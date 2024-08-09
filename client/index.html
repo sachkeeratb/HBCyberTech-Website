@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="/src/assets/HB-CyberTechCircle.png"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>HB CyberTech</title>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+	<script>
+		let title = 'HB CyberTech';
+		let blurMessage = [
+			'Please come back!',
+			'What happened?',
+			'Fancy a cookie?',
+			"I'm feeling lonely :-("
+		];
+
+		let intervalTimer = 60;
+		let timeoutTimer = 60;
+
+		window.addEventListener('blur', function () {
+			intervalTimer = setInterval(function () {
+				let rand = Math.floor(Math.random() * blurMessage.length);
+				document.title = blurMessage[rand];
+			}, 12000);
+		});
+
+		window.addEventListener('focus', function () {
+			clearInterval(intervalTimer);
+			clearTimeout(timeoutTimer);
+			document.title = title;
+		});
+	</script>
+</html>
