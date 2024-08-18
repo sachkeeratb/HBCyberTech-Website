@@ -56,7 +56,7 @@ export default function NavBar() {
 				</Flex>
 				<Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
 					<Flex display={{ base: 'none', md: 'flex' }} mt={-2}>
-						<a href='#' target='_blank'>
+						<a href='/'>
 							<img src={HBCyberTechLogo} className='logo' alt='HB CyberTech' />
 						</a>
 					</Flex>
@@ -100,7 +100,7 @@ const DesktopNav = () => {
 
 	return (
 		<Stack direction={'row'} spacing={4}>
-			{NAV_ITEMS.map((navItem) => (
+			{NavItems.map((navItem) => (
 				<Box key={navItem.label}>
 					<Popover trigger={'hover'} placement={'bottom-start'}>
 						<PopoverTrigger>
@@ -190,7 +190,7 @@ const MobileNav = () => {
 			p={4}
 			display={{ md: 'none' }}
 		>
-			{NAV_ITEMS.map((navItem) => (
+			{NavItems.map((navItem) => (
 				<MobileNavItem key={navItem.label} {...navItem} />
 			))}
 			<Button as={'a'} py={2} href={'#'} onClick={toggleColorMode}>
@@ -256,43 +256,25 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
 interface NavItem {
 	label: string;
 	subLabel?: string;
-	children?: Array<NavItem>;
-	href?: string;
+	children?: NavItem[];
+	href: string;
 }
 
-const NAV_ITEMS: Array<NavItem> = [
+const NavItems: NavItem[] = [
+	{
+		label: 'Home',
+		href: '/'
+	},
 	{
 		label: 'About Us',
-		children: [
-			{
-				label: 'PlaceHolder1',
-				subLabel: 'SubPlaceHolder1',
-				href: '#'
-			},
-			{
-				label: 'PlaceHolder2',
-				subLabel: 'SubPlaceHolder2',
-				href: '#'
-			}
-		]
+		href: '/about'
 	},
 	{
 		label: 'Forum',
-		children: [
-			{
-				label: 'PlaceHolder3',
-				subLabel: 'SubPlaceHolder3',
-				href: '#'
-			},
-			{
-				label: 'PlaceHolder3',
-				subLabel: 'SubPlaceHolder3',
-				href: '#'
-			}
-		]
+		href: '/forum'
 	},
 	{
 		label: 'Links',
-		href: '#'
+		href: '/links'
 	}
 ];
