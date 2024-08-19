@@ -4,3 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+actix-web = "4.9.0"
+chrono = "0.4.38"
+dotenv = "0.15.0"
+futures-util = "0.3.30"
+mongodb = "3.0.1"
+serde = "1.0.208"

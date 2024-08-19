@@ -74,11 +74,11 @@ const LinksList: Link[] = [
 	},
 	{
 		label: 'General Member Form',
-		href: 'https://www.google.com/forms/about/'
+		href: '/form/general'
 	},
 	{
 		label: 'Executive Member Form',
-		href: 'https://www.google.com/forms/about/'
+		href: '/form/executive'
 	},
 	{
 		label: 'Instagram Account',

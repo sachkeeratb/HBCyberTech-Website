@@ -4,6 +4,8 @@ import NavBar from './components/NavBar';
 import Home from './pages/Home';
 import About from './pages/About';
 import Links from './pages/Links';
+import GeneralForm from './pages/GeneralForm';
+import ExecForm from './pages/ExecForm';
 import theme from './theme.ts';
 import {
 	createBrowserRouter,
@@ -18,6 +20,8 @@ const router = createBrowserRouter(
 			<Route path='/' element={<Home />} />
 			<Route path='/about' element={<About />} />
 			<Route path='/links' element={<Links />} />
+			<Route path='/form/general' element={<GeneralForm />} />
+			<Route path='/form/executive' element={<ExecForm />} />
 		</>
 	)
 );
