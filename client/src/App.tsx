@@ -14,6 +14,12 @@ import {
 	Route
 } from 'react-router-dom';
 
+import axios from 'axios';
+
+// Configure the API requests
+axios.defaults.baseURL = import.meta.env.AXIOS_BASE_URL;
+axios.defaults.withCredentials = false;
+
 const router = createBrowserRouter(
 	createRoutesFromElements(
 		<>

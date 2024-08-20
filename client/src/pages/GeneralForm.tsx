@@ -20,195 +20,326 @@ import {
 	SliderTrack,
 	Tooltip
 } from '@chakra-ui/react';
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
+import { useNavigate, Form } from 'react-router-dom';
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
-function NameInput(
-	input: string,
-	setInput: React.Dispatch<React.SetStateAction<string>>
-) {
-	const handleInputChange = (e: {
-		target: { value: SetStateAction<string> };
-	}) => setInput(e.target.value);
-
-	const emptyErr = input === '';
-	const lengthErr = input.length < 2 || input.length > 50;
-	const charErr = !/^[a-zA-Z\s]*$/.test(input);
-	const isErr = emptyErr || lengthErr || charErr;
-
-	return (
-		<FormControl isRequired isInvalid={isErr}>
-			<FormLabel>Full Name</FormLabel>
-			<Input
-				type='name'
-				placeholder='Sachkeerat Singh Brar'
-				value={input}
-				onChange={handleInputChange}
-			/>
-			{!isErr ? (
-				<></>
-			) : emptyErr ? (
-				<FormErrorMessage>A name cannot be empty</FormErrorMessage>
-			) : lengthErr ? (
-				<FormErrorMessage>
-					Invalid length. Must be between 2-30.{' '}
-				</FormErrorMessage>
-			) : charErr ? (
-				<FormErrorMessage>Invalid characters.</FormErrorMessage>
-			) : (
-				<></>
-			)}
-		</FormControl>
-	);
+interface FormVals {
+	fullName: string;
+	email: string;
+	skills: number;
+	extra: string;
 }
 
-function EmailInput(
-	input: string,
-	setInput: React.Dispatch<React.SetStateAction<string>>
-) {
-	const handleInputChange = (e: {
-		target: { value: SetStateAction<string> };
-	}) => setInput(e.target.value);
-
-	const isErr =
-		input === '' ||
-		!input.endsWith('@pdsb.net') ||
-		input.length < 15 ||
-		input.length > 20;
-
-	return (
-		<FormControl isRequired isInvalid={isErr}>
-			<FormLabel>Email</FormLabel>
-			<Input
-				type='email'
-				placeholder='123456@pdsb.net'
-				value={input}
-				onChange={handleInputChange}
-			/>
-			{!isErr ? (
-				<></>
-			) : (
-				<FormErrorMessage>A valid PDSB email is required.</FormErrorMessage>
-			)}
-		</FormControl>
-	);
+interface FormErrors {
+	nameErr: boolean;
+	emailErr: boolean;
+	extraErr: boolean;
 }
 
-function SliderWithMarker(
-	input: number,
-	setInput: React.Dispatch<React.SetStateAction<number>>
-) {
-	const [showTooltip, setShowTooltip] = useState(false);
+interface Slider {
+	value: number;
+	showTooltip: boolean;
+}
+
+export default function GeneralForm() {
+	const wait = async (d: number) => new Promise((r) => setTimeout(r, d));
+
+	const instance = axios.create({
+		baseURL: 'http://localhost:8080',
+		timeout: 1000,
+		withCredentials: false,
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': '*',
+			'Access-Control-Allow-Headers': '*'
+		}
+	});
+
+	const navigate = useNavigate();
+
+	const [data, setData] = useState<FormVals>({
+		fullName: '',
+		email: '',
+		skills: 50,
+		extra: ''
+	});
+	const [error, setError] = useState<FormErrors>({
+		nameErr: false,
+		emailErr: false,
+		extraErr: false
+	});
+	const [extrInpChars, setExtrInpChars] = useState(350);
+	const [slider, setSlider] = useState<Slider>({
+		value: 50,
+		showTooltip: false
+	});
+
+	const handleNameInputChange = (e: { target: { value: string } }) => {
+		setData({ ...data, fullName: e.target.value });
+		validateName(e.target.value);
+	};
+
+	const handleEmailInputChange = (e: { target: { value: string } }) => {
+		setData({ ...data, email: e.target.value });
+		validateEmail(e.target.value);
+	};
+
+	const handleExtraInputChange = (e: { target: { value: string } }) => {
+		setData({ ...data, extra: e.target.value });
+		setExtrInpChars(350 - e.target.value.length);
+		validateExtra(350 - e.target.value.length);
+	};
+
+	const validateName = (val: string) => {
+		if (
+			val === '' ||
+			val.length < 2 ||
+			val.length > 40 ||
+			!/^[a-zA-Z\s]*$/.test(val)
+		)
+			setError({ ...error, nameErr: true });
+		else setError({ ...error, nameErr: false });
+	};
+
+	const validateEmail = (val: string) => {
+		if (
+			!val.endsWith('@pdsb.net') ||
+			val.length < 15 ||
+			val.length > 20 ||
+			!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val)
+		)
+			setError({ ...error, emailErr: true });
+		else setError({ ...error, emailErr: false });
+	};
+
+	const validateExtra = (val: number) => {
+		if (val <= 0 || val > 350) setError({ ...error, extraErr: true });
+		else setError({ ...error, extraErr: false });
+	};
+
+	function canSubmit(): boolean {
+		return !(error.nameErr || error.emailErr || error.extraErr);
+	}
+
 	const labelStyles = {
 		mt: '2',
 		ml: '-2.5',
 		fontSize: 'sm'
 	};
-	return (
-		<>
-			<FormControl isRequired>
-				<FormLabel>Skills In CyberSecurity or Low Level Programming</FormLabel>
-			</FormControl>
-			<Slider
-				id='slider'
-				defaultValue={50}
-				min={0}
-				max={100}
-				colorScheme='blue'
-				onChange={(v) => setInput(v)}
-				onMouseEnter={() => setShowTooltip(true)}
-				onMouseLeave={() => setShowTooltip(false)}
-			>
-				<SliderMark value={25} {...labelStyles}>
-					25%
-				</SliderMark>
-				<SliderMark value={50} {...labelStyles}>
-					50%
-				</SliderMark>
-				<SliderMark value={75} {...labelStyles}>
-					75%
-				</SliderMark>
-				<SliderTrack>
-					<SliderFilledTrack />
-				</SliderTrack>
-				<Tooltip
-					hasArrow
-					bg='teal.500'
-					color='white'
-					placement='top'
-					isOpen={showTooltip}
-					label={
-						input <= 25
-							? `${input}%. Don't worry!`
-							: input >= 75
-							? `${input}%. You're a pro!`
-							: `${input}%`
-					}
-				>
-					<SliderThumb />
-				</Tooltip>
-			</Slider>
-		</>
-	);
-}
-export default function GeneralForm() {
-	const [nameInput, setNameInput] = useState('');
-	const [emailInput, setEmailInput] = useState('');
-	const [sliderVal, setSliderVal] = useState(50);
+	const formBG = useColorModeValue('white', 'gray.700');
+
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
+		if (!canSubmit()) {
+			toast.error('You have invalid inputs. Please try again.');
+			console.log(data);
+			return;
+		}
+
+		const { fullName, email, skills, extra } = data;
+
+		try {
+			const { data } = await instance.post('/general_member', {
+				full_name: fullName,
+				email: email,
+				skills: skills,
+				extra: extra,
+				date_created: new Date().toISOString()
+			});
+
+			// Show the user if any input is invalid
+			if (data.error) {
+				toast.error(data.error);
+				throw new Error(data.error);
+			}
+
+			// Allow the user to continue
+			setData({} as FormVals);
+			toast.success('Registration successful. Welcome.');
+			await wait(2000);
+			navigate('/');
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<Container maxW='7xl' py={10} px={{ base: 5, md: 8 }}>
+			<Toaster
+				position='bottom-right'
+				reverseOrder={false}
+				toastOptions={{
+					style: {
+						color: useColorModeValue('black', 'white'),
+						background: useColorModeValue('#F2F3F4', '#181818')
+					}
+				}}
+			/>
 			<Stack spacing={10}>
 				<Flex align='center' justifyContent='center' direction='column'>
 					<Heading fontSize='4xl' mb={2}>
 						General Member Form
 					</Heading>
-					<Text fontSize='md' textAlign='center'>
+					<Text fontSize='md' textAlign='center' mb={1}>
 						Register now to be a general member of HB CyberTech! Be prepared for
 						amazing experiences and opportunities!
 					</Text>
+					<Text fontSize='md' textAlign='center'>
+						Don't worry if you have no prior knowledge. We welcome members of
+						all skill levels and provide resources and support to help you learn
+						and grow!!
+					</Text>
 				</Flex>
 				<Divider />
-				<VStack
-					as='form'
-					spacing={8}
-					w='100%'
-					bg={useColorModeValue('white', 'gray.700')}
-					rounded='lg'
-					boxShadow='lg'
-					p={{ base: 5, sm: 10 }}
-				>
-					<VStack spacing={4} w='100%'>
-						<Stack
-							w='100%'
-							spacing={3}
-							direction={{ base: 'column', md: 'row' }}
-						>
-							{NameInput(nameInput, setNameInput)}
-							{EmailInput(emailInput, setEmailInput)}
-						</Stack>
-						{SliderWithMarker(sliderVal, setSliderVal)}
-						<FormControl id='message' pt={4}>
-							<FormLabel>Additional Information</FormLabel>
-							<Textarea
-								size='lg'
-								placeholder='Enter your (optional) message'
+				<Form onSubmit={handleSubmit}>
+					<VStack
+						spacing={8}
+						w='100%'
+						bg={formBG}
+						rounded='lg'
+						boxShadow='lg'
+						p={{ base: 5, sm: 10 }}
+					>
+						<VStack spacing={4} w='100%'>
+							<Stack
+								w='100%'
+								spacing={3}
+								direction={{ base: 'column', md: 'row' }}
+							>
+								<FormControl isRequired isInvalid={error.nameErr}>
+									<FormLabel>Full Name</FormLabel>
+									<Input
+										type='name'
+										placeholder='Sachkeerat Singh Brar'
+										value={data.fullName}
+										onChange={handleNameInputChange}
+									/>
+									{!error.nameErr ? (
+										<></>
+									) : data.fullName === '' ? (
+										<FormErrorMessage>A name cannot be empty</FormErrorMessage>
+									) : data.fullName.length < 2 || data.fullName.length > 40 ? (
+										<FormErrorMessage>
+											Invalid length. Must be between 2-40.
+										</FormErrorMessage>
+									) : !/^[a-zA-Z\s]*$/.test(data.fullName) ? (
+										<FormErrorMessage>Invalid characters.</FormErrorMessage>
+									) : (
+										<></>
+									)}
+								</FormControl>
+								<FormControl isRequired isInvalid={error.emailErr}>
+									<FormLabel>Email</FormLabel>
+									<Input
+										type='email'
+										placeholder='123456@pdsb.net'
+										value={data.email}
+										onChange={handleEmailInputChange}
+									/>
+									{!error.emailErr ? (
+										<></>
+									) : (
+										<FormErrorMessage>
+											A valid PDSB email is required.
+										</FormErrorMessage>
+									)}
+								</FormControl>
+							</Stack>
+							<FormControl isRequired>
+								<FormLabel>
+									Skills In CyberSecurity or Low Level Programming
+								</FormLabel>
+							</FormControl>
+							<Slider
+								id='slider'
+								defaultValue={50}
+								min={0}
+								max={100}
+								colorScheme='blue'
+								onChange={(v) => {
+									setSlider({ ...slider, value: v });
+									setData({ ...data, skills: v });
+								}}
+								onMouseEnter={() => {
+									setSlider({ ...slider, showTooltip: true });
+								}}
+								onMouseLeave={() => {
+									setSlider({ ...slider, showTooltip: false });
+								}}
+							>
+								<SliderMark value={25} {...labelStyles}>
+									25%
+								</SliderMark>
+								<SliderMark value={50} {...labelStyles}>
+									50%
+								</SliderMark>
+								<SliderMark value={75} {...labelStyles}>
+									75%
+								</SliderMark>
+								<SliderTrack>
+									<SliderFilledTrack />
+								</SliderTrack>
+								<Tooltip
+									hasArrow
+									bg='teal.500'
+									color='white'
+									placement='top'
+									isOpen={slider.showTooltip}
+									label={
+										slider.value <= 25
+											? `${slider.value}%. Don't worry!`
+											: slider.value >= 75
+											? `${slider.value}%. You're a pro!`
+											: `${slider.value}%`
+									}
+								>
+									<SliderThumb />
+								</Tooltip>
+							</Slider>
+							<FormControl id='message' pt={4} isInvalid={error.extraErr}>
+								<FormLabel>Additional Information</FormLabel>
+								<Textarea
+									size='lg'
+									placeholder='Enter your (optional) message'
+									rounded='md'
+									value={data.extra}
+									onChange={handleExtraInputChange}
+								/>
+								{extrInpChars > 0 ? (
+									<></>
+								) : (
+									<FormErrorMessage>
+										You are only allowed to input 350 characters.
+									</FormErrorMessage>
+								)}
+								{extrInpChars > 50 ? (
+									<Text fontSize='sm' textAlign={'right'}>
+										{extrInpChars}
+									</Text>
+								) : (
+									<Text fontSize='sm' textAlign={'right'} color={'red'}>
+										{extrInpChars}
+									</Text>
+								)}
+							</FormControl>
+						</VStack>
+						<VStack w='100%'>
+							<Button
+								type='submit'
+								bg='teal.300'
+								_hover={{
+									bg: 'teal.500'
+								}}
 								rounded='md'
-							/>
-						</FormControl>
+								w={{ base: '100%', md: 'max-content' }}
+							>
+								Submit Form
+							</Button>
+						</VStack>
 					</VStack>
-					<VStack w='100%'>
-						<Button
-							bg='teal.300'
-							_hover={{
-								bg: 'teal.500'
-							}}
-							rounded='md'
-							w={{ base: '100%', md: 'max-content' }}
-						>
-							Submit Form
-						</Button>
-					</VStack>
-				</VStack>
+				</Form>
 			</Stack>
 		</Container>
 	);

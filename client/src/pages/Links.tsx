@@ -35,7 +35,7 @@ export default function Links() {
 				</SlideFade>
 			</Container>
 
-			{LinksList.map((Link) => (
+			{LinksList.map((Link, i) => (
 				<Box
 					as='a'
 					href={Link.href}
@@ -43,6 +43,7 @@ export default function Links() {
 					display={'block'}
 					p={2}
 					rounded={'md'}
+					key={i}
 				>
 					<Stack direction={'column'} align={'center'}>
 						<Button mb={'7vh'}>
