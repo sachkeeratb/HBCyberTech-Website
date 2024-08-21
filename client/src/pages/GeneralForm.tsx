@@ -21,9 +21,8 @@ import {
 	Tooltip
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useNavigate, Form } from 'react-router-dom';
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface FormVals {
 	fullName: string;
@@ -44,8 +43,6 @@ interface Slider {
 }
 
 export default function GeneralForm() {
-	const wait = async (d: number) => new Promise((r) => setTimeout(r, d));
-
 	const instance = axios.create({
 		baseURL: 'http://localhost:8080',
 		timeout: 1000,
@@ -57,7 +54,12 @@ export default function GeneralForm() {
 		}
 	});
 
-	const navigate = useNavigate();
+	const labelStyles = {
+		mt: '2',
+		ml: '-2.5',
+		fontSize: 'sm'
+	};
+	const formBG = useColorModeValue('white', 'gray.700');
 
 	const [data, setData] = useState<FormVals>({
 		fullName: '',
@@ -97,7 +99,9 @@ export default function GeneralForm() {
 			val === '' ||
 			val.length < 2 ||
 			val.length > 40 ||
-			!/^[a-zA-Z\s]*$/.test(val)
+			!/^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ\s']*$/u.test(
+				val
+			)
 		)
 			setError({ ...error, nameErr: true });
 		else setError({ ...error, nameErr: false });
@@ -123,12 +127,18 @@ export default function GeneralForm() {
 		return !(error.nameErr || error.emailErr || error.extraErr);
 	}
 
-	const labelStyles = {
-		mt: '2',
-		ml: '-2.5',
-		fontSize: 'sm'
+	const isDuplicate = async (fullName: string, email: string) => {
+		const recievedFullName = await instance.get(
+			`/general_member/get/${fullName}`
+		);
+		const recievedEmail = await instance.get(`/general_member/get/${email}`);
+
+		if (recievedFullName.data.length <= 0 && recievedEmail.data.length <= 0)
+			return false;
+
+		toast.error('You have already signed up.');
+		return true;
 	};
-	const formBG = useColorModeValue('white', 'gray.700');
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -141,7 +151,9 @@ export default function GeneralForm() {
 		const { fullName, email, skills, extra } = data;
 
 		try {
-			const { data } = await instance.post('/general_member', {
+			if (await isDuplicate(fullName, email)) return;
+
+			const { data } = await instance.post('/general_member/post', {
 				full_name: fullName,
 				email: email,
 				skills: skills,
@@ -158,8 +170,6 @@ export default function GeneralForm() {
 			// Allow the user to continue
 			setData({} as FormVals);
 			toast.success('Registration successful. Welcome.');
-			await wait(2000);
-			navigate('/');
 		} catch (error) {
 			console.log(error);
 		}
@@ -193,7 +203,7 @@ export default function GeneralForm() {
 					</Text>
 				</Flex>
 				<Divider />
-				<Form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit}>
 					<VStack
 						spacing={8}
 						w='100%'
@@ -339,7 +349,7 @@ export default function GeneralForm() {
 							</Button>
 						</VStack>
 					</VStack>
-				</Form>
+				</form>
 			</Stack>
 		</Container>
 	);

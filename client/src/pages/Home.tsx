@@ -72,7 +72,7 @@ interface Feature {
 
 const Features: Feature[] = [
 	{
-		heading: 'Informational Slideshows',
+		heading: 'Informational Learning Sessions',
 		content:
 			'This club will provide a greate amount of knowledge regarding CyberSecurity, Embedded Programming, and more!',
 		icon: FaSlideshare

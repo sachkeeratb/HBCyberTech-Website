@@ -1,42 +1,32 @@
+import { lazy } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import './App.css';
-import NavBar from './components/NavBar';
-import Home from './pages/Home';
-import About from './pages/About';
-import Links from './pages/Links';
-import GeneralForm from './pages/GeneralForm';
-import ExecForm from './pages/ExecForm';
+
+const NavBar = lazy(() => import('./components/NavBar'));
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const Links = lazy(() => import('./pages/Links'));
+const Forum = lazy(() => import('./pages/Forum'));
+const GeneralForm = lazy(() => import('./pages/GeneralForm'));
+const ExecForm = lazy(() => import('./pages/ExecForm'));
+
 import theme from './theme.ts';
-import {
-	createBrowserRouter,
-	createRoutesFromElements,
-	RouterProvider,
-	Route
-} from 'react-router-dom';
-
-import axios from 'axios';
-
-// Configure the API requests
-axios.defaults.baseURL = import.meta.env.AXIOS_BASE_URL;
-axios.defaults.withCredentials = false;
-
-const router = createBrowserRouter(
-	createRoutesFromElements(
-		<>
-			<Route path='/' element={<Home />} />
-			<Route path='/about' element={<About />} />
-			<Route path='/links' element={<Links />} />
-			<Route path='/form/general' element={<GeneralForm />} />
-			<Route path='/form/executive' element={<ExecForm />} />
-		</>
-	)
-);
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 function App() {
 	return (
 		<ChakraProvider theme={theme}>
 			<NavBar />
-			<RouterProvider router={router} />
+			<Router>
+				<Routes>
+					<Route index path='/' element={<Home />} />
+					<Route path='/about' element={<About />} />
+					<Route path='/links' element={<Links />} />
+					<Route path='/forum' element={<Forum />} />
+					<Route path='/form/general' element={<GeneralForm />} />
+					<Route path='/form/executive' element={<ExecForm />} />
+				</Routes>
+			</Router>
 		</ChakraProvider>
 	);
 }

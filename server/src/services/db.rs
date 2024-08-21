@@ -1,6 +1,6 @@
 use std::env;
 
-use mongodb::{error::Error, results::InsertOneResult, Collection};
+use mongodb::{bson::doc, error::Error, results::InsertOneResult, Collection};
 
 use crate::models::general_member::GeneralMember;
 
@@ -28,7 +28,37 @@ impl Database {
     }
   }
 
+  pub async fn does_exist_full_name(&self, full_name: String) -> bool {
+    let existing_member = self.general_member.find_one(doc! { "full_name": &full_name }).await.ok();
+    if let Some(existing_member) = existing_member {
+      return existing_member.is_some();
+    }
+    false
+  }
+
+  pub async fn does_exist_email(&self, email: String) -> bool {
+    let existing_member = self.general_member.find_one(doc! { "email": &email }).await.ok();
+    if let Some(existing_member) = existing_member {
+      return existing_member.is_some();
+    }
+    false
+  }
+
+  pub async fn does_exist(&self, general_member: &GeneralMember) -> bool {
+    let existing_member = self.general_member.find_one(
+      doc! { "$or": [{ "full_name": &general_member.full_name }, { "email": &general_member.email }] }
+    ).await.ok();
+    if let Some(existing_member) = existing_member {
+      return existing_member.is_some();
+    }
+    false
+  }
+
   pub async fn create_general_member(&self, general_member: GeneralMember) -> Result<InsertOneResult, Error> {
+    if self.does_exist(&general_member).await {
+      return Err(Error::from(std::io::Error::new(std::io::ErrorKind::AlreadyExists, "Member already exists.")));
+    }
+
     let result = self
       .general_member
       .insert_one(general_member)

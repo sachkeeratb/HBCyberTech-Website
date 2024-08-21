@@ -24,8 +24,8 @@ export default function Links() {
 						>
 							<Text
 								as={'span'}
-								color={'green.400'}
-								bgGradient='linear(to-r, green.200, gray.500)'
+								color={'blue.400'}
+								bgGradient='linear(to-r, blue.200, purple.500)'
 								bgClip='text'
 							>
 								Links
