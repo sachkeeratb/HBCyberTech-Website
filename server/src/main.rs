@@ -5,7 +5,7 @@ mod services;
 use std::env;
 
 use actix_cors::Cors;
-use routes::general_member::{create_general_member, get_general_member_by_full_name_or_email};
+use routes::{executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, general_member::{create_general_member, get_general_member_by_full_name_or_email}};
 use services::db::Database;
 use actix_web::{web::Data, App, HttpServer};
 
@@ -32,8 +32,10 @@ async fn main() -> std::io::Result<()> {
 			.app_data(db_data.clone())
 			.service(create_general_member)
 			.service(get_general_member_by_full_name_or_email)
+			.service(create_executive_member)
+			.service(get_executive_member_by_full_name_or_email)
 	})
-		.bind(("localhost", 8080))?
+		.bind((env::var("HOST").unwrap().as_str(), env::var("PORT").unwrap().parse::<u16>().unwrap()))?
 		.run()
 		.await
 }

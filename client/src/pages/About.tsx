@@ -15,6 +15,8 @@ import GurvirSandhu from '../assets/GurvirSandhu.png';
 import UdeshwarSinghSandhu from '../assets/UdeshwarSinghSandhu.png';
 import PrathamDave from '../assets/PrathamDave.jpg';
 import VanshSuri from '../assets/VanshSuri.png';
+import EdwardLin from '../assets/EdwardLin.jpg';
+import PranavThukral from '../assets/PranavThukral.jpg';
 
 import {
 	FaGithub as GitHubIcon,
@@ -167,77 +169,6 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
-								src={'https://avatars.githubusercontent.com/u/90074423?v=4'}
-							/>
-						</MotionBox>
-					</Box>
-				</div>
-
-				<Flex
-					position='relative'
-					ml={['auto', 'auto', 16]}
-					m={['auto', 'initial']}
-					w={['90%', '85%', '80%']}
-					maxW='800px'
-					justifyContent='center'
-					direction='column'
-				>
-					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
-							<Box
-								as='h1'
-								mb={6}
-								fontSize='3xl'
-								lineHeight='shorter'
-								fontWeight='bold'
-								mt={0}
-								cursor='pointer'
-								width='max-content'
-								textAlign='left'
-							>
-								<Box as='span' display='inline-block' position='relative'>
-									Vice President
-									<Box
-										as='span'
-										display='block'
-										position='absolute'
-										bg='blue.400'
-										w='100%'
-										h='1px'
-										bottom={-2}
-									/>
-								</Box>{' '}
-								<Box as='span' display={'flex'} pt={5}>
-									<Box pr={5}>
-										{GitHubContact('https://github.com/TheNobleCoder')}
-									</Box>
-									<Box>
-										{InstagramContact('https://www.instagram.com/edyi_01')}
-									</Box>
-								</Box>
-							</Box>
-						</MotionBox>
-					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
-						Greetings! My name is{' '}
-						<Box as='strong' fontWeight='600'>
-							Edward Lin{' '}
-						</Box>
-						and I am the VP of this club. I enjoy programming competitively and
-						building projects in Python. If you are reading this you are now
-						obliged to check CodeLink!
-					</Box>
-				</Flex>
-			</Flex>
-
-			<Flex direction={['column', 'column', 'row']}>
-				<div>
-					<Box m='auto' mb={[16, 16, 'auto']}>
-						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
-							<Avatar
-								size='2xl'
-								showBorder={true}
-								borderColor='blue.400'
 								src={UdeshwarSinghSandhu}
 							/>
 						</MotionBox>
@@ -297,6 +228,77 @@ export default function About() {
 						programming and enjoy innovative technology. If you are want more
 						info about cyber security and cool technology, check out HB
 						CyberTech.
+					</Box>
+				</Flex>
+			</Flex>
+
+			<Flex direction={['column', 'column', 'row']}>
+				<div>
+					<Box m='auto' mb={[16, 16, 'auto']}>
+						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
+							<Avatar
+								size='2xl'
+								showBorder={true}
+								borderColor='blue.400'
+								src={EdwardLin}
+							/>
+						</MotionBox>
+					</Box>
+				</div>
+
+				<Flex
+					position='relative'
+					ml={['auto', 'auto', 16]}
+					m={['auto', 'initial']}
+					w={['90%', '85%', '80%']}
+					maxW='800px'
+					justifyContent='center'
+					direction='column'
+				>
+					<Box position='relative'>
+						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+							<Box
+								as='h1'
+								mb={6}
+								fontSize='3xl'
+								lineHeight='shorter'
+								fontWeight='bold'
+								mt={0}
+								cursor='pointer'
+								width='max-content'
+								textAlign='left'
+							>
+								<Box as='span' display='inline-block' position='relative'>
+									Vice President
+									<Box
+										as='span'
+										display='block'
+										position='absolute'
+										bg='blue.400'
+										w='100%'
+										h='1px'
+										bottom={-2}
+									/>
+								</Box>{' '}
+								<Box as='span' display={'flex'} pt={5}>
+									<Box pr={5}>
+										{GitHubContact('https://github.com/TheNobleCoder')}
+									</Box>
+									<Box>
+										{InstagramContact('https://www.instagram.com/edyi_01')}
+									</Box>
+								</Box>
+							</Box>
+						</MotionBox>
+					</Box>
+					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+						Greetings! My name is{' '}
+						<Box as='strong' fontWeight='600'>
+							Edward Lin{' '}
+						</Box>
+						and I am the VP of this club. I enjoy programming competitively and
+						building projects in Python. If you are reading this you are now
+						obliged to check CodeLink!
 					</Box>
 				</Flex>
 			</Flex>
@@ -562,7 +564,7 @@ export default function About() {
 									</Box>{' '}
 									<Box>
 										{LinkedInContact(
-											'https://media.licdn.com/dms/image/v2/D4E35AQHD9FBJcZf-Ew/profile-framedphoto-shrink_200_200/profile-framedphoto-shrink_200_200/0/1722215358934?e=1724871600&v=beta&t=l7JCnQwakW9wPRUNXSB6A82JnCwxSlJD0hkmW3cMwR4'
+											'https://www.linkedin.com/in/vansh-suri-b7a2582a9/'
 										)}
 									</Box>
 								</Box>
@@ -658,6 +660,74 @@ export default function About() {
 						racket sports and building circuits on different cad platforms. I am
 						also a part of a table tennis club that I started and managed. Feel
 						free to check it out!
+					</Box>
+				</Flex>
+			</Flex>
+
+			<Flex direction={['column', 'column', 'row']}>
+				<div>
+					<Box m='auto' mb={[16, 16, 'auto']}>
+						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
+							<Avatar
+								size='2xl'
+								showBorder={true}
+								borderColor='blue.400'
+								src={PranavThukral}
+							/>
+						</MotionBox>
+					</Box>
+				</div>
+				<Flex
+					position='relative'
+					ml={['auto', 'auto', 16]}
+					m={['auto', 'initial']}
+					w={['90%', '85%', '80%']}
+					maxW='800px'
+					justifyContent='center'
+					direction='column'
+				>
+					<Box position='relative'>
+						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+							<Box
+								as='h1'
+								mb={6}
+								fontSize='3xl'
+								lineHeight='shorter'
+								fontWeight='bold'
+								mt={0}
+								cursor='pointer'
+								width='max-content'
+								textAlign='left'
+							>
+								<Box as='span' display='inline-block' position='relative'>
+									Marketing Executive
+									<Box
+										as='span'
+										display='block'
+										position='absolute'
+										bg='blue.400'
+										w='100%'
+										h='1px'
+										bottom={-2}
+									/>
+								</Box>{' '}
+								<Box as='span' display={'flex'} pt={5}>
+									{InstagramContact(
+										'https://www.instagram.com/pranav.thukral23'
+									)}
+								</Box>
+							</Box>
+						</MotionBox>
+					</Box>
+					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+						Hi! My name is{' '}
+						<Box as='strong' fontWeight='600'>
+							Pranav
+						</Box>
+						, and I am a marketing exec for this club. I'm interested in
+						cybersecurity as well as computers in general. I'm also president of
+						our school's Hindu Student Association, Sanskar, so make sure to
+						check that out!
 					</Box>
 				</Flex>
 			</Flex>

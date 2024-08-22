@@ -56,7 +56,7 @@ export default function NavBar() {
 				</Flex>
 				<Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
 					<Flex display={{ base: 'none', md: 'flex' }} mt={-2}>
-						<a href='/'>
+						<a>
 							<img src={HBCyberTechLogo} className='logo' alt='HB CyberTech' />
 						</a>
 					</Flex>

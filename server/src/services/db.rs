@@ -2,12 +2,13 @@ use std::env;
 
 use mongodb::{bson::doc, error::Error, results::InsertOneResult, Collection};
 
-use crate::models::general_member::GeneralMember;
+use crate::models::{executive_member::ExecutiveMember, general_member::GeneralMember};
 
 extern crate dotenv;
 
 pub struct Database {
-  general_member: Collection<GeneralMember>
+  general_member: Collection<GeneralMember>,
+  executive_member: Collection<ExecutiveMember>
 }
 
 impl Database {
@@ -22,29 +23,29 @@ impl Database {
     let db = client.database("cybertechdb");
 
     let general_member: Collection<GeneralMember> = db.collection("GeneralMemberForms");
+    let executive_member: Collection<ExecutiveMember> = db.collection("ExecutiveMemberForms");
 
     Database {
-      general_member
+      general_member,
+      executive_member
     }
   }
 
-  pub async fn does_exist_full_name(&self, full_name: String) -> bool {
+  pub async fn gen_mem_does_exist_full_name(&self, full_name: String) -> bool {
     let existing_member = self.general_member.find_one(doc! { "full_name": &full_name }).await.ok();
     if let Some(existing_member) = existing_member {
       return existing_member.is_some();
     }
     false
   }
-
-  pub async fn does_exist_email(&self, email: String) -> bool {
+  pub async fn gen_mem_does_exist_email(&self, email: String) -> bool {
     let existing_member = self.general_member.find_one(doc! { "email": &email }).await.ok();
     if let Some(existing_member) = existing_member {
       return existing_member.is_some();
     }
     false
   }
-
-  pub async fn does_exist(&self, general_member: &GeneralMember) -> bool {
+  pub async fn gen_mem_does_exist(&self, general_member: &GeneralMember) -> bool {
     let existing_member = self.general_member.find_one(
       doc! { "$or": [{ "full_name": &general_member.full_name }, { "email": &general_member.email }] }
     ).await.ok();
@@ -55,7 +56,7 @@ impl Database {
   }
 
   pub async fn create_general_member(&self, general_member: GeneralMember) -> Result<InsertOneResult, Error> {
-    if self.does_exist(&general_member).await {
+    if self.gen_mem_does_exist(&general_member).await {
       return Err(Error::from(std::io::Error::new(std::io::ErrorKind::AlreadyExists, "Member already exists.")));
     }
 
@@ -65,6 +66,46 @@ impl Database {
       .await
       .ok()
       .expect("Error creating general member.");
+
+    Ok(result)
+  }
+
+
+  pub async fn exec_mem_does_exist_full_name(&self, full_name: String) -> bool {
+    let existing_member = self.executive_member.find_one(doc! { "full_name": &full_name }).await.ok();
+    if let Some(existing_member) = existing_member {
+      return existing_member.is_some();
+    }
+    false
+  }
+  pub async fn exec_mem_does_exist_email(&self, email: String) -> bool {
+    let existing_member = self.executive_member.find_one(doc! { "email": &email }).await.ok();
+    if let Some(existing_member) = existing_member {
+      return existing_member.is_some();
+    }
+    false
+  }
+  pub async fn exec_mem_does_exist(&self, executive_member: &ExecutiveMember) -> bool {
+    let existing_member = self.executive_member.find_one(
+      doc! { "$or": [{ "full_name": &executive_member.full_name }, { "email": &executive_member.email }] }
+    ).await.ok();
+    if let Some(existing_member) = existing_member {
+      return existing_member.is_some();
+    }
+    false
+  }
+
+  pub async fn create_executive_member(&self, executive_member: ExecutiveMember) -> Result<InsertOneResult, Error> {
+    if self.exec_mem_does_exist(&executive_member).await {
+      return Err(Error::from(std::io::Error::new(std::io::ErrorKind::AlreadyExists, "Member already exists.")));
+    }
+
+    let result = self
+      .executive_member
+      .insert_one(executive_member)
+      .await
+      .ok()
+      .expect("Error creating executive member.");
 
     Ok(result)
   }

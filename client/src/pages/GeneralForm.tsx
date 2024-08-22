@@ -42,18 +42,19 @@ interface Slider {
 	showTooltip: boolean;
 }
 
-export default function GeneralForm() {
-	const instance = axios.create({
-		baseURL: 'http://localhost:8080',
-		timeout: 1000,
-		withCredentials: false,
-		headers: {
-			'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Methods': '*',
-			'Access-Control-Allow-Headers': '*'
-		}
-	});
+const instance = axios.create({
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
+	timeout: 1000,
+	withCredentials: false,
+	headers: {
+		'Access-Control-Allow-Origin': '*',
+		'Access-Control-Allow-Methods': '*',
+		'Access-Control-Allow-Headers': '*',
+		'Content-Type': 'application/json'
+	}
+});
 
+export default function GeneralForm() {
 	const labelStyles = {
 		mt: '2',
 		ml: '-2.5',
@@ -119,7 +120,7 @@ export default function GeneralForm() {
 	};
 
 	const validateExtra = (val: number) => {
-		if (val <= 0 || val > 350) setError({ ...error, extraErr: true });
+		if (val < 0 || val > 350) setError({ ...error, extraErr: true });
 		else setError({ ...error, extraErr: false });
 	};
 
@@ -144,7 +145,6 @@ export default function GeneralForm() {
 		event.preventDefault();
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
-			console.log(data);
 			return;
 		}
 
@@ -170,6 +170,9 @@ export default function GeneralForm() {
 			// Allow the user to continue
 			setData({} as FormVals);
 			toast.success('Registration successful. Welcome.');
+			new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
+				window.location.reload();
+			});
 		} catch (error) {
 			console.log(error);
 		}
@@ -317,14 +320,14 @@ export default function GeneralForm() {
 									value={data.extra}
 									onChange={handleExtraInputChange}
 								/>
-								{extrInpChars > 0 ? (
+								{extrInpChars >= 0 ? (
 									<></>
 								) : (
 									<FormErrorMessage>
 										You are only allowed to input 350 characters.
 									</FormErrorMessage>
 								)}
-								{extrInpChars > 50 ? (
+								{extrInpChars >= 50 ? (
 									<Text fontSize='sm' textAlign={'right'}>
 										{extrInpChars}
 									</Text>

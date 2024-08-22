@@ -5,9 +5,9 @@ use crate::{models::general_member::{GeneralMember, GeneralMemberRequest}, servi
 
 #[get("/general_member/get/{full_name_or_email}")]
 pub async fn get_general_member_by_full_name_or_email(db: Data<Database>, full_name_or_email: web::Path<String>) -> HttpResponse {
-  match db.does_exist_full_name(full_name_or_email.to_string()).await {
+  match db.gen_mem_does_exist_full_name(full_name_or_email.to_string()).await {
     true => HttpResponse::Ok().json(full_name_or_email.to_string()),
-    false => match db.does_exist_email(full_name_or_email.to_string()).await {
+    false => match db.gen_mem_does_exist_email(full_name_or_email.to_string()).await {
       true => HttpResponse::Ok().json(full_name_or_email.to_string()),
       false => HttpResponse::Ok().json("")
     }
