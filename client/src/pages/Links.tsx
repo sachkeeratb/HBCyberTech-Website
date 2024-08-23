@@ -74,15 +74,19 @@ const LinksList: Link[] = [
 		href: 'https://classroom.google.com/'
 	},
 	{
+		label: 'Instagram Account',
+		href: 'https://www.instagram.com/hbcybertech'
+	},
+	{
 		label: 'General Member Form',
 		href: '/form/general'
 	},
 	{
 		label: 'Executive Member Form',
 		href: '/form/executive'
-	},
-	{
-		label: 'Instagram Account',
-		href: 'https://www.instagram.com/hbcybertech'
 	}
+	// {
+	// 	label: 'Feedback',
+	// 	href: '/form/feedback'
+	// }
 ];

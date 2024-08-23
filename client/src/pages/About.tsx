@@ -574,7 +574,7 @@ export default function About() {
 					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left'>
 						Hi! My name{' '}
 						<Box as='strong' fontWeight='600'>
-							Vansh Suri
+							Vansh Suri{' '}
 						</Box>
 						and I&apos;m the Director of Development at HB CyberTech. I&apos;m
 						passionate about programming and technology, with expertise in Java,

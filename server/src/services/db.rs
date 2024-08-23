@@ -1,14 +1,16 @@
 use std::env;
 
+use futures_util::TryStreamExt;
 use mongodb::{bson::doc, error::Error, results::InsertOneResult, Collection};
 
-use crate::models::{executive_member::ExecutiveMember, general_member::GeneralMember};
+use crate::models::{announcement_forum_post::Announcement, executive_member::ExecutiveMember, general_member::GeneralMember};
 
 extern crate dotenv;
 
 pub struct Database {
   general_member: Collection<GeneralMember>,
-  executive_member: Collection<ExecutiveMember>
+  executive_member: Collection<ExecutiveMember>,
+  announcement_forum_post: Collection<Announcement>
 }
 
 impl Database {
@@ -24,10 +26,12 @@ impl Database {
 
     let general_member: Collection<GeneralMember> = db.collection("GeneralMemberForms");
     let executive_member: Collection<ExecutiveMember> = db.collection("ExecutiveMemberForms");
+    let announcement_forum_post: Collection<Announcement> = db.collection("Announcements");
 
     Database {
       general_member,
-      executive_member
+      executive_member,
+      announcement_forum_post
     }
   }
 
@@ -108,5 +112,17 @@ impl Database {
       .expect("Error creating executive member.");
 
     Ok(result)
+  }
+
+
+  pub async fn get_announcement_forum_posts(&self) -> Result<Vec<Announcement>, Error> {
+    let cursor = self.announcement_forum_post.find(doc! {}).await?;
+    let posts: Vec<Announcement> = cursor.try_collect().await?;
+    Ok(posts)
+  }
+
+  pub async fn get_amount_of_announcement_forum_posts(&self) -> Result<u64, Error> {
+    let amount = self.announcement_forum_post.count_documents(doc! {}).await?;
+    Ok(amount)
   }
 }

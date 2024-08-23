@@ -5,7 +5,7 @@ mod services;
 use std::env;
 
 use actix_cors::Cors;
-use routes::{executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, general_member::{create_general_member, get_general_member_by_full_name_or_email}};
+use routes::{announcement_forum_post::{return_amount_of_announcements, return_announcements}, executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, general_member::{create_general_member, get_general_member_by_full_name_or_email}};
 use services::db::Database;
 use actix_web::{web::Data, App, HttpServer};
 
@@ -23,7 +23,7 @@ async fn main() -> std::io::Result<()> {
 	HttpServer::new(move || {	
 		let cors = Cors::default()
 			.allowed_origin(&env::var("CLIENT_URL").unwrap().to_string())
-			.allow_any_method()
+			.allowed_methods(vec!["GET", "POST"])
 			.allow_any_header()
 			.max_age(3600)
 			.send_wildcard();
@@ -34,6 +34,8 @@ async fn main() -> std::io::Result<()> {
 			.service(get_general_member_by_full_name_or_email)
 			.service(create_executive_member)
 			.service(get_executive_member_by_full_name_or_email)
+			.service(return_announcements)
+			.service(return_amount_of_announcements)
 	})
 		.bind((env::var("HOST").unwrap().as_str(), env::var("PORT").unwrap().parse::<u16>().unwrap()))?
 		.run()
