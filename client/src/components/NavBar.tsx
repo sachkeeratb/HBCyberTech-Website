@@ -274,6 +274,20 @@ const NavItems: NavItem[] = [
 		href: '/forum'
 	},
 	{
+		label: 'Accounts',
+		href: '#',
+		children: [
+			{
+				label: 'Sign Up',
+				href: '/signup'
+			},
+			{
+				label: 'Sign In',
+				href: '/signin'
+			}
+		]
+	},
+	{
 		label: 'Links',
 		href: '/links'
 	}

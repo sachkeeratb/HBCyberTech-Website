@@ -3,14 +3,15 @@ use std::env;
 use futures_util::TryStreamExt;
 use mongodb::{bson::doc, error::Error, results::InsertOneResult, Collection};
 
-use crate::models::{announcement_forum_post::Announcement, executive_member::ExecutiveMember, general_member::GeneralMember};
+use crate::models::{announcement_forum_post::Announcement, executive_member::ExecutiveMember, general_member::GeneralMember, account::Account};
 
 extern crate dotenv;
 
 pub struct Database {
   general_member: Collection<GeneralMember>,
   executive_member: Collection<ExecutiveMember>,
-  announcement_forum_post: Collection<Announcement>
+  announcement_forum_post: Collection<Announcement>,
+  account: Collection<Account>
 }
 
 impl Database {
@@ -27,11 +28,13 @@ impl Database {
     let general_member: Collection<GeneralMember> = db.collection("GeneralMemberForms");
     let executive_member: Collection<ExecutiveMember> = db.collection("ExecutiveMemberForms");
     let announcement_forum_post: Collection<Announcement> = db.collection("Announcements");
+    let account: Collection<Account> = db.collection("Accounts");
 
     Database {
       general_member,
       executive_member,
-      announcement_forum_post
+      announcement_forum_post,
+      account
     }
   }
 
@@ -125,4 +128,31 @@ impl Database {
     let amount = self.announcement_forum_post.count_documents(doc! {}).await?;
     Ok(amount)
   }
+
+
+
+  pub async fn account_does_exist_full_name(&self, username: String) -> bool {
+    let acc = self.account.find_one(doc! { "username": &username }).await.ok();
+    if let Some(acc) = acc {
+      return acc.is_some();
+    }
+    false
+  }
+  pub async fn account_does_exist_email(&self, email: String) -> bool {
+    let acc = self.account.find_one(doc! { "email": &email }).await.ok();
+    if let Some(acc) = acc {
+      return acc.is_some();
+    }
+    false
+  }
+  pub async fn account_does_exist(&self, acc: &Account) -> bool {
+    let acc = self.executive_member.find_one(
+      doc! { "$or": [{ "username": &acc.username }, { "email": &acc.email }] }
+    ).await.ok();
+    if let Some(acc) = acc {
+      return acc.is_some();
+    }
+    false
+  }
+
 }

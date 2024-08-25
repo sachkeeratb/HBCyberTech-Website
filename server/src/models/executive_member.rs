@@ -29,6 +29,7 @@ pub struct ExecutiveMember {
   pub _id: ObjectId,
   pub full_name: String,
   pub email: String,
+  pub grade: u8,
   pub exec_type: String,
   pub why: String,
   pub experience: String,
@@ -52,11 +53,19 @@ pub struct ExecutiveMemberRequest {
   )]
   pub email: String,  
   #[validate(
+    range(
+      min = 9,
+      max = 12,
+      message = "Grade should be 9, 10, 11, or 12."
+    )
+  )]
+  pub grade: u8,
+  #[validate(
     regex(
       path = *RE_EXEC_TYPE,
       message = "Invalid exec type. Must be development, marketing, or events."
     )
-  )]
+  )] 
   pub exec_type: String,
   #[validate(
     regex(
@@ -100,6 +109,7 @@ impl TryFrom<ExecutiveMemberRequest> for ExecutiveMember {
       _id: ObjectId::new(),
       full_name: item.full_name,
       email: item.email,
+      grade: item.grade,
       exec_type: item.exec_type,
       why: item.why,
       experience: item.experience,

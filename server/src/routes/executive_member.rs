@@ -25,6 +25,7 @@ pub async fn create_executive_member(db: Data<Database>, request: Json<Executive
       ExecutiveMember::try_from(ExecutiveMemberRequest {
         full_name: request.full_name.clone(),
         email: request.email.clone(),
+        grade: request.grade.clone(),
         exec_type: request.exec_type.clone(),
         why: request.why.clone(),
         experience: request.experience.clone(),

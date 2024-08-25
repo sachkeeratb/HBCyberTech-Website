@@ -16,6 +16,7 @@ pub struct GeneralMember {
   pub _id: ObjectId,
   pub full_name: String,
   pub email: String,
+  pub grade: u8,
   pub skills: u8,
   pub extra: String,
   pub date_created: DateTime
@@ -35,6 +36,14 @@ pub struct GeneralMemberRequest {
     )
   )]
   pub email: String,
+  #[validate(
+    range(
+      min = 9,
+      max = 12,
+      message = "Grade should be 9, 10, 11, or 12."
+    )
+  )]
+  pub grade: u8,
   #[validate(range(min = 0, max = 100, message = "Skills should be from 0 to 100."))]
   pub skills: u8,
   #[validate(
@@ -60,6 +69,7 @@ impl TryFrom<GeneralMemberRequest> for GeneralMember {
       _id: ObjectId::new(),
       full_name: item.full_name,
       email: item.email,
+      grade: item.grade,
       skills: item.skills,
       extra: item.extra,
       date_created: DateTime::from(chrono_datetime)

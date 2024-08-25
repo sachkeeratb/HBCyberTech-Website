@@ -65,7 +65,7 @@ export default function Forum() {
 					<Tr>
 						<Td>
 							<Heading as='h2' size='lg' mb={4}>
-								<Link as={RouterLink} to='/forum/general-discussion'>
+								<Link as={RouterLink} to='/forum/general'>
 									General Discussion
 								</Link>
 							</Heading>

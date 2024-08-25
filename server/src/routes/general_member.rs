@@ -26,6 +26,7 @@ pub async fn create_general_member(db: Data<Database>, request: Json<GeneralMemb
       GeneralMember::try_from(GeneralMemberRequest {
         full_name: request.full_name.clone(),
         email: request.email.clone(),
+        grade: request.grade.clone(),
         skills: request.skills.clone(),
         extra: request.extra.clone(),
         date_created: request.date_created.clone()

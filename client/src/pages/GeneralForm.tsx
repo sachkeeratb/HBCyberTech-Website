@@ -18,7 +18,8 @@ import {
 	SliderMark,
 	SliderThumb,
 	SliderTrack,
-	Tooltip
+	Tooltip,
+	Select
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import axios from 'axios';
@@ -27,6 +28,7 @@ import { toast, Toaster } from 'react-hot-toast';
 interface FormVals {
 	fullName: string;
 	email: string;
+	grade: number;
 	skills: number;
 	extra: string;
 }
@@ -34,6 +36,7 @@ interface FormVals {
 interface FormErrors {
 	nameErr: boolean;
 	emailErr: boolean;
+	gradeErr: boolean;
 	extraErr: boolean;
 }
 
@@ -65,12 +68,14 @@ export default function GeneralForm() {
 	const [data, setData] = useState<FormVals>({
 		fullName: '',
 		email: '',
+		grade: 0,
 		skills: 50,
 		extra: ''
 	});
 	const [error, setError] = useState<FormErrors>({
 		nameErr: false,
 		emailErr: false,
+		gradeErr: false,
 		extraErr: false
 	});
 	const [extrInpChars, setExtrInpChars] = useState(350);
@@ -125,10 +130,18 @@ export default function GeneralForm() {
 	};
 
 	function canSubmit(): boolean {
-		return !(error.nameErr || error.emailErr || error.extraErr);
+		return !(
+			error.nameErr ||
+			error.emailErr ||
+			error.extraErr ||
+			error.gradeErr
+		);
 	}
 
-	const isDuplicate = async (fullName: string, email: string) => {
+	const isDuplicate = async (
+		fullName: string,
+		email: string
+	): Promise<boolean> => {
 		const recievedFullName = await instance.get(
 			`/general_member/get/${fullName}`
 		);
@@ -148,7 +161,7 @@ export default function GeneralForm() {
 			return;
 		}
 
-		const { fullName, email, skills, extra } = data;
+		const { fullName, email, grade, skills, extra } = data;
 
 		try {
 			if (await isDuplicate(fullName, email)) return;
@@ -156,6 +169,7 @@ export default function GeneralForm() {
 			const { data } = await instance.post('/general_member/post', {
 				full_name: fullName,
 				email: email,
+				grade: grade,
 				skills: skills,
 				extra: extra,
 				date_created: new Date().toISOString()
@@ -259,6 +273,28 @@ export default function GeneralForm() {
 										</FormErrorMessage>
 									)}
 								</FormControl>
+								<FormControl isRequired>
+									<FormLabel>Select Your Grade</FormLabel>
+									<Select
+										name='grade'
+										value={data.grade}
+										onChange={(e) => {
+											setData({ ...data, grade: parseInt(e.target.value) });
+											parseInt(e.target.value) < 9 ||
+											parseInt(e.target.value) > 12
+												? setError({ ...error, gradeErr: true })
+												: setError({ ...error, gradeErr: false });
+										}}
+										isInvalid={error.gradeErr}
+										isRequired
+									>
+										<option value='0'>Select Your Grade</option>
+										<option value='9'>9</option>
+										<option value='10'>10</option>
+										<option value='11'>11</option>
+										<option value='12'>12</option>
+									</Select>
+								</FormControl>
 							</Stack>
 							<FormControl isRequired>
 								<FormLabel>
@@ -270,7 +306,7 @@ export default function GeneralForm() {
 								defaultValue={50}
 								min={0}
 								max={100}
-								colorScheme='blue'
+								colorScheme='purple'
 								onChange={(v) => {
 									setSlider({ ...slider, value: v });
 									setData({ ...data, skills: v });
@@ -296,8 +332,7 @@ export default function GeneralForm() {
 								</SliderTrack>
 								<Tooltip
 									hasArrow
-									bg='teal.500'
-									color='white'
+									bg={useColorModeValue('purple.600', 'purple.200')}
 									placement='top'
 									isOpen={slider.showTooltip}
 									label={
@@ -341,9 +376,9 @@ export default function GeneralForm() {
 						<VStack w='100%'>
 							<Button
 								type='submit'
-								bg='teal.300'
+								bg={useColorModeValue('purple.400', 'purple.500')}
 								_hover={{
-									bg: 'teal.500'
+									bg: useColorModeValue('purple.600', 'purple.700')
 								}}
 								rounded='md'
 								w={{ base: '100%', md: 'max-content' }}

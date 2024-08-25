@@ -22,6 +22,7 @@ import axios from 'axios';
 interface FormData {
 	fullName: string;
 	email: string;
+	grade: number;
 	execType: string;
 	why: string;
 	experience: string;
@@ -32,6 +33,7 @@ interface FormData {
 interface ErrorData {
 	nameErr: boolean;
 	emailErr: boolean;
+	gradeErr: boolean;
 	execTypeErr: boolean;
 	whyErr: boolean;
 	experienceErr: boolean;
@@ -61,6 +63,7 @@ export default function ExecForm() {
 	const [data, setData] = useState<FormData>({
 		fullName: '',
 		email: '',
+		grade: 0,
 		execType: '',
 		why: '',
 		experience: '',
@@ -70,6 +73,7 @@ export default function ExecForm() {
 	const [error, setError] = useState<ErrorData>({
 		nameErr: false,
 		emailErr: false,
+		gradeErr: false,
 		execTypeErr: false,
 		whyErr: false,
 		experienceErr: false,
@@ -150,6 +154,7 @@ export default function ExecForm() {
 		return !(
 			error.nameErr ||
 			error.emailErr ||
+			error.gradeErr ||
 			error.execTypeErr ||
 			error.whyErr ||
 			error.experienceErr ||
@@ -184,14 +189,23 @@ export default function ExecForm() {
 			return;
 		}
 
-		const { fullName, email, execType, why, experience, portfolio, extra } =
-			data;
+		const {
+			fullName,
+			email,
+			grade,
+			execType,
+			why,
+			experience,
+			portfolio,
+			extra
+		} = data;
 		try {
 			if (await isDuplicate(fullName, email)) return;
 
 			const { data } = await instance.post('/executive_member/post', {
 				full_name: fullName,
 				email: email,
+				grade: grade,
 				exec_type: execType,
 				why: why,
 				experience: experience,
@@ -298,21 +312,52 @@ export default function ExecForm() {
 								)}
 							</FormControl>
 						</Stack>
-						<FormControl>
-							<FormLabel>Select Executive Type</FormLabel>
-							<Select
-								name='execType'
-								value={data.execType}
-								onChange={handleChange}
-								isInvalid={error.execTypeErr}
-								isRequired
-							>
-								<option value=''>Select Executive Type</option>
-								<option value='development'>Development</option>
-								<option value='marketing'>Marketing</option>
-								<option value='events'>Events</option>
-							</Select>
-						</FormControl>
+						<Stack
+							w='100%'
+							spacing={3}
+							direction={{ base: 'column', md: 'row' }}
+						>
+							<FormControl isRequired>
+								<FormLabel>Select Executive Type</FormLabel>
+								<Select
+									name='execType'
+									value={data.execType}
+									onChange={(e) => {
+										handleChange(e);
+										setError({ ...error, execTypeErr: e.target.value === '' });
+									}}
+									isInvalid={error.execTypeErr}
+									isRequired
+								>
+									<option value=''>Select Executive Type</option>
+									<option value='development'>Development</option>
+									<option value='marketing'>Marketing</option>
+									<option value='events'>Events</option>
+								</Select>
+							</FormControl>
+							<FormControl isRequired>
+								<FormLabel>Select Your Grade</FormLabel>
+								<Select
+									name='grade'
+									value={data.grade}
+									onChange={(e) => {
+										setData({ ...data, grade: parseInt(e.target.value) });
+										parseInt(e.target.value) < 9 ||
+										parseInt(e.target.value) > 12
+											? setError({ ...error, gradeErr: true })
+											: setError({ ...error, gradeErr: false });
+									}}
+									isInvalid={error.gradeErr}
+									isRequired
+								>
+									<option value='0'>Select Your Grade</option>
+									<option value='9'>9</option>
+									<option value='10'>10</option>
+									<option value='11'>11</option>
+									<option value='12'>12</option>
+								</Select>
+							</FormControl>
+						</Stack>
 						<VStack
 							spacing={8}
 							w='100%'
@@ -350,38 +395,73 @@ export default function ExecForm() {
 								)}
 							</FormControl>
 
-							<FormControl
-								id='experience'
-								isInvalid={error.experienceErr}
-								isRequired
-							>
-								<FormLabel pl={1}>
-									What Experience Do You Have in This Area?
-								</FormLabel>
-								<Textarea
-									size='lg'
-									placeholder='My experience consists of ...'
-									rounded='md'
-									value={data.experience}
-									onChange={handleExperienceInputChange}
-								/>
-								{chars.experience >= 0 ? (
-									<></>
-								) : (
-									<FormErrorMessage>
-										You are only allowed to input 600 characters.
-									</FormErrorMessage>
-								)}
-								{chars.experience >= 50 ? (
-									<Text fontSize='sm' textAlign={'right'}>
-										{chars.experience}
-									</Text>
-								) : (
-									<Text fontSize='sm' textAlign={'right'} color={'red'}>
-										{chars.experience}
-									</Text>
-								)}
-							</FormControl>
+							{data.execType === 'events' ? (
+								<FormControl
+									id='experience'
+									isInvalid={error.experienceErr}
+									isRequired
+								>
+									<FormLabel pl={1}>
+										Give Two Possible Event Ideas You Would Like to Host
+									</FormLabel>
+									<Textarea
+										size='lg'
+										placeholder='My experience consists of ...'
+										rounded='md'
+										value={data.experience}
+										onChange={handleExperienceInputChange}
+									/>
+									{chars.experience >= 0 ? (
+										<></>
+									) : (
+										<FormErrorMessage>
+											You are only allowed to input 600 characters.
+										</FormErrorMessage>
+									)}
+									{chars.experience >= 50 ? (
+										<Text fontSize='sm' textAlign={'right'}>
+											{chars.experience}
+										</Text>
+									) : (
+										<Text fontSize='sm' textAlign={'right'} color={'red'}>
+											{chars.experience}
+										</Text>
+									)}
+								</FormControl>
+							) : (
+								<FormControl
+									id='experience'
+									isInvalid={error.experienceErr}
+									isRequired
+								>
+									<FormLabel pl={1}>
+										What Experience Do You Have in This Area?
+									</FormLabel>
+									<Textarea
+										size='lg'
+										placeholder='My experience consists of ...'
+										rounded='md'
+										value={data.experience}
+										onChange={handleExperienceInputChange}
+									/>
+									{chars.experience >= 0 ? (
+										<></>
+									) : (
+										<FormErrorMessage>
+											You are only allowed to input 600 characters.
+										</FormErrorMessage>
+									)}
+									{chars.experience >= 50 ? (
+										<Text fontSize='sm' textAlign={'right'}>
+											{chars.experience}
+										</Text>
+									) : (
+										<Text fontSize='sm' textAlign={'right'} color={'red'}>
+											{chars.experience}
+										</Text>
+									)}
+								</FormControl>
+							)}
 							{data.execType === 'events' || data.execType == 'development' ? (
 								<FormControl id='portfolio' isInvalid={error.portfolioErr}>
 									<FormLabel pl={1}>
@@ -458,9 +538,9 @@ export default function ExecForm() {
 						<VStack w='100%'>
 							<Button
 								type='submit'
-								bg='teal.300'
+								bg={useColorModeValue('purple.400', 'purple.500')}
 								_hover={{
-									bg: 'teal.500'
+									bg: useColorModeValue('purple.600', 'purple.700')
 								}}
 								rounded='md'
 								w={{ base: '100%', md: 'max-content' }}
