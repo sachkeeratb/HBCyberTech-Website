@@ -130,7 +130,6 @@ impl Database {
   }
 
 
-
   pub async fn account_does_exist_full_name(&self, username: String) -> bool {
     let acc = self.account.find_one(doc! { "username": &username }).await.ok();
     if let Some(acc) = acc {
@@ -146,7 +145,7 @@ impl Database {
     false
   }
   pub async fn account_does_exist(&self, acc: &Account) -> bool {
-    let acc = self.executive_member.find_one(
+    let acc = self.account.find_one(
       doc! { "$or": [{ "username": &acc.username }, { "email": &acc.email }] }
     ).await.ok();
     if let Some(acc) = acc {
@@ -155,4 +154,18 @@ impl Database {
     false
   }
 
+  pub async fn create_account(&self, acc: Account) -> Result<InsertOneResult, Error> {
+    if self.account_does_exist(&acc).await {
+      return Err(Error::from(std::io::Error::new(std::io::ErrorKind::AlreadyExists, "Account already exists.")));
+    }
+
+    let result = self
+      .account
+      .insert_one(acc)
+      .await
+      .ok()
+      .expect("Error creating account.");
+
+    Ok(result)
+  }
 }
