@@ -51,7 +51,15 @@ export default function Home() {
 				>
 					{Features.map((feature, index) => (
 						<Box key={index} textAlign='center'>
-							<Icon as={feature.icon} w={10} h={10} color='blue.400' />
+							{' '}
+							<SlideFade in={true} offsetY='50vh'>
+								<motion.div
+									whileHover={{ scale: 1.1 }}
+									whileTap={{ scale: 0.9 }}
+								>
+									<Icon as={feature.icon} w={10} h={10} color='blue.400' />
+								</motion.div>
+							</SlideFade>
 							<chakra.h3 fontWeight='semibold' fontSize='2xl'>
 								{feature.heading}
 							</chakra.h3>

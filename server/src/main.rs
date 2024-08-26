@@ -2,14 +2,13 @@ mod models;
 mod routes;
 mod services;
 
-use std::env;
-
 use actix_cors::Cors;
-use routes::{account::{create_account, get_account_by_username_or_email}, announcement_forum_post::{return_amount_of_announcements, return_announcements}, executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, general_member::{create_general_member, get_general_member_by_full_name_or_email}};
+use routes::{account::{create_account, get_account_by_username_or_email, sign_in, verify_account}, announcement_forum_post::{return_amount_of_announcements, return_announcements}, executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, general_member::{create_general_member, get_general_member_by_full_name_or_email}};
 use services::db::Database;
 use actix_web::{web::Data, App, HttpServer};
 
-extern crate dotenv;
+#[macro_use]
+extern crate dotenv_codegen;
 
 #[macro_use]
 extern crate validator_derive;
@@ -22,7 +21,7 @@ async fn main() -> std::io::Result<()> {
 
 	HttpServer::new(move || {	
 		let cors = Cors::default()
-			.allowed_origin(&env::var("CLIENT_URL").unwrap().to_string())
+			.allowed_origin(dotenv!("CLIENT_URL"))
 			.allowed_methods(vec!["GET", "POST"])
 			.allow_any_header()
 			.max_age(3600)
@@ -38,8 +37,10 @@ async fn main() -> std::io::Result<()> {
 			.service(return_amount_of_announcements)
 			.service(get_account_by_username_or_email)
 			.service(create_account)
+			.service(sign_in)
+			.service(verify_account)
 	})
-		.bind((env::var("HOST").unwrap().as_str(), env::var("PORT").unwrap().parse::<u16>().unwrap()))?
+		.bind((dotenv!("HOST"), dotenv!("PORT").parse::<u16>().unwrap()))?
 		.run()
 		.await
 }

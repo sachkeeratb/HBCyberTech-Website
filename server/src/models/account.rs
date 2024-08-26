@@ -8,7 +8,6 @@ use regex::Regex;
 lazy_static! {
   static ref RE_USERNAME: Regex = Regex::new(r"^^[a-zA-Z0-9._%+-]{2,20}$").unwrap();
   static ref RE_EMAIL: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]+@pdsb.net$").unwrap();
-  static ref RE_PASSWORD: Regex = Regex::new(r"^.{0,50}$").unwrap();
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -35,12 +34,6 @@ pub struct AccountRequest {
     )
   )]
   pub email: String,
-  #[validate(
-    regex(
-      path = *RE_PASSWORD,
-      message = "Keep your password at a reasonable length."
-    )
-  )]
   pub password: String,
   pub verified: bool,
   pub date_created: String

@@ -1,7 +1,6 @@
 use std::env;
-
 use futures_util::TryStreamExt;
-use mongodb::{bson::doc, error::Error, results::InsertOneResult, Collection};
+use mongodb::{bson::{doc, oid::ObjectId}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
 
 use crate::models::{announcement_forum_post::Announcement, executive_member::ExecutiveMember, general_member::GeneralMember, account::Account};
 
@@ -154,6 +153,29 @@ impl Database {
     false
   }
 
+  pub async fn get_account_password_by_email(&self, email: String) -> Result<Option<String>, Error> {
+    let account = self.account.find_one(doc! { "email": &email }).await?;
+    if let Some(account) = account {
+      return Ok(Some(account.password));
+    }
+    Ok(None)
+  }
+  pub async fn get_account_by_email(&self, email: String) -> Result<Option<Account>, Error> {
+    let account = self.account.find_one(doc! { "email": &email }).await?;
+    Ok(account)
+  }
+
+  pub async fn verify_account(&self, id: String) -> Result<UpdateResult, Error> {
+      let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
+      let result = self
+        .account
+        .update_one(doc! { "_id": object_id }, doc! { "$set": { "verified": true } })
+        .await
+        .ok()
+        .expect("Error verifying account.");
+  
+      Ok(result)
+  }
   pub async fn create_account(&self, acc: Account) -> Result<InsertOneResult, Error> {
     if self.account_does_exist(&acc).await {
       return Err(Error::from(std::io::Error::new(std::io::ErrorKind::AlreadyExists, "Account already exists.")));

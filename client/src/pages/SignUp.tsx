@@ -6,6 +6,7 @@ import {
 	FormLabel,
 	Input,
 	Stack,
+	Text,
 	Button,
 	Heading,
 	useColorModeValue,
@@ -16,12 +17,12 @@ import {
 	FormErrorMessage
 } from '@chakra-ui/react';
 import { toast, Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router';
 
 interface FormVals {
 	username: string;
 	email: string;
 	password: string;
-	verified: boolean;
 }
 
 interface FormErrors {
@@ -32,7 +33,6 @@ interface FormErrors {
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -42,12 +42,12 @@ const instance = axios.create({
 	}
 });
 
-const SignIn = () => {
+export default function SignUp() {
+	const navigate = useNavigate();
 	const [data, setData] = useState<FormVals>({
 		username: '',
 		email: '',
-		password: '',
-		verified: false
+		password: ''
 	});
 	const [error, setError] = useState<FormErrors>({
 		usernameErr: false,
@@ -121,16 +121,16 @@ const SignIn = () => {
 			return;
 		}
 
-		const { username, email, password, verified } = data;
+		const { username, email, password } = data;
 
 		try {
 			if (await isDuplicate(username, email)) return;
 
-			const { data } = await instance.post('/account/post', {
+			const { data } = await instance.post('/account/post/signup', {
 				username: username,
 				email: email,
 				password: password,
-				verified: verified,
+				verified: false,
 				date_created: new Date().toISOString()
 			});
 
@@ -141,10 +141,9 @@ const SignIn = () => {
 			}
 
 			// Allow the user to continue
-			setData({} as FormVals);
 			toast.success('Registration successful. Welcome.');
 			new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
-				window.location.reload();
+				navigate('/signin');
 			});
 		} catch (error) {
 			console.log(error);
@@ -242,6 +241,7 @@ const SignIn = () => {
 								<InputGroup size='md'>
 									<Input
 										rounded='md'
+										placeholder='Not even we can see this!'
 										type={show ? 'text' : 'password'}
 										value={data.password}
 										onChange={handlePasswordInputChange}
@@ -271,6 +271,7 @@ const SignIn = () => {
 							</FormControl>
 						</VStack>
 						<VStack w='100%'>
+							<Text>Make sure to verify using the email sent to you.</Text>
 							<Button
 								type='submit'
 								bg='purple.500'
@@ -289,6 +290,4 @@ const SignIn = () => {
 			</Center>
 		</Container>
 	);
-};
-
-export default SignIn;
+}
