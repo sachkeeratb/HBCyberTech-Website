@@ -24,7 +24,7 @@ fn validate_portfolio(portfolio: &str) -> Result<(), ValidationError> {
 }
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct ExecutiveMember {
   pub _id: ObjectId,
   pub full_name: String,

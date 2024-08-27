@@ -2,7 +2,7 @@ use std::env;
 use futures_util::TryStreamExt;
 use mongodb::{bson::{doc, oid::ObjectId}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
 
-use crate::models::{announcement_forum_post::Announcement, executive_member::ExecutiveMember, general_member::GeneralMember, account::Account};
+use crate::models::{account::Account, announcement_forum_post::Announcement, executive_member::ExecutiveMember, forum_post::Post, general_member::GeneralMember};
 
 extern crate dotenv;
 
@@ -10,6 +10,7 @@ pub struct Database {
   general_member: Collection<GeneralMember>,
   executive_member: Collection<ExecutiveMember>,
   announcement_forum_post: Collection<Announcement>,
+  forum_post: Collection<Post>,
   account: Collection<Account>
 }
 
@@ -27,12 +28,14 @@ impl Database {
     let general_member: Collection<GeneralMember> = db.collection("GeneralMemberForms");
     let executive_member: Collection<ExecutiveMember> = db.collection("ExecutiveMemberForms");
     let announcement_forum_post: Collection<Announcement> = db.collection("Announcements");
+    let forum_post: Collection<Post> = db.collection("ForumPosts");
     let account: Collection<Account> = db.collection("Accounts");
 
     Database {
       general_member,
       executive_member,
       announcement_forum_post,
+      forum_post,
       account
     }
   }
@@ -122,10 +125,36 @@ impl Database {
     let posts: Vec<Announcement> = cursor.try_collect().await?;
     Ok(posts)
   }
-
   pub async fn get_amount_of_announcement_forum_posts(&self) -> Result<u64, Error> {
     let amount = self.announcement_forum_post.count_documents(doc! {}).await?;
     Ok(amount)
+  }
+
+  
+  pub async fn get_forum_posts(&self) -> Result<Vec<Post>, Error> {
+    let cursor = self.forum_post.find(doc! {}).await?;
+    let posts: Vec<Post> = cursor.try_collect().await?;
+    Ok(posts)
+  }
+  pub async fn get_amount_of_forum_posts(&self) -> Result<u64, Error> {
+    let amount = self.forum_post.count_documents(doc! {}).await?;
+    Ok(amount)
+  }
+  pub async fn get_forum_post_by_id(&self, id: String) -> Result<Option<Post>, Error> {
+    let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
+    let post = self.forum_post.find_one(doc! { "_id": object_id }).await?;
+    Ok(post)
+  }
+
+  pub async fn create_forum_post(&self, post: Post) -> Result<InsertOneResult, Error> {
+    let result = self
+      .forum_post
+      .insert_one(post)
+      .await
+      .ok()
+      .expect("Error creating forum post.");
+
+    Ok(result)
   }
 
 

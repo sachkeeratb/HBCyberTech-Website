@@ -3,7 +3,7 @@ use chrono::Utc;
 use mongodb::bson::{oid::ObjectId, DateTime};
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Announcement {
   pub _id: ObjectId,
   pub author: String,

@@ -72,6 +72,22 @@ export default function NavBar() {
 					direction={'row'}
 					spacing={6}
 				>
+					{localStorage.getItem('user') ? (
+						<Button
+							as={'a'}
+							fontSize={'sm'}
+							fontWeight={600}
+							href={'#'}
+							onClick={() => {
+								localStorage.removeItem('user');
+								window.location.reload();
+							}}
+						>
+							Sign Out
+						</Button>
+					) : (
+						<></>
+					)}
 					<Button
 						as={'a'}
 						mb={2}

@@ -384,7 +384,7 @@ export default function ExecForm() {
 										You are only allowed to input 600 characters.
 									</FormErrorMessage>
 								)}
-								{chars.why >= 50 ? (
+								{chars.why > 50 ? (
 									<Text fontSize='sm' textAlign={'right'}>
 										{chars.why}
 									</Text>
@@ -418,7 +418,7 @@ export default function ExecForm() {
 											You are only allowed to input 600 characters.
 										</FormErrorMessage>
 									)}
-									{chars.experience >= 50 ? (
+									{chars.experience > 50 ? (
 										<Text fontSize='sm' textAlign={'right'}>
 											{chars.experience}
 										</Text>
@@ -451,7 +451,7 @@ export default function ExecForm() {
 											You are only allowed to input 600 characters.
 										</FormErrorMessage>
 									)}
-									{chars.experience >= 50 ? (
+									{chars.experience > 50 ? (
 										<Text fontSize='sm' textAlign={'right'}>
 											{chars.experience}
 										</Text>
@@ -525,7 +525,7 @@ export default function ExecForm() {
 									You are only allowed to input 200 characters.
 								</FormErrorMessage>
 							)}
-							{chars.extra >= 50 ? (
+							{chars.extra > 50 ? (
 								<Text fontSize='sm' textAlign={'right'}>
 									{chars.extra}
 								</Text>

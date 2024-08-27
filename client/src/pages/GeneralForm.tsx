@@ -362,7 +362,7 @@ export default function GeneralForm() {
 										You are only allowed to input 350 characters.
 									</FormErrorMessage>
 								)}
-								{extrInpChars >= 50 ? (
+								{extrInpChars > 50 ? (
 									<Text fontSize='sm' textAlign={'right'}>
 										{extrInpChars}
 									</Text>

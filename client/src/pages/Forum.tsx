@@ -31,13 +31,19 @@ export default function Forum() {
 	});
 
 	useEffect(() => {
-		(async function fetchAnnouncementsAmount() {
+		(async function fetchData() {
 			try {
-				const response = await instance.get('/forum/announcements/get/amount');
-				if (response === null) return;
-				setAmount({ ...amount, announcements: response.data });
+				const responseAnnouncements = await instance.get(
+					'/forum/announcements/get/amount'
+				);
+				const responseGeneral = await instance.get('/forum/general/get/amount');
+				if (responseAnnouncements === null || responseGeneral === null) return;
+				setAmount({
+					announcements: responseAnnouncements.data,
+					general: responseGeneral.data
+				});
 			} catch (error) {
-				console.error('Error fetching announcements:', error);
+				console.error('Error fetching posts:', error);
 			}
 		})();
 	}, []);

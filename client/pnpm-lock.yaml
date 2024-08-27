@@ -29,9 +29,6 @@ importers:
       google-auth-library:
         specifier: ^9.14.0
         version: 9.14.0
-      jwt-decode:
-        specifier: ^4.0.0
-        version: 4.0.0
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
@@ -1598,10 +1595,6 @@ packages:
 
   jws@4.0.0:
     resolution: {integrity: sha512-KDncfTmOZoOMTFG4mBlG0qUIOlc03fmzH+ru6RgYVZhPkyiy/92Owlt/8UEN+a4TXR1FQetfIpJE8ApdvdVxTg==}
-
-  jwt-decode@4.0.0:
-    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
-    engines: {node: '>=18'}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -3776,8 +3769,6 @@ snapshots:
     dependencies:
       jwa: 2.0.0
       safe-buffer: 5.2.1
-
-  jwt-decode@4.0.0: {}
 
   keyv@4.5.4:
     dependencies:

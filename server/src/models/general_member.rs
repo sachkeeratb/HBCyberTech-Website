@@ -11,7 +11,7 @@ lazy_static! {
   static ref RE_EXTRA: Regex = Regex::new(r"^.{0,350}$").unwrap();
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct GeneralMember {
   pub _id: ObjectId,
   pub full_name: String,

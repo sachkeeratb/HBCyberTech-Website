@@ -3,7 +3,12 @@ mod routes;
 mod services;
 
 use actix_cors::Cors;
-use routes::{account::{create_account, get_account_by_username_or_email, sign_in, verify_account}, announcement_forum_post::{return_amount_of_announcements, return_announcements}, executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, general_member::{create_general_member, get_general_member_by_full_name_or_email}};
+use routes::{
+	account::{create_account, get_account_by_username_or_email, sign_in, verify_account}, 
+	announcement_forum_post::{return_amount_of_announcements, return_announcements}, 
+	executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, forum_post::{create_post, get_post_by_id, return_amount_of_posts, return_posts}, 
+	general_member::{create_general_member, get_general_member_by_full_name_or_email}
+};
 use services::db::Database;
 use actix_web::{web::Data, App, HttpServer};
 
@@ -17,7 +22,6 @@ extern crate validator_derive;
 async fn main() -> std::io::Result<()> {
 	let db = Database::init().await;
 	let db_data = Data::new(db);
-
 
 	HttpServer::new(move || {	
 		let cors = Cors::default()
@@ -36,6 +40,10 @@ async fn main() -> std::io::Result<()> {
 			.service(return_announcements)
 			.service(return_amount_of_announcements)
 			.service(get_account_by_username_or_email)
+			.service(create_post)
+			.service(return_posts)
+			.service(get_post_by_id)
+			.service(return_amount_of_posts)
 			.service(create_account)
 			.service(sign_in)
 			.service(verify_account)

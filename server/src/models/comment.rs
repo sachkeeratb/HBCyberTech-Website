@@ -8,25 +8,26 @@ use regex::Regex;
 lazy_static! {
   static ref RE_USERNAME: Regex = Regex::new(r"^^[a-zA-Z0-9._%+-]{2,20}$").unwrap();
   static ref RE_EMAIL: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]+@pdsb.net$").unwrap();
+  static ref RE_BODY: Regex = Regex::new(r"^.{20,600}$").unwrap();
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct Account {
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Comment {
   pub _id: ObjectId,
-  pub username: String,
+  pub author: String,
   pub email: String,
-  pub password: String,
-  pub verified: bool,
-  pub date_created: DateTime
+	pub date_created: DateTime,
+	pub body: String
 }
 
-#[derive(Serialize, Deserialize, Validate)]
-pub struct AccountRequest {
+#[derive(Clone, Serialize, Deserialize, Validate)]
+pub struct CommentRequest {
+  pub id: String,
   #[validate(regex(
     path = *RE_USERNAME,
     message = "Invalid username."
   ))]
-  pub username: String,
+  pub author: String,
   #[validate(
     regex(
       path = *RE_EMAIL,
@@ -34,15 +35,18 @@ pub struct AccountRequest {
     )
   )]
   pub email: String,
-  pub password: String,
-  pub verified: bool,
-  pub date_created: String
+	pub date_created: String,
+  #[validate(regex(
+    path = *RE_BODY,
+    message = "Invalid body length."
+  ))]
+	pub body: String
 }
 
-impl TryFrom<AccountRequest> for Account {
+impl TryFrom<CommentRequest> for Comment {
   type Error = Box<dyn std::error::Error>;
 
-  fn try_from(item: AccountRequest) -> Result<Self, Self::Error> {
+  fn try_from(item: CommentRequest) -> Result<Self, Self::Error> {
     let chrono_datetime: SystemTime = chrono::DateTime::parse_from_rfc3339(&item.date_created)
       .map_err(|err| format!("Error parsing date: {err}"))?
       .with_timezone(&Utc)
@@ -50,11 +54,10 @@ impl TryFrom<AccountRequest> for Account {
 
     Ok(Self {
       _id: ObjectId::new(),
-      username: item.username,
+      author: item.author,
       email: item.email,
-      password: item.password,
-      verified: item.verified,
-      date_created: DateTime::from(chrono_datetime)
+      date_created: DateTime::from(chrono_datetime),
+      body: item.body,
     })
   }
 }

@@ -12,7 +12,7 @@ const Forum = lazy(() => import('./pages/Forum'));
 import CreatePost from './pages/CreatePost';
 import Announcements from './pages/Announcements';
 import General from './pages/GeneralDiscussion';
-import Replies from './pages/Replies';
+import Post from './pages/Post';
 const GeneralForm = lazy(() => import('./pages/GeneralForm'));
 const ExecForm = lazy(() => import('./pages/ExecForm'));
 // const Feedback = lazy(() => import('./pages/Feedback'));
@@ -35,7 +35,7 @@ function App() {
 					<Route path='/forum/create' element={<CreatePost />} />
 					<Route path='/forum/announcements' element={<Announcements />} />
 					<Route path='/forum/general' element={<General />} />
-					<Route path='/forum/general/:id' element={<Replies />} />
+					<Route path='/forum/general/:id' element={<Post />} />
 					<Route path='/form/general' element={<GeneralForm />} />
 					<Route path='/form/executive' element={<ExecForm />} />
 					{/* <Route path='/form/feedback' element={<Feedback />} /> */}

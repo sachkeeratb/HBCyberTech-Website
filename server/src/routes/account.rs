@@ -59,6 +59,7 @@ pub async fn sign_in(db: Data<Database>, request: web::Json<AccountGiven>) -> Ht
 						let account = db.get_account_by_email(request.email.clone()).await.unwrap();
 						let response = json!({
 							"username": account.as_ref().unwrap().username, 
+							"email": account.as_ref().unwrap().email, 
 							"verified": account.as_ref().unwrap().verified
 						});
 						HttpResponse::Ok().json(response)

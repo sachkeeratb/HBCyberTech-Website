@@ -118,7 +118,7 @@ export default function SignIn() {
 				if (!localStorage.getItem('loginAttempts'))
 					localStorage.setItem('loginAttempts', '1');
 				const loginAttempts = parseInt(
-					localStorage.getItem('loginAttempts') || '1'
+					localStorage.getItem('loginAttempts') || '0'
 				);
 				if (loginAttempts < 2) {
 					localStorage.setItem('loginAttempts', (loginAttempts + 1).toString());

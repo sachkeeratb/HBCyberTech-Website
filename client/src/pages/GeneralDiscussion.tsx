@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 import axios from 'axios';
 import {
 	Box,
@@ -8,19 +7,25 @@ import {
 	VStack,
 	useColorModeValue,
 	Flex,
-	Button
+	Button,
+	SlideFade
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface ForumPostRequest {
+	id: string;
 	author: string;
+	email: string;
 	date_created: string;
 	title: string;
 	body: string;
 }
 
 interface ForumPost {
+	id: string;
 	author: string;
+	email: string;
 	date: string;
 	time: string;
 	title: string;
@@ -28,7 +33,9 @@ interface ForumPost {
 }
 
 const DesktopForumPost: React.FC<ForumPost> = ({
+	id,
 	author,
+	email,
 	date,
 	time,
 	title,
@@ -39,11 +46,17 @@ const DesktopForumPost: React.FC<ForumPost> = ({
 		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
 			<Flex justify='space-between' align='center'>
 				<Flex>
-					<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
-						{title}
-					</Text>
+					<SlideFade in={true} offsetY='50vh'>
+						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+							<Link to={'/forum/general/' + id}>
+								<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+									{title}
+								</Text>
+							</Link>
+						</motion.div>
+					</SlideFade>
 					<Text fontSize='md' color='gray.400' mt={1} align='left'>
-						by {author}
+						by {author} &lt;{email}&gt;
 					</Text>
 				</Flex>
 				<Text fontSize='sm' color='gray.400' align='right'>
@@ -60,7 +73,9 @@ const DesktopForumPost: React.FC<ForumPost> = ({
 };
 
 const MobileForumPost: React.FC<ForumPost> = ({
+	id,
 	author,
+	email,
 	date,
 	time,
 	title,
@@ -70,13 +85,20 @@ const MobileForumPost: React.FC<ForumPost> = ({
 	return (
 		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
 			<Flex direction='column' align='left'>
-				<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
-					{title}
-				</Text>
-				<Text fontSize='md' color='gray.400' align='left'>
-					by {author}
-				</Text>
+				<SlideFade in={true} offsetY='50vh'>
+					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+						<Link to={'/forum/general/' + id}>
+							<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+								{title}
+							</Text>
+						</Link>
+					</motion.div>
+				</SlideFade>
 			</Flex>
+
+			<Text fontSize='md' color='gray.400' align='left'>
+				by {author} &lt;{email}&gt;
+			</Text>
 			<Text fontSize='sm' color='gray.400' align='left'>
 				{date} at {time}
 			</Text>
@@ -102,6 +124,23 @@ const instance = axios.create({
 });
 
 export default function General() {
+	const [isMobile, setIsMobile] = useState(
+		typeof window !== 'undefined' && window.innerWidth < 1024
+	);
+
+	useEffect(() => {
+		function handleResize() {
+			setIsMobile(window.innerWidth < 1024);
+		}
+
+		if (typeof window !== 'undefined') handleResize();
+
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, [isMobile]);
+
 	const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
 
 	useEffect(() => {
@@ -122,7 +161,6 @@ export default function General() {
 						hms = '0' + hms;
 					}
 					const givenDate = new Date(ymd + hms);
-					const author = responseArr[i].author;
 					const date = givenDate.toLocaleDateString('en-US', {
 						year: 'numeric',
 						month: 'long',
@@ -133,9 +171,12 @@ export default function General() {
 						minute: 'numeric',
 						hour12: true
 					});
+					const id = responseArr[i].id;
+					const author = responseArr[i].author;
+					const email = responseArr[i].email;
 					const title = responseArr[i].title;
 					const body = responseArr[i].body;
-					postArr.push({ author, date, time, title, body });
+					postArr.push({ id, author, email, date, time, title, body });
 				}
 				setForumPosts(postArr);
 			} catch (error) {
@@ -143,6 +184,7 @@ export default function General() {
 			}
 		})();
 	}, []);
+
 	const BG = useColorModeValue('gray.700', 'purple.700');
 
 	return (
@@ -169,7 +211,9 @@ export default function General() {
 							<VStack spacing={4} w='100%' key={key}>
 								{isMobile ? (
 									<MobileForumPost
+										id={forumPost.id}
 										author={forumPost.author}
+										email={forumPost.email}
 										date={forumPost.date}
 										time={forumPost.time}
 										title={forumPost.title}
@@ -177,7 +221,9 @@ export default function General() {
 									/>
 								) : (
 									<DesktopForumPost
+										id={forumPost.id}
 										author={forumPost.author}
+										email={forumPost.email}
 										date={forumPost.date}
 										time={forumPost.time}
 										title={forumPost.title}
