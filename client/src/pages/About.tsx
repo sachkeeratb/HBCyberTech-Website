@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 
 import { motion, isValidMotionProp } from 'framer-motion';
+
+// Import images
 import ParthKapoor from '../assets/ParthKapoor.png';
 import GurvirSandhu from '../assets/GurvirSandhu.png';
 import UdeshwarSinghSandhu from '../assets/UdeshwarSinghSandhu.png';
@@ -18,12 +20,23 @@ import VanshSuri from '../assets/VanshSuri.png';
 import EdwardLin from '../assets/EdwardLin.jpg';
 import PranavThukral from '../assets/PranavThukral.jpg';
 
+// Import icons
 import {
 	FaGithub as GitHubIcon,
 	FaInstagram as InstagramIcon,
 	FaLinkedin as LinkedInIcon
 } from 'react-icons/fa';
 
+export const MotionBox = motion(
+	forwardRef((props, ref) => {
+		const chakraProps = Object.fromEntries(
+			Object.entries(props).filter(([key]) => !isValidMotionProp(key))
+		);
+		return <Box ref={ref} {...chakraProps} />;
+	})
+);
+
+// Social Media Contact Links
 const GitHubContact = (link: string) => {
 	return (
 		<Link href={link} isExternal>
@@ -55,6 +68,7 @@ const LinkedInContact = (link: string) => {
 export default function About() {
 	return (
 		<Container maxW='7xl' p='12'>
+			{/* About Us */}
 			<SlideFade in={true} offsetY='50vh'>
 				<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
 					<Heading
@@ -76,6 +90,9 @@ export default function About() {
 				</motion.div>
 			</SlideFade>
 
+			{/* Executive Team */}
+
+			{/* President */}
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -161,6 +178,7 @@ export default function About() {
 				</Flex>
 			</Flex>
 
+			{/* Vice Presidents */}
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -231,7 +249,6 @@ export default function About() {
 					</Box>
 				</Flex>
 			</Flex>
-
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -303,6 +320,7 @@ export default function About() {
 				</Flex>
 			</Flex>
 
+			{/* Social Equity Officer */}
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -370,6 +388,7 @@ export default function About() {
 				</Flex>
 			</Flex>
 
+			{/* Directors */}
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -441,7 +460,6 @@ export default function About() {
 					</Box>
 				</Flex>
 			</Flex>
-
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -509,7 +527,6 @@ export default function About() {
 					</Box>
 				</Flex>
 			</Flex>
-
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -598,6 +615,7 @@ export default function About() {
 				</Flex>
 			</Flex>
 
+			{/* Other various executives */}
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -663,7 +681,6 @@ export default function About() {
 					</Box>
 				</Flex>
 			</Flex>
-
 			<Flex direction={['column', 'column', 'row']}>
 				<div>
 					<Box m='auto' mb={[16, 16, 'auto']}>
@@ -734,12 +751,3 @@ export default function About() {
 		</Container>
 	);
 }
-
-export const MotionBox = motion(
-	forwardRef((props, ref) => {
-		const chakraProps = Object.fromEntries(
-			Object.entries(props).filter(([key]) => !isValidMotionProp(key))
-		);
-		return <Box ref={ref} {...chakraProps} />;
-	})
-);

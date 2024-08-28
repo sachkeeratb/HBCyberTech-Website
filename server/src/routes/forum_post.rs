@@ -2,7 +2,9 @@ use std::cmp::Reverse;
 
 use actix_web::web::{self, Json};
 use actix_web::{get, post, web::Data, HttpResponse};
+use mongodb::bson::Bson;
 use validator::Validate;
+use crate::models::comment::{Comment, CommentRequest};
 use crate::services::db::Database;
 use crate::models::forum_post::{Post, PostRequest};
 
@@ -79,4 +81,61 @@ pub async fn create_post(db: Data<Database>, request: Json<PostRequest>) -> Http
       Ok(post) => HttpResponse::Ok().json(post),
       Err(err) => HttpResponse::InternalServerError().body(err.to_string())
     }
+}
+
+#[post("/forum/general/post/{id}/comment")]
+pub async fn post_comment(db: Data<Database>, id: web::Path<String>, request: Json<CommentRequest>) -> HttpResponse {
+	match request.validate() {
+		Ok(_) => (),
+		Err(err) => return HttpResponse::BadRequest().body(err.to_string())
+	}
+
+	match db.get_forum_post_by_id(id.to_string()).await {
+		Ok(Some(mut post)) => {
+			let comment = Comment::try_from(CommentRequest {
+				author: request.author.clone(),
+				email: request.email.clone(),
+				date_created: request.date_created.clone(),
+				body: request.body.clone(),
+			}).expect("Error converting CommentRequest to Comment.");
+
+			match comment.to_bson() {
+				Ok(document) => {
+					post.comments.push(mongodb::bson::Bson::Document(document));
+					db.update_forum_post(id.to_string(), &post).await.expect("Error updating forum post.");
+					HttpResponse::Ok().json(post)
+				},
+				Err(err) => {
+					println!("Error converting Comment to Bson: {}", err);
+					return HttpResponse::InternalServerError().body(err.to_string());
+				}
+			}
+		},
+		Ok(None) => HttpResponse::NotFound().body("Forum post not found."),
+		Err(err) => HttpResponse::InternalServerError().body(err.to_string())
+	}
+}
+
+#[get("/forum/general/post/{id}/comments")]
+pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>) -> HttpResponse {
+	match db.get_forum_post_by_id(id.to_string()).await {
+		Ok(Some(post)) => {
+			let comments: Vec<CommentRequest> = post.comments.into_iter().rev().map(|comment| {
+				let author = comment.as_document().and_then(|doc| doc.get("author")).and_then(Bson::as_str).unwrap_or("").to_string();
+				let email = comment.as_document().and_then(|doc| doc.get("email")).and_then(Bson::as_str).unwrap_or("").to_string();
+				let date_created = comment.as_document().and_then(|doc| doc.get("date_created")).and_then(|bson| Bson::as_datetime(bson)).map(|datetime| datetime.to_string()).unwrap_or_else(|| mongodb::bson::DateTime::now().to_string());
+				let body = comment.as_document().and_then(|doc| doc.get("body")).and_then(Bson::as_str).unwrap_or("").to_string();
+				CommentRequest {
+					author,
+					email,
+					date_created,
+					body,
+				}
+			}).collect();
+
+			HttpResponse::Ok().json(comments)
+		},
+		Ok(None) => HttpResponse::NotFound().body("Forum post not found."),
+		Err(err) => HttpResponse::InternalServerError().body(err.to_string())
+	}
 }

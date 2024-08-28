@@ -2,7 +2,10 @@ import { lazy } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import './App.css';
 
+// Top Navigation Bar
 const NavBar = lazy(() => import('./components/NavBar'));
+
+// Pages
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Links = lazy(() => import('./pages/Links'));
@@ -15,10 +18,15 @@ import General from './pages/GeneralDiscussion';
 import Post from './pages/Post';
 const GeneralForm = lazy(() => import('./pages/GeneralForm'));
 const ExecForm = lazy(() => import('./pages/ExecForm'));
-// const Feedback = lazy(() => import('./pages/Feedback'));
 
 import theme from './theme.ts';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
+/**
+ * Renders the main application component.
+ *
+ * @returns The JSX element representing the application.
+ */
 
 function App() {
 	return (
@@ -38,7 +46,6 @@ function App() {
 					<Route path='/forum/general/:id' element={<Post />} />
 					<Route path='/form/general' element={<GeneralForm />} />
 					<Route path='/form/executive' element={<ExecForm />} />
-					{/* <Route path='/form/feedback' element={<Feedback />} /> */}
 				</Routes>
 			</Router>
 		</ChakraProvider>

@@ -18,18 +18,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
-	withCredentials: false,
-	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
-	}
-});
-
+// Define the data types
 interface FormData {
 	title: string;
 	body: string;
@@ -51,9 +40,23 @@ interface UserData {
 	verified: boolean;
 }
 
+// Create an instance of axios with custom configurations
+const instance = axios.create({
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 1000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
+	headers: {
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
+	}
+});
+
 export default function CreatePost() {
 	const navigate = useNavigate();
 
+	// Store the data, errors, and the available characters
 	const [data, setData] = useState<FormData>({
 		title: '',
 		body: ''
@@ -66,12 +69,15 @@ export default function CreatePost() {
 		title: 20,
 		body: 600
 	});
+
+	// Store the user data
 	const [user, setUser] = useState<UserData>({
 		username: '',
 		email: '',
 		verified: false
 	});
 
+	// Fetch the user data from the local storage
 	useEffect(() => {
 		const token = JSON.parse(localStorage.getItem('user') || '{}');
 		if (token) {
@@ -83,6 +89,7 @@ export default function CreatePost() {
 		}
 	}, []);
 
+	// Handle the input change for the title
 	const handleTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (
 			!e.target.value ||
@@ -96,6 +103,7 @@ export default function CreatePost() {
 		setData({ ...data, title: e.target.value });
 	};
 
+	// Handle the input change for the body
 	const handleBodyInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		if (
 			!e.target.value ||
@@ -109,12 +117,20 @@ export default function CreatePost() {
 		setData({ ...data, body: e.target.value });
 	};
 
+	// Handle the form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 		if (!data.title || !data.body) {
 			toast.error('Please fill in all fields.');
 			return;
 		}
+
+		const lastPostTime = localStorage.getItem('lastPostTime');
+		const now = new Date().getTime();
+		if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
+			toast.error('You must wait 10 minutes between posting comments.');
+			return;
+		} else localStorage.setItem('lastPostTime', now.toString());
 
 		const { username, email } = user;
 		const { title, body } = data;
@@ -145,6 +161,7 @@ export default function CreatePost() {
 	const toastColour = useColorModeValue('black', 'white');
 	const bgColour = useColorModeValue('#F2F3F4', '#181818');
 
+	// If the user is not verified, display a message
 	if (!user.verified) {
 		return (
 			<Container maxW='7xl' p={{ base: 5, md: 10 }}>

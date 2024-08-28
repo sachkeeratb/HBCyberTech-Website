@@ -25,12 +25,20 @@ import {
 } from '@chakra-ui/icons';
 import HBCyberTechLogo from '../assets/HB-CyberTechCircle.png';
 
+/**
+ * Represents a navigation bar component.
+ *
+ * The NavBar component is responsible for rendering a navigation bar with various features such as a toggle button, sign out button, and color mode toggle button. It provides a responsive design for both desktop and mobile devices.
+ */
+
 export default function NavBar() {
+	// Hooks for managing state and behavior
 	const { isOpen, onToggle } = useDisclosure();
 	const { colorMode, toggleColorMode } = useColorMode();
 
 	return (
 		<Box>
+			{/* Desktop Navigation */}
 			<Flex
 				bg={useColorModeValue('white', 'gray.800')}
 				color={useColorModeValue('gray.600', 'white')}
@@ -72,6 +80,7 @@ export default function NavBar() {
 					direction={'row'}
 					spacing={6}
 				>
+					{/* Sign Out Button */}
 					{localStorage.getItem('user') ? (
 						<Button
 							as={'a'}
@@ -88,6 +97,7 @@ export default function NavBar() {
 					) : (
 						<></>
 					)}
+					{/* Color Mode Toggle Button */}
 					<Button
 						as={'a'}
 						mb={2}
@@ -102,6 +112,7 @@ export default function NavBar() {
 				</Stack>
 			</Flex>
 
+			{/* Mobile Navigation */}
 			<Collapse in={isOpen} animateOpacity>
 				<MobileNav />
 			</Collapse>
@@ -109,7 +120,9 @@ export default function NavBar() {
 	);
 }
 
+// Component for desktop navigation
 const DesktopNav = () => {
+	// Hooks for managing color mode and disclosure state
 	const linkColor = useColorModeValue('gray.600', 'gray.200');
 	const linkHoverColor = useColorModeValue('gray.800', 'white');
 	const popoverContentBgColor = useColorModeValue('white', 'gray.800');
@@ -159,6 +172,7 @@ const DesktopNav = () => {
 	);
 };
 
+// Component for desktop sub-navigation
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 	return (
 		<Box
@@ -197,7 +211,9 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 	);
 };
 
+// Component for mobile navigation
 const MobileNav = () => {
+	// Hooks for managing color mode
 	const { colorMode, toggleColorMode } = useColorMode();
 
 	return (
@@ -216,7 +232,9 @@ const MobileNav = () => {
 	);
 };
 
+// Component for mobile navigation item
 const MobileNavItem = ({ label, children, href }: NavItem) => {
+	// Hook for managing disclosure state
 	const { isOpen, onToggle } = useDisclosure();
 
 	return (
@@ -269,6 +287,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
 	);
 };
 
+// Navigation Items
 interface NavItem {
 	label: string;
 	subLabel?: string;

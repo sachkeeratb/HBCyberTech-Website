@@ -156,8 +156,18 @@ impl Database {
 
     Ok(result)
   }
+  pub async fn update_forum_post(&self, id: String, post: &Post) -> Result<UpdateResult, Error> {
+    let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
+    let result = self
+      .forum_post
+      .update_one(doc! { "_id": object_id }, doc! { "$set": { "comments": post.comments.clone() } })
+      .await
+      .ok()
+      .expect("Error updating forum post.");
 
-
+    Ok(result)
+  }
+  
   pub async fn account_does_exist_full_name(&self, username: String) -> bool {
     let acc = self.account.find_one(doc! { "username": &username }).await.ok();
     if let Some(acc) = acc {

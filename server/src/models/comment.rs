@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 use chrono::Utc;
-use mongodb::bson::{oid::ObjectId, DateTime};
+use mongodb::bson::{self, doc, oid::ObjectId, DateTime};
 use serde::{Serialize, Deserialize};
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -22,7 +22,6 @@ pub struct Comment {
 
 #[derive(Clone, Serialize, Deserialize, Validate)]
 pub struct CommentRequest {
-  pub id: String,
   #[validate(regex(
     path = *RE_USERNAME,
     message = "Invalid username."
@@ -59,5 +58,18 @@ impl TryFrom<CommentRequest> for Comment {
       date_created: DateTime::from(chrono_datetime),
       body: item.body,
     })
+  }
+}
+
+impl Comment {
+  pub fn to_bson(&self) -> Result<bson::Document, Box<dyn std::error::Error>> {
+    let doc = doc! {
+      "_id": self._id.clone(),
+      "author": self.author.clone(),
+      "email": self.email.clone(),
+      "date_created": self.date_created.clone(),
+      "body": self.body.clone(),
+    };
+    Ok(doc)
   }
 }

@@ -19,6 +19,7 @@ import {
 import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
+// Define the data types
 interface FormData {
 	fullName: string;
 	email: string;
@@ -47,19 +48,21 @@ interface CharCount {
 	experience: number;
 }
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 1000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
 export default function ExecForm() {
+	// Store the data, errors, and the available characters
 	const [data, setData] = useState<FormData>({
 		fullName: '',
 		email: '',
@@ -86,6 +89,7 @@ export default function ExecForm() {
 		experience: 600
 	});
 
+	// Handle input changes
 	const handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, fullName: e.target.value });
 		if (
@@ -137,6 +141,7 @@ export default function ExecForm() {
 		else error.portfolioErr = data.execType === 'marketing';
 	};
 
+	// Check if the URL is valid
 	const isValidUrl = (urlString: string): boolean => {
 		const urlPattern = new RegExp(
 			'^(https?:\\/\\/)?' + // validate protocol
@@ -150,6 +155,7 @@ export default function ExecForm() {
 		return !!urlPattern.test(urlString);
 	};
 
+	// Check if the user can submit the form
 	function canSubmit(): boolean {
 		return !(
 			error.nameErr ||
@@ -163,6 +169,7 @@ export default function ExecForm() {
 		);
 	}
 
+	// Check if the user has already signed up
 	const isDuplicate = async (fullName: string, email: string) => {
 		const recievedFullName = await instance.get(
 			`/executive_member/get/${fullName}`
@@ -176,19 +183,24 @@ export default function ExecForm() {
 		return true;
 	};
 
+	// Handle general change
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 	) => {
 		setData({ ...data, [e.target.name]: e.target.value });
 	};
 
+	// Handle form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
+
+		// Check if the user can submit the form
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
 			return;
 		}
 
+		// Destructure the data
 		const {
 			fullName,
 			email,
@@ -200,8 +212,10 @@ export default function ExecForm() {
 			extra
 		} = data;
 		try {
+			// Check if the user has already signed up
 			if (await isDuplicate(fullName, email)) return;
 
+			// Send the data to the server
 			const { data } = await instance.post('/executive_member/post', {
 				full_name: fullName,
 				email: email,

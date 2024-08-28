@@ -10,6 +10,7 @@ import {
 	Flex
 } from '@chakra-ui/react';
 
+// Define the shape of the announcement request
 interface AnnouncementRequest {
 	author: string;
 	date_created: string;
@@ -17,6 +18,7 @@ interface AnnouncementRequest {
 	body: string;
 }
 
+// Define the shape of the announcement
 interface Announcement {
 	author: string;
 	date: string;
@@ -25,6 +27,7 @@ interface Announcement {
 	body: string;
 }
 
+// Component for displaying announcement on desktop
 const DesktopAnnouncementPost: React.FC<Announcement> = ({
 	author,
 	date,
@@ -57,6 +60,7 @@ const DesktopAnnouncementPost: React.FC<Announcement> = ({
 	);
 };
 
+// Component for displaying announcement on mobile
 const MobileAnnouncementPost: React.FC<Announcement> = ({
 	author,
 	date,
@@ -87,22 +91,25 @@ const MobileAnnouncementPost: React.FC<Announcement> = ({
 	);
 };
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 1000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
+// Main component for displaying announcements
 export default function Announcements() {
 	const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
 	useEffect(() => {
+		// Fetch announcements from the server
 		(async function fetchAnnouncements() {
 			try {
 				const response = await instance.get('/forum/announcements/get');
@@ -141,6 +148,7 @@ export default function Announcements() {
 			}
 		})();
 	}, []);
+
 	const BG = useColorModeValue('gray.700', 'purple.700');
 
 	return (
