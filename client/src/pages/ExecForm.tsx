@@ -194,6 +194,17 @@ export default function ExecForm() {
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
+		const lastSubmission = localStorage.getItem('execFormLastSubmission');
+		const now = new Date().getTime();
+
+		if (
+			lastSubmission &&
+			now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
+		) {
+			toast.error('You can only apply once per day.');
+			return;
+		}
+
 		// Check if the user can submit the form
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
@@ -237,6 +248,7 @@ export default function ExecForm() {
 			// Allow the user to continue
 			setData({} as FormData);
 			toast.success('You have sucessfuly registered!');
+			localStorage.setItem('execFormLastSubmission', now.toString());
 			new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
 				window.location.reload();
 			});

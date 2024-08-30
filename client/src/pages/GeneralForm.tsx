@@ -156,6 +156,18 @@ export default function GeneralForm() {
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
+
+		const lastSubmission = localStorage.getItem('generalFormLastSubmission');
+		const now = new Date().getTime();
+
+		if (
+			lastSubmission &&
+			now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
+		) {
+			toast.error('You can only apply once per day!');
+			return;
+		}
+
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
 			return;
@@ -184,6 +196,7 @@ export default function GeneralForm() {
 			// Allow the user to continue
 			setData({} as FormVals);
 			toast.success('Registration successful. Welcome.');
+			localStorage.setItem('generalFormLastSubmission', now.toString());
 			new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
 				window.location.reload();
 			});

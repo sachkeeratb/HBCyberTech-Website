@@ -2,9 +2,10 @@ use actix_web::{get, post, web::{self, Data, Json}, HttpResponse};
 use mail_send::SmtpClientBuilder;
 use mail_builder::MessageBuilder;
 use validator::Validate;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use bcrypt::{hash, verify, DEFAULT_COST};
+use jsonwebtoken::{encode, Header, EncodingKey};
 
 use crate::{models::account::{Account, AccountRequest}, services::db::Database};
 
@@ -12,6 +13,14 @@ use crate::{models::account::{Account, AccountRequest}, services::db::Database};
 struct AccountGiven {
   email: String,
   password: String
+}
+
+#[derive(Serialize, Deserialize)]
+struct Claims {
+	username: String,
+	email: String,
+	verified: bool,
+	exp: usize,
 }
 
 async fn check_account_exists(db: &Database, username_or_email: &str) -> bool {
@@ -57,12 +66,14 @@ pub async fn sign_in(db: Data<Database>, request: web::Json<AccountGiven>) -> Ht
 				Ok(matches) => {
 					if matches {
 						let account = db.get_account_by_email(request.email.clone()).await.unwrap();
-						let response = json!({
-							"username": account.as_ref().unwrap().username, 
-							"email": account.as_ref().unwrap().email, 
-							"verified": account.as_ref().unwrap().verified
-						});
-						HttpResponse::Ok().json(response)
+						let claims = Claims {
+							username: account.as_ref().unwrap().username.clone(),
+							email: account.as_ref().unwrap().email.clone(),
+							verified: account.as_ref().unwrap().verified.clone(),
+							exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
+					};
+					let token = encode(&Header::default(), &claims, &EncodingKey::from_secret(dotenv!("SECRET").as_ref())).unwrap();
+					HttpResponse::Ok().json(json!({ "token": token }))
 					} else {
 						HttpResponse::Ok().json("")
 					}

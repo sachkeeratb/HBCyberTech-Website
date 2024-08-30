@@ -16,7 +16,9 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
+import { useCookies } from 'react-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
@@ -126,8 +128,7 @@ const MobileForumPost: React.FC<ForumPost> = ({
 	);
 };
 
-const DesktopComment: React.FC<Comment> = (comment: Comment) => {
-	const BG = useColorModeValue('white', 'gray.800');
+const DesktopComment: React.FC<Comment> = (comment: Comment, BG: string) => {
 	return (
 		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
 			<Flex justify='space-between' align='center'>
@@ -152,14 +153,13 @@ const DesktopComment: React.FC<Comment> = (comment: Comment) => {
 		</Box>
 	);
 };
-const MobileComment: React.FC<Comment> = (comment: Comment) => {
-	const BG = useColorModeValue('white', 'gray.800');
+const MobileComment: React.FC<Comment> = (comment: Comment, BG: string) => {
 	return (
 		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
 			<Flex direction='column' align='left'>
 				<SlideFade in={true} offsetY='50vh'>
 					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-						<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+						<Text fontSize='md' fontWeight='bold' mr={2} align='left'>
 							{comment.author} &lt;{comment.email}&gt;
 						</Text>
 					</motion.div>
@@ -178,6 +178,7 @@ const MobileComment: React.FC<Comment> = (comment: Comment) => {
 };
 
 export default function Post() {
+	const [cookies] = useCookies(['user']);
 	const navigate = useNavigate();
 
 	const [isMobile, setIsMobile] = useState(
@@ -206,11 +207,16 @@ export default function Post() {
 		date_created: '',
 		body: ''
 	});
+	const [error, setError] = useState(false);
 
 	useEffect(() => {
-		if (localStorage.getItem('user')) {
-			const token = JSON.parse(localStorage.getItem('user') || '{}');
-			setData({ ...data, author: token.username, email: token.email });
+		if (cookies.user) {
+			const decoded = jwtDecode<{
+				username: string;
+				email: string;
+				verified: boolean;
+			}>(cookies.user);
+			setData({ ...data, author: decoded.username, email: decoded.email });
 		}
 	}, []);
 
@@ -297,7 +303,7 @@ export default function Post() {
 
 	const handleCommentSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
-		if (!data.body || data.body.length > 600 || data.body.length < 20) {
+		if (error) {
 			toast.error('Invalid values.');
 			return;
 		}
@@ -308,6 +314,21 @@ export default function Post() {
 			toast.error('You must wait 10 minutes between posting comments.');
 			return;
 		} else localStorage.setItem('lastCommentTime', now.toString());
+
+		if (!cookies.user) {
+			toast.error('You must be signed in to post a comment.');
+			return;
+		}
+		if (
+			!jwtDecode<{
+				username: string;
+				email: string;
+				verified: boolean;
+			}>(cookies.user).verified
+		) {
+			toast.error('You must verify your email before posting a comment.');
+			return;
+		}
 
 		try {
 			const { author, email, body } = data;
@@ -320,7 +341,6 @@ export default function Post() {
 					body: body
 				}
 			);
-			console.log(response);
 
 			if (response.data.error) {
 				throw new Error(response.data.error);
@@ -341,6 +361,16 @@ export default function Post() {
 
 	return (
 		<Box mt={8} mx='auto' w='100%'>
+			<Toaster
+				position='bottom-right'
+				reverseOrder={false}
+				toastOptions={{
+					style: {
+						color: useColorModeValue('black', 'white'),
+						background: useColorModeValue('#F2F3F4', '#181818')
+					}
+				}}
+			/>
 			{post ? (
 				<VStack
 					w='100%'
@@ -372,31 +402,36 @@ export default function Post() {
 			) : (
 				<></>
 			)}
-			<VStack spacing={4} align='left'>
-				{localStorage.getItem('user') ? (
+			<VStack spacing={4} align='center'>
+				{cookies.user ? (
 					<Box as='form' onSubmit={handleCommentSubmit} w='100%' pt={5}>
-						<FormControl
-							id='comment'
-							isRequired
-							isInvalid={data.body.length > 600 || data.body.length < 20}
-						>
+						<FormControl id='comment' isRequired isInvalid={error}>
 							<FormLabel>Leave a Comment</FormLabel>
 							<Textarea
 								value={data.body}
-								onChange={(e) => setData({ ...data, body: e.target.value })}
+								onChange={(e) => {
+									setError(
+										e.target.value.length > 600 || e.target.value.length < 20
+									);
+									setData({ ...data, body: e.target.value });
+								}}
 							/>
-							{data.body.length <= 600 ? (
-								data.body.length < 20 ? (
-									<FormErrorMessage>
-										You must input a comment with a minimum of 20 characters.
-									</FormErrorMessage>
+							{error ? (
+								data.body.length <= 600 ? (
+									data.body.length < 20 ? (
+										<FormErrorMessage>
+											You must input a comment with a minimum of 20 characters.
+										</FormErrorMessage>
+									) : (
+										<></>
+									)
 								) : (
-									<></>
+									<FormErrorMessage>
+										You are only allowed to input a maximum of 600 characters.
+									</FormErrorMessage>
 								)
 							) : (
-								<FormErrorMessage>
-									You are only allowed to input a maximum of 600 characters.
-								</FormErrorMessage>
+								<></>
 							)}
 						</FormControl>
 						<Button type='submit' colorScheme='purple' mt={4}>
@@ -406,11 +441,11 @@ export default function Post() {
 				) : (
 					<></>
 				)}
-				<Heading as='h3' size='md' pt={5}>
+				<Heading as='h1' size='lg' pt={5}>
 					Comments
 				</Heading>
 				<VStack
-					w='100%'
+					w='80%'
 					bg={OUTLINE}
 					spacing={4}
 					rounded='lg'
@@ -419,7 +454,9 @@ export default function Post() {
 				>
 					{comments.map((comment, index) => (
 						<Box key={index} bg={BG} p={4} borderRadius='md' w='100%'>
-							{isMobile ? MobileComment(comment) : DesktopComment(comment)}
+							{isMobile
+								? MobileComment(comment, BG)
+								: DesktopComment(comment, BG)}
 						</Box>
 					))}
 				</VStack>

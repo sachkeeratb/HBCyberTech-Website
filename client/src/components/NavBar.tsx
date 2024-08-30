@@ -24,6 +24,7 @@ import {
 	ChevronRightIcon
 } from '@chakra-ui/icons';
 import HBCyberTechLogo from '../assets/HB-CyberTechCircle.png';
+import { useCookies } from 'react-cookie';
 
 /**
  * Represents a navigation bar component.
@@ -35,6 +36,7 @@ export default function NavBar() {
 	// Hooks for managing state and behavior
 	const { isOpen, onToggle } = useDisclosure();
 	const { colorMode, toggleColorMode } = useColorMode();
+	const [cookies, , removeCookie] = useCookies(['user']);
 
 	return (
 		<Box>
@@ -81,14 +83,14 @@ export default function NavBar() {
 					spacing={6}
 				>
 					{/* Sign Out Button */}
-					{localStorage.getItem('user') ? (
+					{cookies.user ? (
 						<Button
 							as={'a'}
 							fontSize={'sm'}
 							fontWeight={600}
 							href={'#'}
 							onClick={() => {
-								localStorage.removeItem('user');
+								removeCookie('user');
 								window.location.reload();
 							}}
 						>

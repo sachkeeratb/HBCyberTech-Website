@@ -168,6 +168,7 @@ impl Database {
     Ok(result)
   }
   
+
   pub async fn account_does_exist_full_name(&self, username: String) -> bool {
     let acc = self.account.find_one(doc! { "username": &username }).await.ok();
     if let Some(acc) = acc {

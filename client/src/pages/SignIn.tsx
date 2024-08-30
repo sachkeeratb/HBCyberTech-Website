@@ -16,6 +16,7 @@ import {
 	FormErrorMessage
 } from '@chakra-ui/react';
 import { toast, Toaster } from 'react-hot-toast';
+import { useCookies } from 'react-cookie';
 
 interface FormVals {
 	email: string;
@@ -40,6 +41,8 @@ const instance = axios.create({
 });
 
 export default function SignIn() {
+	const [cookies, setCookie] = useCookies(['user']);
+
 	const [data, setData] = useState<FormVals>({
 		email: '',
 		password: ''
@@ -108,6 +111,10 @@ export default function SignIn() {
 
 		try {
 			if (await doesNotExist(email)) return;
+			if (cookies.user) {
+				toast.error('You are already signed in.');
+				return;
+			}
 
 			const { data } = await instance.post('/account/post/signin', {
 				email: email,
@@ -144,8 +151,12 @@ export default function SignIn() {
 				throw new Error(data.error);
 			}
 
-			localStorage.setItem('user', JSON.stringify(data));
-			console.log(localStorage.getItem('user'));
+			const { token } = data;
+			setCookie('user', token, {
+				httpOnly: false,
+				path: '/',
+				expires: new Date(Date.now() + 60 * 60 * 24)
+			});
 
 			// Allow the user to continue
 			setData({} as FormVals);

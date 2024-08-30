@@ -17,6 +17,8 @@ import {
 import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 // Define the data types
 interface FormData {
@@ -55,6 +57,7 @@ const instance = axios.create({
 
 export default function CreatePost() {
 	const navigate = useNavigate();
+	const [cookies] = useCookies(['user']);
 
 	// Store the data, errors, and the available characters
 	const [data, setData] = useState<FormData>({
@@ -79,12 +82,12 @@ export default function CreatePost() {
 
 	// Fetch the user data from the local storage
 	useEffect(() => {
-		const token = JSON.parse(localStorage.getItem('user') || '{}');
-		if (token) {
+		if (cookies.user) {
+			const decoded = jwtDecode<UserData>(cookies.user);
 			setUser({
-				username: token.username,
-				email: token.email,
-				verified: token.verified
+				username: decoded.username,
+				email: decoded.email,
+				verified: decoded.verified
 			});
 		}
 	}, []);
