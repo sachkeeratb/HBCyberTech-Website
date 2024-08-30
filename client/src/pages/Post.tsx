@@ -208,6 +208,8 @@ export default function Post() {
 		body: ''
 	});
 	const [error, setError] = useState(false);
+	const [page, setPage] = useState(1);
+	const [canGoForward, setCanGoForward] = useState(false);
 
 	useEffect(() => {
 		if (cookies.user) {
@@ -221,85 +223,92 @@ export default function Post() {
 	}, []);
 
 	useEffect(() => {
-		(async function fetchPost() {
-			try {
-				const response = await instance.get(`/forum/general/post/${id}`);
-				const postData = response.data;
-				const ymd = postData.date_created.substring(0, 10) + 'T';
-				let hms =
-					postData.date_created.substring(
-						11,
-						postData.date_created.indexOf('.')
-					) + '.000Z';
-				if (hms.length != 13) {
-					hms = '0' + hms;
-				}
-				const givenDate = new Date(ymd + hms);
-				const date = givenDate.toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'long',
-					day: 'numeric'
-				});
-				const time = givenDate.toLocaleString('en-US', {
-					hour: 'numeric',
-					minute: 'numeric',
-					hour12: true
-				});
-				setPost({
-					author: postData.author,
-					email: postData.email,
-					date: date,
-					time: time,
-					title: postData.title,
-					body: postData.body
-				});
+		fetchPost();
+	}, [id, page]);
 
-				try {
-					const response = await instance.get(
-						`/forum/general/post/${id}/comments`
-					);
-					const responseArr: CommentRequest[] = [];
-					const commentArr: Comment[] = [];
-					for (let i = 0; i < response.data.length; i++) {
-						responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-						const ymd =
-							responseArr[i].date_created.toString().substring(0, 10) + 'T';
-						let hms =
-							responseArr[i].date_created
-								.toString()
-								.substring(
-									11,
-									responseArr[i].date_created.toString().indexOf('.')
-								) + '.000Z';
-						if (hms.length != 13) {
-							hms = '0' + hms;
-						}
-						const givenDate = new Date(ymd + hms);
-						const date = givenDate.toLocaleDateString('en-US', {
-							year: 'numeric',
-							month: 'long',
-							day: 'numeric'
-						});
-						const time = givenDate.toLocaleString('en-US', {
-							hour: 'numeric',
-							minute: 'numeric',
-							hour12: true
-						});
-						const author = responseArr[i].author;
-						const email = responseArr[i].email;
-						const body = responseArr[i].body;
-						commentArr.push({ author, email, date, time, body });
-					}
-					setComments(commentArr);
-				} catch (error) {
-					console.error('Error fetching comments:', error);
-				}
-			} catch (error) {
-				console.error('Error fetching post:', error);
-				navigate('/forum/general');
+	const fetchPost = async () => {
+		try {
+			const response = await instance.get(`/forum/general/post/${id}`);
+			const postData = response.data;
+			const ymd = postData.date_created.substring(0, 10) + 'T';
+			let hms =
+				postData.date_created.substring(
+					11,
+					postData.date_created.indexOf('.')
+				) + '.000Z';
+			if (hms.length != 13) {
+				hms = '0' + hms;
 			}
-		})();
-	}, []);
+			const givenDate = new Date(ymd + hms);
+			const date = givenDate.toLocaleDateString('en-US', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			});
+			const time = givenDate.toLocaleString('en-US', {
+				hour: 'numeric',
+				minute: 'numeric',
+				hour12: true
+			});
+			setPost({
+				author: postData.author,
+				email: postData.email,
+				date: date,
+				time: time,
+				title: postData.title,
+				body: postData.body
+			});
+
+			try {
+				const response = await instance.post(
+					`/forum/general/post/${id}/comments`,
+					{
+						page: page,
+						limit: 5
+					}
+				);
+				const responseArr: CommentRequest[] = [];
+				const commentArr: Comment[] = [];
+				for (let i = 0; i < response.data.length; i++) {
+					responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
+					const ymd =
+						responseArr[i].date_created.toString().substring(0, 10) + 'T';
+					let hms =
+						responseArr[i].date_created
+							.toString()
+							.substring(
+								11,
+								responseArr[i].date_created.toString().indexOf('.')
+							) + '.000Z';
+					if (hms.length != 13) {
+						hms = '0' + hms;
+					}
+					const givenDate = new Date(ymd + hms);
+					const date = givenDate.toLocaleDateString('en-US', {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					});
+					const time = givenDate.toLocaleString('en-US', {
+						hour: 'numeric',
+						minute: 'numeric',
+						hour12: true
+					});
+					const author = responseArr[i].author;
+					const email = responseArr[i].email;
+					const body = responseArr[i].body;
+					commentArr.push({ author, email, date, time, body });
+				}
+				setCanGoForward(commentArr.length === 5);
+				setComments(commentArr);
+			} catch (error) {
+				console.error('Error fetching comments:', error);
+			}
+		} catch (error) {
+			console.error('Error fetching post:', error);
+			navigate('/forum/general');
+		}
+	};
 
 	const handleCommentSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -461,6 +470,22 @@ export default function Post() {
 					))}
 				</VStack>
 			</VStack>
+			<Box mt={4} display='flex' justifyContent='space-between'>
+				<Button
+					onClick={() => setPage((page) => Math.max(page - 1, 1))}
+					disabled={page === 1}
+				>
+					Previous
+				</Button>
+				<Text pt='1vh'>Page {page}</Text>
+				<Button
+					onClick={() => {
+						if (canGoForward) setPage((page) => page + 1);
+					}}
+				>
+					Next
+				</Button>
+			</Box>
 		</Box>
 	);
 }

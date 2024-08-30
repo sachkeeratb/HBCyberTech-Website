@@ -123,11 +123,13 @@ pub async fn post_comment(db: Data<Database>, id: web::Path<String>, request: Js
 	}
 }
 
-#[get("/forum/general/post/{id}/comments")]
-pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>) -> HttpResponse {
+#[post("/forum/general/post/{id}/comments")]
+pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>, request: Json<PaginationArgs>) -> HttpResponse {
+	let PaginationArgs { page, limit } = request.into_inner();
 	match db.get_forum_post_by_id(id.to_string()).await {
 		Ok(Some(post)) => {
-			let comments: Vec<CommentRequest> = post.comments.into_iter().rev().map(|comment| {
+			let skip = (page - 1) * limit;
+			let comments: Vec<CommentRequest> = post.comments.into_iter().skip(skip as usize).take(limit as usize).map(|comment| {
 				let author = comment.as_document().and_then(|doc| doc.get("author")).and_then(Bson::as_str).unwrap_or("").to_string();
 				let email = comment.as_document().and_then(|doc| doc.get("email")).and_then(Bson::as_str).unwrap_or("").to_string();
 				let date_created = comment.as_document().and_then(|doc| doc.get("date_created")).and_then(|bson| Bson::as_datetime(bson)).map(|datetime| datetime.to_string()).unwrap_or_else(|| mongodb::bson::DateTime::now().to_string());

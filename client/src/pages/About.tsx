@@ -155,7 +155,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left'>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left'>
 						Hello! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Sachkeerat Singh Brar
@@ -167,7 +167,7 @@ export default function About() {
 					</Box>
 					<Box
 						as='h2'
-						fontSize='2xl'
+						fontSize='xl'
 						fontWeight='400'
 						mt={5}
 						pb={10}
@@ -237,7 +237,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Hi! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Udeshwar Singh Sandhu{' '}
@@ -308,7 +308,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Greetings! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Edward Lin{' '}
@@ -374,7 +374,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Welcome to the club! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Parth Kapoor
@@ -448,7 +448,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Hello! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Nimay Desai
@@ -516,7 +516,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Hello! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Pratham Dave{' '}
@@ -588,7 +588,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left'>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left'>
 						Hi! My name{' '}
 						<Box as='strong' fontWeight='600'>
 							Vansh Suri{' '}
@@ -602,7 +602,7 @@ export default function About() {
 					</Box>
 					<Box
 						as='h2'
-						fontSize='2xl'
+						fontSize='xl'
 						fontWeight='400'
 						mt={5}
 						pb={10}
@@ -669,7 +669,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Hey! My name&apos;s{' '}
 						<Box as='strong' fontWeight='600'>
 							Gurvir Sandhu{' '}
@@ -736,7 +736,7 @@ export default function About() {
 							</Box>
 						</MotionBox>
 					</Box>
-					<Box as='h2' fontSize='2xl' fontWeight='400' textAlign='left' pb={10}>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						Hi! My name is{' '}
 						<Box as='strong' fontWeight='600'>
 							Pranav

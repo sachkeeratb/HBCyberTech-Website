@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 import axios from 'axios';
 import {
 	Box,
@@ -107,6 +106,23 @@ const instance = axios.create({
 
 // Main component for displaying announcements
 export default function Announcements() {
+	const [isMobile, setIsMobile] = useState(
+		typeof window !== 'undefined' && window.innerWidth < 1024
+	);
+
+	useEffect(() => {
+		function handleResize() {
+			setIsMobile(window.innerWidth < 1024);
+		}
+
+		if (typeof window !== 'undefined') handleResize();
+
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, [isMobile]);
+
 	const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 	const [page, setPage] = useState(1);
 	const [canGoForward, setCanGoForward] = useState(false);

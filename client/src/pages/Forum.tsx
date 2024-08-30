@@ -65,7 +65,11 @@ export default function Forum() {
 						</Td>
 						<Td textAlign='center'>
 							<Text fontSize='2xl'>{amount.announcements}</Text>
-							<Text>Posts</Text>
+							{amount.announcements === 1 ? (
+								<Text>Post</Text>
+							) : (
+								<Text>Posts</Text>
+							)}
 						</Td>
 					</Tr>
 					<Tr>
@@ -81,7 +85,7 @@ export default function Forum() {
 						</Td>
 						<Td textAlign='center'>
 							<Text fontSize='2xl'>{amount.general}</Text>
-							<Text>Posts</Text>
+							{amount.general === 1 ? <Text>Post</Text> : <Text>Posts</Text>}
 						</Td>
 					</Tr>
 				</Tbody>
