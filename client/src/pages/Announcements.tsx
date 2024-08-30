@@ -7,8 +7,10 @@ import {
 	VStack,
 	useColorModeValue,
 	Flex,
-	Button
+	Button,
+	SlideFade
 } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 // Define the shape of the announcement request
 interface AnnouncementRequest {
@@ -40,9 +42,13 @@ const DesktopAnnouncementPost: React.FC<Announcement> = ({
 		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
 			<Flex justify='space-between' align='center'>
 				<Flex>
-					<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
-						{title}
-					</Text>
+					<SlideFade in={true} offsetY='50vh'>
+						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+							<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+								{title}
+							</Text>
+						</motion.div>
+					</SlideFade>
 					<Text fontSize='md' color='gray.400' mt={1} align='left'>
 						by {author}
 					</Text>
@@ -72,9 +78,13 @@ const MobileAnnouncementPost: React.FC<Announcement> = ({
 	return (
 		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
 			<Flex direction='column' align='left'>
-				<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
-					{title}
-				</Text>
+				<SlideFade in={true} offsetY='50vh'>
+					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+						<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+							{title}
+						</Text>
+					</motion.div>
+				</SlideFade>
 				<Text fontSize='md' color='gray.400' align='left'>
 					by {author}
 				</Text>
