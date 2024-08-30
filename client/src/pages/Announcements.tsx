@@ -7,7 +7,8 @@ import {
 	Text,
 	VStack,
 	useColorModeValue,
-	Flex
+	Flex,
+	Button
 } from '@chakra-ui/react';
 
 // Define the shape of the announcement request
@@ -107,47 +108,55 @@ const instance = axios.create({
 // Main component for displaying announcements
 export default function Announcements() {
 	const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+	const [page, setPage] = useState(1);
+	const [canGoForward, setCanGoForward] = useState(false);
 
 	useEffect(() => {
 		// Fetch announcements from the server
-		(async function fetchAnnouncements() {
-			try {
-				const response = await instance.get('/forum/announcements/get');
-				const responseArr: AnnouncementRequest[] = [];
-				const anouncementArr: Announcement[] = [];
-				for (let i = 0; i < response.data.length; i++) {
-					responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-					const ymd = responseArr[i].date_created.substring(0, 10) + 'T';
-					let hms =
-						responseArr[i].date_created.substring(
-							11,
-							responseArr[i].date_created.indexOf('.')
-						) + '.000Z';
-					if (hms.length != 13) {
-						hms = '0' + hms;
-					}
-					const givenDate = new Date(ymd + hms);
-					const author = responseArr[i].author;
-					const date = givenDate.toLocaleDateString('en-US', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric'
-					});
-					const time = givenDate.toLocaleString('en-US', {
-						hour: 'numeric',
-						minute: 'numeric',
-						hour12: true
-					});
-					const title = responseArr[i].title;
-					const body = responseArr[i].body;
-					anouncementArr.push({ author, date, time, title, body });
+		fetchAnnouncements();
+	}, [page]);
+
+	const fetchAnnouncements = async () => {
+		try {
+			const response = await instance.post('/forum/announcements/get', {
+				page: page,
+				limit: 10
+			});
+			const responseArr: AnnouncementRequest[] = [];
+			const anouncementArr: Announcement[] = [];
+			for (let i = 0; i < response.data.length; i++) {
+				responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
+				const ymd = responseArr[i].date_created.substring(0, 10) + 'T';
+				let hms =
+					responseArr[i].date_created.substring(
+						11,
+						responseArr[i].date_created.indexOf('.')
+					) + '.000Z';
+				if (hms.length != 13) {
+					hms = '0' + hms;
 				}
-				setAnnouncements(anouncementArr);
-			} catch (error) {
-				console.error('Error fetching announcements:', error);
+				const givenDate = new Date(ymd + hms);
+				const author = responseArr[i].author;
+				const date = givenDate.toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				});
+				const time = givenDate.toLocaleString('en-US', {
+					hour: 'numeric',
+					minute: 'numeric',
+					hour12: true
+				});
+				const title = responseArr[i].title;
+				const body = responseArr[i].body;
+				anouncementArr.push({ author, date, time, title, body });
 			}
-		})();
-	}, []);
+			setCanGoForward(anouncementArr.length === 10);
+			setAnnouncements(anouncementArr);
+		} catch (error) {
+			console.error('Error fetching announcements:', error);
+		}
+	};
 
 	const BG = useColorModeValue('gray.700', 'purple.700');
 
@@ -189,6 +198,22 @@ export default function Announcements() {
 						))}
 					</VStack>
 				</div>
+				<Box mt={4} display='flex' justifyContent='space-between'>
+					<Button
+						onClick={() => setPage((page) => Math.max(page - 1, 1))}
+						disabled={page === 1}
+					>
+						Previous
+					</Button>
+					<Text pt={'1vh'}>Page {page}</Text>
+					<Button
+						onClick={() => {
+							if (canGoForward) setPage((page) => page + 1);
+						}}
+					>
+						Next
+					</Button>
+				</Box>
 			</div>
 		</Box>
 	);

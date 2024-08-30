@@ -120,8 +120,9 @@ impl Database {
   }
 
 
-  pub async fn get_announcement_forum_posts(&self) -> Result<Vec<Announcement>, Error> {
-    let cursor = self.announcement_forum_post.find(doc! {}).await?;
+  pub async fn get_announcement_forum_posts(&self, page: u32, limit: u32) -> Result<Vec<Announcement>, Error> {
+    let skip = (page - 1) * limit;
+    let cursor = self.announcement_forum_post.find(doc! {}).skip(skip.into()).limit(limit.into()).await?;
     let posts: Vec<Announcement> = cursor.try_collect().await?;
     Ok(posts)
   }
@@ -133,7 +134,7 @@ impl Database {
   
   pub async fn get_forum_posts(&self, page: u32, limit: u32) -> Result<Vec<Post>, Error> {
     let skip = (page - 1) * limit;
-    let cursor = self.forum_post.find(doc! {}).skip(skip.into()).limit(limit as i64).await?;
+    let cursor = self.forum_post.find(doc! {}).skip(skip.into()).limit(limit.into()).await?;
     let posts: Vec<Post> = cursor.try_collect().await?;
     Ok(posts)
   }

@@ -308,7 +308,17 @@ const NavItems: NavItem[] = [
 	},
 	{
 		label: 'Forum',
-		href: '/forum'
+		href: '/forum',
+		children: [
+			{
+				label: 'Announcements',
+				href: '/forum/announcements'
+			},
+			{
+				label: 'General Discussion',
+				href: '/forum/general'
+			}
+		]
 	},
 	{
 		label: 'Accounts',

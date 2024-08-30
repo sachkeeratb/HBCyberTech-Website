@@ -249,7 +249,7 @@ export default function General() {
 					>
 						Previous
 					</Button>
-					<Text>Page {page}</Text>
+					<Text pt={'1vh'}>Page {page}</Text>
 					<Button
 						onClick={() => {
 							if (canGoForward) setPage((page) => page + 1);

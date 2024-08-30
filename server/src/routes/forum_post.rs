@@ -3,13 +3,13 @@ use std::cmp::Reverse;
 use actix_web::web::{self, Json};
 use actix_web::{get, post, web::Data, HttpResponse};
 use mongodb::bson::Bson;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use validator::Validate;
 use crate::models::comment::{Comment, CommentRequest};
 use crate::services::db::Database;
 use crate::models::forum_post::{Post, PostRequest};
 
-#[derive(Debug, Validate, Clone, Serialize, Deserialize)]
+#[derive(Deserialize)]
 struct PaginationArgs {
 	page: u32,
 	limit: u32
