@@ -131,8 +131,9 @@ impl Database {
   }
 
   
-  pub async fn get_forum_posts(&self) -> Result<Vec<Post>, Error> {
-    let cursor = self.forum_post.find(doc! {}).await?;
+  pub async fn get_forum_posts(&self, page: u32, limit: u32) -> Result<Vec<Post>, Error> {
+    let skip = (page - 1) * limit;
+    let cursor = self.forum_post.find(doc! {}).skip(skip.into()).limit(limit as i64).await?;
     let posts: Vec<Post> = cursor.try_collect().await?;
     Ok(posts)
   }

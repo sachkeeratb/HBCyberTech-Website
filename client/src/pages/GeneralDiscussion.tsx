@@ -142,48 +142,56 @@ export default function General() {
 	}, [isMobile]);
 
 	const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
+	const [page, setPage] = useState(1);
+	const [canGoForward, setCanGoForward] = useState(false);
 
 	useEffect(() => {
-		(async function fetchForumPosts() {
-			try {
-				const response = await instance.get('/forum/general/get');
-				const responseArr: ForumPostRequest[] = [];
-				const postArr: ForumPost[] = [];
-				for (let i = 0; i < response.data.length; i++) {
-					responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-					const ymd = responseArr[i].date_created.substring(0, 10) + 'T';
-					let hms =
-						responseArr[i].date_created.substring(
-							11,
-							responseArr[i].date_created.indexOf('.')
-						) + '.000Z';
-					if (hms.length != 13) {
-						hms = '0' + hms;
-					}
-					const givenDate = new Date(ymd + hms);
-					const date = givenDate.toLocaleDateString('en-US', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric'
-					});
-					const time = givenDate.toLocaleString('en-US', {
-						hour: 'numeric',
-						minute: 'numeric',
-						hour12: true
-					});
-					const id = responseArr[i].id;
-					const author = responseArr[i].author;
-					const email = responseArr[i].email;
-					const title = responseArr[i].title;
-					const body = responseArr[i].body;
-					postArr.push({ id, author, email, date, time, title, body });
+		fetchForumPosts();
+	}, [page]);
+
+	const fetchForumPosts = async () => {
+		try {
+			const response = await instance.post('/forum/general/get', {
+				page: page,
+				limit: 10
+			});
+			const responseArr: ForumPostRequest[] = [];
+			const postArr: ForumPost[] = [];
+			for (let i = 0; i < response.data.length; i++) {
+				responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
+				const ymd = responseArr[i].date_created.substring(0, 10) + 'T';
+				let hms =
+					responseArr[i].date_created.substring(
+						11,
+						responseArr[i].date_created.indexOf('.')
+					) + '.000Z';
+				if (hms.length != 13) {
+					hms = '0' + hms;
 				}
-				setForumPosts(postArr);
-			} catch (error) {
-				console.error('Error fetching announcements:', error);
+				const givenDate = new Date(ymd + hms);
+				const date = givenDate.toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				});
+				const time = givenDate.toLocaleString('en-US', {
+					hour: 'numeric',
+					minute: 'numeric',
+					hour12: true
+				});
+				const id = responseArr[i].id;
+				const author = responseArr[i].author;
+				const email = responseArr[i].email;
+				const title = responseArr[i].title;
+				const body = responseArr[i].body;
+				postArr.push({ id, author, email, date, time, title, body });
 			}
-		})();
-	}, []);
+			setCanGoForward(postArr.length === 10);
+			setForumPosts(postArr);
+		} catch (error) {
+			console.error('Error fetching announcements:', error);
+		}
+	};
 
 	const BG = useColorModeValue('gray.700', 'purple.700');
 
@@ -234,6 +242,22 @@ export default function General() {
 						))}
 					</VStack>
 				</div>
+				<Box mt={4} display='flex' justifyContent='space-between'>
+					<Button
+						onClick={() => setPage((page) => Math.max(page - 1, 1))}
+						disabled={page === 1}
+					>
+						Previous
+					</Button>
+					<Text>Page {page}</Text>
+					<Button
+						onClick={() => {
+							if (canGoForward) setPage((page) => page + 1);
+						}}
+					>
+						Next
+					</Button>
+				</Box>
 			</div>
 		</Box>
 	);

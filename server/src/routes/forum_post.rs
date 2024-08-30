@@ -3,10 +3,17 @@ use std::cmp::Reverse;
 use actix_web::web::{self, Json};
 use actix_web::{get, post, web::Data, HttpResponse};
 use mongodb::bson::Bson;
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 use crate::models::comment::{Comment, CommentRequest};
 use crate::services::db::Database;
 use crate::models::forum_post::{Post, PostRequest};
+
+#[derive(Debug, Validate, Clone, Serialize, Deserialize)]
+struct PaginationArgs {
+	page: u32,
+	limit: u32
+}
 
 #[get("/forum/general/get/amount")]
 pub async fn return_amount_of_posts(db: Data<Database>) -> HttpResponse {
@@ -32,9 +39,9 @@ pub async fn get_post_by_id(db: Data<Database>, id: web::Path<String>) -> HttpRe
 	}
 }
 
-#[get("/forum/general/get")]
-pub async fn return_posts(db: Data<Database>) -> HttpResponse {
-	match db.get_forum_posts().await {
+#[post("/forum/general/get")]
+pub async fn return_posts(db: Data<Database>, request: Json<PaginationArgs>) -> HttpResponse {
+	match db.get_forum_posts(request.page, request.limit).await {
 		Ok(mut posts) => {
 			posts.sort_by_key(|post| Reverse(post.date_created));
 			let posts: Vec<PostRequest> = posts.into_iter().map(|post| {
