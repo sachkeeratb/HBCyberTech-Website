@@ -1,6 +1,6 @@
 use std::env;
 use futures_util::TryStreamExt;
-use mongodb::{bson::{DateTime, doc, oid::ObjectId}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
+use mongodb::{bson::{doc, oid::ObjectId, DateTime}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
 use passwords::{PasswordGenerator, analyzer, scorer};
 use rand::Rng;
 
@@ -130,9 +130,14 @@ impl Database {
   }
 
 
-  pub async fn get_announcement_forum_posts(&self, page: u32, limit: u32) -> Result<Vec<Announcement>, Error> {
+  pub async fn get_announcement_forum_posts(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<Announcement>, Error> {
     let skip = (page - 1) * limit;
-    let cursor = self.announcement_forum_post.find(doc! {}).skip(skip.into()).limit(limit.into()).await?;
+    let filter = if search.is_empty() {
+      doc! {}
+    } else {
+      doc! { field : { "$regex": search, "$options": "i" } }
+    };
+    let cursor = self.announcement_forum_post.find(filter).skip(skip.into()).limit(limit.into()).await?;
     let posts: Vec<Announcement> = cursor.try_collect().await?;
     Ok(posts)
   }
@@ -142,9 +147,14 @@ impl Database {
   }
 
   
-  pub async fn get_forum_posts(&self, page: u32, limit: u32) -> Result<Vec<Post>, Error> {
+  pub async fn get_forum_posts(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<Post>, Error> {
     let skip = (page - 1) * limit;
-    let cursor = self.forum_post.find(doc! {}).skip(skip.into()).limit(limit.into()).await?;
+    let filter = if search.is_empty() {
+      doc! {}
+    } else {
+      doc! { field : { "$regex": search, "$options": "i" } }
+    };
+    let cursor = self.forum_post.find(filter).skip(skip.into()).limit(limit.into()).await?;
     let posts: Vec<Post> = cursor.try_collect().await?;
     Ok(posts)
   }

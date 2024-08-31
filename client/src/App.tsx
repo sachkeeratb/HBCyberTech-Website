@@ -6,20 +6,20 @@ import './App.css';
 const NavBar = lazy(() => import('./components/NavBar'));
 
 // Pages
-const Home = lazy(() => import('./pages/Home'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const About = lazy(() => import('./pages/About'));
-const Links = lazy(() => import('./pages/Links'));
-const SignUp = lazy(() => import('./pages/SignUp'));
-const SignIn = lazy(() => import('./pages/SignIn'));
-const AdminSignIn = lazy(() => import('./pages/AdminSignIn'));
-const Forum = lazy(() => import('./pages/Forum'));
-import CreatePost from './pages/CreatePost';
-import Announcements from './pages/Announcements';
-import General from './pages/GeneralDiscussion';
-import Post from './pages/Post';
-const GeneralForm = lazy(() => import('./pages/GeneralForm'));
-const ExecForm = lazy(() => import('./pages/ExecForm'));
+const Home = lazy(() => import('./pages/General/Home.tsx'));
+const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.tsx'));
+const About = lazy(() => import('./pages/General/About.tsx'));
+const Links = lazy(() => import('./pages/Misc/Links.tsx'));
+const SignUp = lazy(() => import('./pages/Account/SignUp.tsx'));
+const SignIn = lazy(() => import('./pages/Account/SignIn.tsx'));
+const AdminSignIn = lazy(() => import('./pages/Admin/AdminSignIn.tsx'));
+const Forum = lazy(() => import('./pages/Forum/Forum.tsx'));
+import CreatePost from './pages/Forum/CreatePost.tsx';
+import Announcements from './pages/Forum/Announcements.tsx';
+import General from './pages/Forum/GeneralDiscussion.tsx';
+import Post from './pages/Forum/Post.tsx';
+const GeneralForm = lazy(() => import('./pages/Misc/GeneralForm.tsx'));
+const ExecForm = lazy(() => import('./pages/Misc/ExecForm.tsx'));
 
 import theme from './theme.ts';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';

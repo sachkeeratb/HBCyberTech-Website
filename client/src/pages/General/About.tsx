@@ -12,13 +12,13 @@ import {
 import { motion, isValidMotionProp } from 'framer-motion';
 
 // Import images
-import ParthKapoor from '../assets/ParthKapoor.png';
-import GurvirSandhu from '../assets/GurvirSandhu.png';
-import UdeshwarSinghSandhu from '../assets/UdeshwarSinghSandhu.png';
-import PrathamDave from '../assets/PrathamDave.jpg';
-import VanshSuri from '../assets/VanshSuri.png';
-import EdwardLin from '../assets/EdwardLin.jpg';
-import PranavThukral from '../assets/PranavThukral.jpg';
+import ParthKapoor from '../../assets/ParthKapoor.png';
+import GurvirSandhu from '../../assets/GurvirSandhu.png';
+import UdeshwarSinghSandhu from '../../assets/UdeshwarSinghSandhu.png';
+import PrathamDave from '../../assets/PrathamDave.jpg';
+import VanshSuri from '../../assets/VanshSuri.png';
+import EdwardLin from '../../assets/EdwardLin.jpg';
+import PranavThukral from '../../assets/PranavThukral.jpg';
 
 // Import icons
 import {
@@ -162,7 +162,7 @@ export default function About() {
 						</Box>{' '}
 						and I&apos;m the president of this club. I am a Full Stack
 						Developer, but I also have an affinity for the lower levels of
-						computers. In my free time, I like to read, study, and play video
+						programming. In my free time, I like to read, study, and play video
 						games, especially mass-multiplayer FPSs.
 					</Box>
 					<Box

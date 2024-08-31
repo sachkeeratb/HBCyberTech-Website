@@ -8,7 +8,9 @@ import {
 	useColorModeValue,
 	Flex,
 	Button,
-	SlideFade
+	SlideFade,
+	Input,
+	Select
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -162,16 +164,20 @@ export default function General() {
 	const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
 	const [page, setPage] = useState(1);
 	const [canGoForward, setCanGoForward] = useState(false);
+	const [search, setSearch] = useState('');
+	const [filter, setFilter] = useState('title');
 
 	useEffect(() => {
 		fetchForumPosts();
-	}, [page]);
+	}, [page, search, filter]);
 
 	const fetchForumPosts = async () => {
 		try {
 			const response = await instance.post('/forum/general/get', {
 				page: page,
-				limit: 10
+				limit: 10,
+				search: search,
+				field: filter
 			});
 			const responseArr: ForumPostRequest[] = [];
 			const postArr: ForumPost[] = [];
@@ -211,6 +217,13 @@ export default function General() {
 		}
 	};
 
+	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(event.target.value);
+		setPage(1);
+		setForumPosts([]);
+		setCanGoForward(true);
+	};
+
 	const BG = useColorModeValue('gray.700', 'purple.700');
 
 	return (
@@ -224,6 +237,26 @@ export default function General() {
 				</Flex>
 			</Heading>
 			<div>
+				<Box>
+					<Flex justifyContent='space-between'>
+						<Input
+							placeholder='Search posts...'
+							value={search}
+							onChange={handleSearchChange}
+							mb={4}
+							maxWidth={'74%'}
+						/>
+						<Select
+							maxWidth='25%'
+							onChange={(e) => setFilter(e.target.value)}
+							defaultValue='title'
+						>
+							<option value='title'>Title</option>
+							<option value='author'>Author</option>
+							<option value='email'>Email</option>
+						</Select>
+					</Flex>
+				</Box>
 				<div>
 					<VStack
 						spacing={2}

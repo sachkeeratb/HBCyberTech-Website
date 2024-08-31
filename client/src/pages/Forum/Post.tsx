@@ -12,7 +12,9 @@ import {
 	useColorModeValue,
 	Flex,
 	SlideFade,
-	FormErrorMessage
+	FormErrorMessage,
+	Input,
+	Select
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -242,6 +244,8 @@ export default function Post() {
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const [hasMore, setHasMore] = useState(true);
+	const [search, setSearch] = useState('');
+	const [filter, setFilter] = useState('author');
 	let lastPage = 0;
 
 	useEffect(() => {
@@ -261,7 +265,7 @@ export default function Post() {
 
 	useEffect(() => {
 		fetchComments();
-	}, [hasMore]);
+	}, [search, filter, hasMore]);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -320,7 +324,9 @@ export default function Post() {
 				`/forum/general/post/${id}/comments`,
 				{
 					page: page,
-					limit: 3
+					limit: 3,
+					search: search,
+					field: filter
 				}
 			);
 			const responseArr: CommentRequest[] = [];
@@ -367,7 +373,6 @@ export default function Post() {
 			setLoading(false);
 		}
 	};
-	// rather than the second page being loaded, the first page is loaded twice, which leads to duplicated comments
 
 	const handleCommentSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -422,6 +427,13 @@ export default function Post() {
 		} catch (error) {
 			console.error('Error submitting comment:', error);
 		}
+	};
+
+	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(event.target.value);
+		setPage(1);
+		setComments([]);
+		setHasMore(true);
 	};
 
 	const OUTLINE = useColorModeValue('gray.700', 'purple.700');
@@ -512,6 +524,25 @@ export default function Post() {
 				<Heading as='h1' size='lg' pt={5}>
 					Comments
 				</Heading>
+				<Box width='75%'>
+					<Flex justifyContent='space-between'>
+						<Input
+							placeholder='Search comments...'
+							value={search}
+							onChange={handleSearchChange}
+							mb={4}
+							maxWidth={'74%'}
+						/>
+						<Select
+							maxWidth='25%'
+							onChange={(e) => setFilter(e.target.value)}
+							defaultValue='author'
+						>
+							<option value='author'>Author</option>
+							<option value='email'>Email</option>
+						</Select>
+					</Flex>
+				</Box>
 				<VStack
 					w='80%'
 					bg={OUTLINE}
@@ -528,11 +559,13 @@ export default function Post() {
 						</Box>
 					))}
 				</VStack>
+				<VStack spacing={4}>
+					<Box mt={4} display='flex' justifyContent='space-between'>
+						{loading && <Text>Loading...</Text>}
+						{!hasMore && <Text>No more comments</Text>}
+					</Box>
+				</VStack>
 			</VStack>
-			<Box mt={4} display='flex' justifyContent='space-between'>
-				{loading && <Text>Loading...</Text>}
-				{!hasMore && <Text>No more comments</Text>}
-			</Box>
 		</Box>
 	);
 }

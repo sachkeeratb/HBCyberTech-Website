@@ -2,7 +2,7 @@ use std::cmp::Reverse;
 
 use actix_web::web::{self, Json};
 use actix_web::{get, post, web::Data, HttpResponse};
-use mongodb::bson::Bson;
+use mongodb::bson::{doc, Bson};
 use serde::Deserialize;
 use validator::Validate;
 use crate::models::comment::{Comment, CommentRequest};
@@ -11,8 +11,10 @@ use crate::models::forum_post::{Post, PostRequest};
 
 #[derive(Deserialize)]
 struct PaginationArgs {
-	page: u32,
-	limit: u32
+  page: u32,
+  limit: u32,
+	search: String,
+	field: String,
 }
 
 #[get("/forum/general/get/amount")]
@@ -41,7 +43,7 @@ pub async fn get_post_by_id(db: Data<Database>, id: web::Path<String>) -> HttpRe
 
 #[post("/forum/general/get")]
 pub async fn return_posts(db: Data<Database>, request: Json<PaginationArgs>) -> HttpResponse {
-	match db.get_forum_posts(request.page, request.limit).await {
+	match db.get_forum_posts(request.page, request.limit, request.search.clone(), request.field.clone()).await {
 		Ok(mut posts) => {
 			posts.sort_by_key(|post| Reverse(post.date_created));
 			let posts: Vec<PostRequest> = posts.into_iter().map(|post| {
@@ -125,7 +127,7 @@ pub async fn post_comment(db: Data<Database>, id: web::Path<String>, request: Js
 
 #[post("/forum/general/post/{id}/comments")]
 pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>, request: Json<PaginationArgs>) -> HttpResponse {
-	let PaginationArgs { page, limit } = request.into_inner();
+	let PaginationArgs { page, limit , search, field} = request.into_inner();
 	match db.get_forum_post_by_id(id.to_string()).await {
 		Ok(Some(post)) => {
 			let skip = (page - 1) * limit;
@@ -139,6 +141,12 @@ pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>, 
 					email,
 					date_created,
 					body
+				}
+			}).filter(|comment| {
+				match field.as_str() {
+					"author" => comment.author.contains(&search),
+					"email" => comment.email.contains(&search),
+					_ => comment.author.contains(&search) 
 				}
 			}).collect();
 

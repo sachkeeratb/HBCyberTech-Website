@@ -12,7 +12,7 @@ lazy_static! {
   static ref RE_BODY: Regex = Regex::new(r"^.{20,600}$").unwrap();
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Post {
   pub _id: ObjectId,
   pub author: String,
