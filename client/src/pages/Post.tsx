@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
 	Box,
@@ -71,21 +71,33 @@ const DesktopForumPost: React.FC<ForumPost> = ({
 				<Flex>
 					<SlideFade in={true} offsetY='50vh'>
 						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-							<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+							<Text
+								fontSize='xl'
+								fontWeight='bold'
+								mr={2}
+								align='left'
+								overflow='hidden'
+							>
 								{title}
 							</Text>
 						</motion.div>
 					</SlideFade>
-					<Text fontSize='md' color='gray.400' mt={1} align='left'>
+					<Text
+						fontSize='md'
+						color='gray.400'
+						mt={1}
+						align='left'
+						overflow='hidden'
+					>
 						by {author} &lt;{email}&gt;
 					</Text>
 				</Flex>
-				<Text fontSize='sm' color='gray.400' align='right'>
+				<Text fontSize='sm' color='gray.400' align='right' overflow='hidden'>
 					{date} at {time}
 				</Text>
 			</Flex>
 			<Flex mt={4}>
-				<Text fontSize='md' align='left'>
+				<Text fontSize='md' align='left' overflow='hidden'>
 					{body}
 				</Text>
 			</Flex>
@@ -106,21 +118,27 @@ const MobileForumPost: React.FC<ForumPost> = ({
 			<Flex direction='column' align='left'>
 				<SlideFade in={true} offsetY='50vh'>
 					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-						<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+						<Text
+							fontSize='xl'
+							fontWeight='bold'
+							mr={2}
+							align='left'
+							overflow='hidden'
+						>
 							{title}
 						</Text>
 					</motion.div>
 				</SlideFade>
 			</Flex>
 
-			<Text fontSize='md' color='gray.400' align='left'>
+			<Text fontSize='md' color='gray.400' align='left' overflow='hidden'>
 				by {author} &lt;{email}&gt;
 			</Text>
-			<Text fontSize='sm' color='gray.400' align='left'>
+			<Text fontSize='sm' color='gray.400' align='left' overflow='hidden'>
 				{date} at {time}
 			</Text>
 			<Flex mt={4}>
-				<Text fontSize='md' align='left'>
+				<Text fontSize='md' align='left' overflow='hidden'>
 					{body}
 				</Text>
 			</Flex>
@@ -135,18 +153,25 @@ const DesktopComment: React.FC<Comment> = (comment: Comment, BG: string) => {
 				<Flex>
 					<SlideFade in={true} offsetY='50vh'>
 						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-							<Text fontSize='xl' mt={1} align='left' fontWeight='bold' mr={2}>
+							<Text
+								fontSize='xl'
+								mt={1}
+								align='left'
+								fontWeight='bold'
+								mr={2}
+								overflow='hidden'
+							>
 								{comment.author} &lt;{comment.email}&gt;
 							</Text>
 						</motion.div>
 					</SlideFade>
 				</Flex>
-				<Text fontSize='sm' color='gray.400' align='right'>
+				<Text fontSize='sm' color='gray.400' align='right' overflow='hidden'>
 					{comment.date} at {comment.time}
 				</Text>
 			</Flex>
 			<Flex mt={4}>
-				<Text fontSize='md' align='left'>
+				<Text fontSize='md' align='left' overflow='hidden'>
 					{comment.body}
 				</Text>
 			</Flex>
@@ -159,17 +184,23 @@ const MobileComment: React.FC<Comment> = (comment: Comment, BG: string) => {
 			<Flex direction='column' align='left'>
 				<SlideFade in={true} offsetY='50vh'>
 					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-						<Text fontSize='md' fontWeight='bold' mr={2} align='left'>
+						<Text
+							fontSize='md'
+							fontWeight='bold'
+							mr={2}
+							align='left'
+							overflow='hidden'
+						>
 							{comment.author} &lt;{comment.email}&gt;
 						</Text>
 					</motion.div>
 				</SlideFade>
 			</Flex>
-			<Text fontSize='sm' color='gray.400' align='left'>
+			<Text fontSize='sm' color='gray.400' align='left' overflow='hidden'>
 				{comment.date} at {comment.time}
 			</Text>
 			<Flex mt={4}>
-				<Text fontSize='md' align='left'>
+				<Text fontSize='md' align='left' overflow='hidden'>
 					{comment.body}
 				</Text>
 			</Flex>
@@ -209,7 +240,9 @@ export default function Post() {
 	});
 	const [error, setError] = useState(false);
 	const [page, setPage] = useState(1);
-	const [canGoForward, setCanGoForward] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [hasMore, setHasMore] = useState(true);
+	let lastPage = 0;
 
 	useEffect(() => {
 		if (cookies.user) {
@@ -224,7 +257,23 @@ export default function Post() {
 
 	useEffect(() => {
 		fetchPost();
-	}, [id, page]);
+	}, [id]);
+
+	useEffect(() => {
+		fetchComments();
+	}, [hasMore]);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			if (
+				window.innerHeight + document.documentElement.scrollTop ===
+				document.documentElement.offsetHeight
+			)
+				fetchComments();
+		};
+		window.addEventListener('scroll', handleScroll);
+		return () => window.removeEventListener('scroll', handleScroll);
+	}, [page]);
 
 	const fetchPost = async () => {
 		try {
@@ -258,57 +307,67 @@ export default function Post() {
 				title: postData.title,
 				body: postData.body
 			});
-
-			try {
-				const response = await instance.post(
-					`/forum/general/post/${id}/comments`,
-					{
-						page: page,
-						limit: 5
-					}
-				);
-				const responseArr: CommentRequest[] = [];
-				const commentArr: Comment[] = [];
-				for (let i = 0; i < response.data.length; i++) {
-					responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-					const ymd =
-						responseArr[i].date_created.toString().substring(0, 10) + 'T';
-					let hms =
-						responseArr[i].date_created
-							.toString()
-							.substring(
-								11,
-								responseArr[i].date_created.toString().indexOf('.')
-							) + '.000Z';
-					if (hms.length != 13) {
-						hms = '0' + hms;
-					}
-					const givenDate = new Date(ymd + hms);
-					const date = givenDate.toLocaleDateString('en-US', {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric'
-					});
-					const time = givenDate.toLocaleString('en-US', {
-						hour: 'numeric',
-						minute: 'numeric',
-						hour12: true
-					});
-					const author = responseArr[i].author;
-					const email = responseArr[i].email;
-					const body = responseArr[i].body;
-					commentArr.push({ author, email, date, time, body });
-				}
-				setCanGoForward(commentArr.length === 5);
-				setComments(commentArr);
-			} catch (error) {
-				console.error('Error fetching comments:', error);
-			}
 		} catch (error) {
 			console.error('Error fetching post:', error);
 			navigate('/forum/general');
 		}
 	};
+
+	const fetchComments = async () => {
+		if (!hasMore) return;
+		try {
+			const response = await instance.post(
+				`/forum/general/post/${id}/comments`,
+				{
+					page: page,
+					limit: 3
+				}
+			);
+			const responseArr: CommentRequest[] = [];
+			const commentArr: Comment[] = [];
+			for (let i = 0; i < response.data.length; i++) {
+				responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
+				const ymd =
+					responseArr[i].date_created.toString().substring(0, 10) + 'T';
+				let hms =
+					responseArr[i].date_created
+						.toString()
+						.substring(
+							11,
+							responseArr[i].date_created.toString().indexOf('.')
+						) + '.000Z';
+				if (hms.length != 13) {
+					hms = '0' + hms;
+				}
+				const givenDate = new Date(ymd + hms);
+				const date = givenDate.toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				});
+				const time = givenDate.toLocaleString('en-US', {
+					hour: 'numeric',
+					minute: 'numeric',
+					hour12: true
+				});
+				const author = responseArr[i].author;
+				const email = responseArr[i].email;
+				const body = responseArr[i].body;
+				commentArr.push({ author, email, date, time, body });
+			}
+			if (page == lastPage) return;
+			lastPage = page;
+
+			setComments((prevComments) => [...prevComments, ...commentArr]);
+			setHasMore(commentArr.length > 0);
+			setPage((prevPage) => prevPage + 1);
+		} catch (error) {
+			console.error('Error fetching comments:', error);
+		} finally {
+			setLoading(false);
+		}
+	};
+	// rather than the second page being loaded, the first page is loaded twice, which leads to duplicated comments
 
 	const handleCommentSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
@@ -471,20 +530,8 @@ export default function Post() {
 				</VStack>
 			</VStack>
 			<Box mt={4} display='flex' justifyContent='space-between'>
-				<Button
-					onClick={() => setPage((page) => Math.max(page - 1, 1))}
-					disabled={page === 1}
-				>
-					Previous
-				</Button>
-				<Text pt='1vh'>Page {page}</Text>
-				<Button
-					onClick={() => {
-						if (canGoForward) setPage((page) => page + 1);
-					}}
-				>
-					Next
-				</Button>
+				{loading && <Text>Loading...</Text>}
+				{!hasMore && <Text>No more comments</Text>}
 			</Box>
 		</Box>
 	);

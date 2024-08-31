@@ -138,7 +138,7 @@ pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>, 
 					author,
 					email,
 					date_created,
-					body,
+					body
 				}
 			}).collect();
 

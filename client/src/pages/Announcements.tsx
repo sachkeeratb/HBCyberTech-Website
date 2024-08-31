@@ -44,21 +44,33 @@ const DesktopAnnouncementPost: React.FC<Announcement> = ({
 				<Flex>
 					<SlideFade in={true} offsetY='50vh'>
 						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-							<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+							<Text
+								fontSize='xl'
+								fontWeight='bold'
+								mr={2}
+								align='left'
+								overflow='hidden'
+							>
 								{title}
 							</Text>
 						</motion.div>
 					</SlideFade>
-					<Text fontSize='md' color='gray.400' mt={1} align='left'>
+					<Text
+						fontSize='md'
+						color='gray.400'
+						mt={1}
+						align='left'
+						overflow='hidden'
+					>
 						by {author}
 					</Text>
 				</Flex>
-				<Text fontSize='sm' color='gray.400' align='right'>
+				<Text fontSize='sm' color='gray.400' align='right' overflow='hidden'>
 					{date} at {time}
 				</Text>
 			</Flex>
 			<Flex mt={4}>
-				<Text fontSize='md' align='left'>
+				<Text fontSize='md' align='left' overflow='hidden'>
 					{body}
 				</Text>
 			</Flex>
@@ -80,20 +92,26 @@ const MobileAnnouncementPost: React.FC<Announcement> = ({
 			<Flex direction='column' align='left'>
 				<SlideFade in={true} offsetY='50vh'>
 					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-						<Text fontSize='xl' fontWeight='bold' mr={2} align='left'>
+						<Text
+							fontSize='xl'
+							fontWeight='bold'
+							mr={2}
+							align='left'
+							overflow='hidden'
+						>
 							{title}
 						</Text>
 					</motion.div>
 				</SlideFade>
-				<Text fontSize='md' color='gray.400' align='left'>
+				<Text fontSize='md' color='gray.400' align='left' overflow='hidden'>
 					by {author}
 				</Text>
 			</Flex>
-			<Text fontSize='sm' color='gray.400' align='left'>
+			<Text fontSize='sm' color='gray.400' align='left' overflow='hidden'>
 				{date} at {time}
 			</Text>
 			<Flex mt={4}>
-				<Text fontSize='md' align='left'>
+				<Text fontSize='md' align='left' overflow='hidden'>
 					{body}
 				</Text>
 			</Flex>
