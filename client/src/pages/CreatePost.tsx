@@ -94,13 +94,13 @@ export default function CreatePost() {
 
 	// Handle the input change for the title
 	const handleTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (
-			!e.target.value ||
-			e.target.value.length < 5 ||
-			e.target.value.length > 20
-		)
-			setError({ ...error, titleErr: true });
-		else setError({ ...error, titleErr: false });
+		setError({
+			...error,
+			titleErr:
+				!e.target.value ||
+				e.target.value.length < 5 ||
+				e.target.value.length > 20
+		});
 		setChars({ ...chars, title: 20 - e.target.value.length });
 
 		setData({ ...data, title: e.target.value });
@@ -108,13 +108,13 @@ export default function CreatePost() {
 
 	// Handle the input change for the body
 	const handleBodyInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		if (
-			!e.target.value ||
-			e.target.value.length < 20 ||
-			e.target.value.length > 600
-		)
-			setError({ ...error, bodyErr: true });
-		else setError({ ...error, bodyErr: false });
+		setError({
+			...error,
+			bodyErr:
+				!e.target.value ||
+				e.target.value.length < 20 ||
+				e.target.value.length > 600
+		});
 		setChars({ ...chars, body: 600 - e.target.value.length });
 
 		setData({ ...data, body: e.target.value });

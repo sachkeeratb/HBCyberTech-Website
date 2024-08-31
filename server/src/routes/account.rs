@@ -24,13 +24,11 @@ struct Claims {
 }
 
 async fn check_account_exists(db: &Database, username_or_email: &str) -> bool {
-	match db.account_does_exist_full_name(username_or_email.to_string()).await {
-		true => true,
-		false => match db.account_does_exist_email(username_or_email.to_string()).await {
-			true => true,
-			false => false
-		}
-	}
+  if db.account_does_exist_full_name(username_or_email.to_owned()).await {
+    true
+  } else {
+    db.account_does_exist_email(username_or_email.to_owned()).await
+  }
 }
 
 #[get("/account/get/{username_or_email}")]
@@ -53,7 +51,7 @@ pub async fn verify_account(db: Data<Database>, id: web::Path<String>) -> HttpRe
 }
 
 #[post("/account/post/signin")]
-pub async fn sign_in(db: Data<Database>, request: web::Json<AccountGiven>) -> HttpResponse {
+pub async fn account_sign_in(db: Data<Database>, request: web::Json<AccountGiven>) -> HttpResponse {
 	if !check_account_exists(&db, &request.email).await {
 		return HttpResponse::NotFound().json("Account does not exist.");
 	}

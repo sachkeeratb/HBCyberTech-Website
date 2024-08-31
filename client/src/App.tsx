@@ -7,10 +7,12 @@ const NavBar = lazy(() => import('./components/NavBar'));
 
 // Pages
 const Home = lazy(() => import('./pages/Home'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const About = lazy(() => import('./pages/About'));
 const Links = lazy(() => import('./pages/Links'));
 const SignUp = lazy(() => import('./pages/SignUp'));
 const SignIn = lazy(() => import('./pages/SignIn'));
+const AdminSignIn = lazy(() => import('./pages/AdminSignIn'));
 const Forum = lazy(() => import('./pages/Forum'));
 import CreatePost from './pages/CreatePost';
 import Announcements from './pages/Announcements';
@@ -35,10 +37,12 @@ function App() {
 			<Router>
 				<Routes>
 					<Route index path='/' element={<Home />} />
+					<Route path='/admin' element={<AdminDashboard />} />
 					<Route path='/about' element={<About />} />
 					<Route path='/links' element={<Links />} />
 					<Route path='/signup' element={<SignUp />} />
 					<Route path='/signin' element={<SignIn />} />
+					<Route path='/admin/signin' element={<AdminSignIn />} />
 					<Route path='/forum' element={<Forum />} />
 					<Route path='/forum/create' element={<CreatePost />} />
 					<Route path='/forum/announcements' element={<Announcements />} />

@@ -4,9 +4,11 @@ mod services;
 
 use actix_cors::Cors;
 use routes::{
-	account::{create_account, get_account_by_username_or_email, sign_in, verify_account}, 
+	account::{account_sign_in, create_account, get_account_by_username_or_email, verify_account}, 
+	admin::{admin_sign_in, verify_admin}, 
 	announcement_forum_post::{return_amount_of_announcements, return_announcements}, 
-	executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, forum_post::{create_post, get_comments_by_post_id, get_post_by_id, post_comment, return_amount_of_posts, return_posts}, 
+	executive_member::{create_executive_member, get_executive_member_by_full_name_or_email}, 
+	forum_post::{create_post, get_comments_by_post_id, get_post_by_id, post_comment, return_amount_of_posts, return_posts}, 
 	general_member::{create_general_member, get_general_member_by_full_name_or_email}
 };
 use services::db::Database;
@@ -47,8 +49,10 @@ async fn main() -> std::io::Result<()> {
 			.service(get_comments_by_post_id)
 			.service(post_comment)
 			.service(create_account)
-			.service(sign_in)
+			.service(account_sign_in)
 			.service(verify_account)
+			.service(admin_sign_in)
+			.service(verify_admin)
 	})
 		.bind((dotenv!("HOST"), dotenv!("PORT").parse::<u16>().unwrap()))?
 		.run()

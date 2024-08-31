@@ -1,17 +1,25 @@
 use std::env;
 use futures_util::TryStreamExt;
-use mongodb::{bson::{doc, oid::ObjectId}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
+use mongodb::{bson::{DateTime, doc, oid::ObjectId}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
+use passwords::{PasswordGenerator, analyzer, scorer};
+use rand::Rng;
 
-use crate::models::{account::Account, announcement_forum_post::Announcement, executive_member::ExecutiveMember, forum_post::Post, general_member::GeneralMember};
-
-extern crate dotenv;
+use crate::models::{
+  account::Account, 
+  admin::Admin, 
+  announcement_forum_post::Announcement,
+  forum_post::Post,
+  executive_member::ExecutiveMember,
+  general_member::GeneralMember
+};
 
 pub struct Database {
   general_member: Collection<GeneralMember>,
   executive_member: Collection<ExecutiveMember>,
   announcement_forum_post: Collection<Announcement>,
   forum_post: Collection<Post>,
-  account: Collection<Account>
+  account: Collection<Account>,
+  admin: Collection<Admin>
 }
 
 impl Database {
@@ -30,13 +38,15 @@ impl Database {
     let announcement_forum_post: Collection<Announcement> = db.collection("Announcements");
     let forum_post: Collection<Post> = db.collection("ForumPosts");
     let account: Collection<Account> = db.collection("Accounts");
+    let admin: Collection<Admin> = db.collection("Admin");
 
     Database {
       general_member,
       executive_member,
       announcement_forum_post,
       forum_post,
-      account
+      account,
+      admin
     }
   }
 
@@ -208,15 +218,15 @@ impl Database {
   }
 
   pub async fn verify_account(&self, id: String) -> Result<UpdateResult, Error> {
-      let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
-      let result = self
-        .account
-        .update_one(doc! { "_id": object_id }, doc! { "$set": { "verified": true } })
-        .await
-        .ok()
-        .expect("Error verifying account.");
+    let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
+    let result = self
+      .account
+      .update_one(doc! { "_id": object_id }, doc! { "$set": { "verified": true } })
+      .await
+      .ok()
+      .expect("Error verifying account.");
   
-      Ok(result)
+    Ok(result)
   }
   pub async fn create_account(&self, acc: Account) -> Result<InsertOneResult, Error> {
     if self.account_does_exist(&acc).await {
@@ -231,5 +241,51 @@ impl Database {
       .expect("Error creating account.");
 
     Ok(result)
+  }
+
+
+  pub async fn update_admin(&self) -> Result<UpdateResult, Error> {
+    // Generate a number between 30 and 45
+    let num = rand::thread_rng().gen_range(30..=45);
+
+    // Create a password generator to generate a secure password with a length between 30 and 45 characters
+    let mut pgi = PasswordGenerator {
+      length: num,
+      numbers: true,
+      lowercase_letters: true,
+      uppercase_letters: true,
+      symbols: true,
+      spaces: true,
+      exclude_similar_characters: true,
+      strict: true,
+    }.try_iter().unwrap();
+
+    // Create a new password with a score of at least 90
+    let mut new_password = pgi.next().unwrap();
+    while scorer::score(&analyzer::analyze(&new_password)) < 90.0 {
+      new_password = pgi.next().unwrap();
+    }
+    
+    // Update the admin account with the new password and the current time
+    let result = self.admin.update_one(
+      doc! {},
+      doc! { "$set": { "password": new_password, "last_reset": DateTime::now() } }
+    ).await?;
+  
+    // Return the result of the update operation
+    Ok(result)
+  }
+  
+  pub async fn get_admin(&self) -> Result<Admin, Error> {
+    // Get the admin account
+    let admin = self.admin.find_one(doc! { }).await.expect("Admin does not exist.").unwrap();
+
+    return Ok(admin);
+  }
+  pub async fn get_admin_hashed_password(&self) -> Result<String, Error> {
+    // Get the admin account
+    let admin = self.get_admin().await.unwrap();
+
+    return Ok(bcrypt::hash(admin.password, bcrypt::DEFAULT_COST).unwrap());
   }
 }

@@ -92,53 +92,50 @@ export default function ExecForm() {
 	// Handle input changes
 	const handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, fullName: e.target.value });
-		if (
-			e.target.value === '' ||
-			e.target.value.length < 2 ||
-			e.target.value.length > 40 ||
-			!/^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ\s']*$/u.test(
-				e.target.value
-			)
-		)
-			setError({ ...error, nameErr: true });
-		else setError({ ...error, nameErr: false });
+		setError({
+			...error,
+			nameErr:
+				e.target.value === '' ||
+				e.target.value.length < 2 ||
+				e.target.value.length > 40 ||
+				!/^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ\s']*$/u.test(
+					e.target.value
+				)
+		});
 	};
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, email: e.target.value });
-		if (
-			!e.target.value.endsWith('@pdsb.net') ||
-			e.target.value.length < 15 ||
-			e.target.value.length > 20 ||
-			!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
-		)
-			setError({ ...error, emailErr: true });
-		else setError({ ...error, emailErr: false });
+		setError({
+			...error,
+			emailErr:
+				!e.target.value.endsWith('@pdsb.net') ||
+				e.target.value.length < 15 ||
+				e.target.value.length > 20 ||
+				!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
+		});
 	};
 	const handleWhyInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		setData({ ...data, why: e.target.value });
 		setChars({ ...chars, why: 600 - e.target.value.length });
-		if (chars.why < 0) setError({ ...error, whyErr: true });
-		else setError({ ...error, whyErr: false });
+		setError({ ...error, whyErr: chars.why <= 0 });
 	};
 	const handleExtraInputChange = (
 		e: React.ChangeEvent<HTMLTextAreaElement>
 	) => {
 		setData({ ...data, extra: e.target.value });
 		setChars({ ...chars, extra: 200 - e.target.value.length });
-		if (chars.extra < 0) setError({ ...error, extraErr: true });
-		else setError({ ...error, extraErr: false });
+		setError({ ...error, extraErr: chars.extra <= 0 });
 	};
 	const handleExperienceInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		setData({ ...data, experience: e.target.value });
 		setChars({ ...chars, experience: 600 - e.target.value.length });
-		if (chars.experience < 0) setError({ ...error, experienceErr: true });
-		else setError({ ...error, experienceErr: false });
+		setError({ ...error, experienceErr: chars.experience <= 0 });
 	};
 	const handlePortfolioInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, portfolio: e.target.value });
 		if (e.target.value.length > 0)
-			error.portfolioErr = !isValidUrl(e.target.value);
-		else error.portfolioErr = data.execType === 'marketing';
+			setError({ ...error, portfolioErr: !isValidUrl(e.target.value) });
+		else setError({ ...error, portfolioErr: data.execType === 'marketing' });
 	};
 
 	// Check if the URL is valid

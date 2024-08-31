@@ -18,19 +18,8 @@ import {
 import { toast, Toaster } from 'react-hot-toast';
 import { useCookies } from 'react-cookie';
 
-interface FormVals {
-	email: string;
-	password: string;
-}
-
-interface FormErrors {
-	emailErr: boolean;
-	passwordErr: boolean;
-}
-
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -40,106 +29,70 @@ const instance = axios.create({
 	}
 });
 
-export default function SignIn() {
-	const [cookies, setCookie] = useCookies(['user']);
+export default function AdminSignIn() {
+	const [cookies, setCookie, removeCookie] = useCookies(['user', 'admin']);
 
-	const [data, setData] = useState<FormVals>({
-		email: '',
-		password: ''
-	});
-	const [error, setError] = useState<FormErrors>({
-		emailErr: false,
-		passwordErr: false
-	});
+	const [password, setPassword] = useState('');
+	const [error, setError] = useState(false);
 	const [show, setShow] = useState(false);
 	const handleClick = () => setShow(!show);
 
-	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setData((prevData) => ({
-			...prevData,
-			email: e.target.value
-		}));
-		setError({
-			...error,
-			emailErr:
-				!e.target.value.endsWith('@pdsb.net') ||
-				e.target.value.length < 15 ||
-				e.target.value.length > 20 ||
-				!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
-		});
-	};
-
-	const doesNotExist = async (email: string): Promise<boolean> => {
-		const recievedEmail = await instance.get(`/account/get/${email}`);
-
-		if (recievedEmail.data.length > 0) return false;
-
-		toast.error('You have not signed up.');
-		return true;
-	};
-
 	const handlePasswordInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setData((prevData) => ({
-			...prevData,
-			password: e.target.value
-		}));
-		setError({ ...error, passwordErr: e.target.value.length > 50 });
+		setPassword(e.target.value);
+		setError(e.target.value.length > 50);
 	};
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
-		if (error.emailErr || error.passwordErr) {
+		if (error) {
 			toast.error('You have invalid inputs. Please try again.');
 			return;
 		}
 
-		if (localStorage.getItem('lockoutTime')) {
+		if (localStorage.getItem('adminLockoutTime')) {
 			const currentTime = new Date().getTime();
-			const lockoutTime = new Date(localStorage.getItem('lockoutTime') || '');
+			const lockoutTime = new Date(
+				localStorage.getItem('adminLockoutTime') || ''
+			);
 			if (currentTime < lockoutTime.getTime()) {
 				toast.error(
 					'You have exceeded the maximum login attempts. Please try again later.'
 				);
 				return;
 			}
-			localStorage.removeItem('lockoutTime');
-			localStorage.removeItem('loginAttempts');
+			localStorage.removeItem('adminLockoutTime');
+			localStorage.removeItem('adminLoginAttempts');
 		}
 
-		const { email, password } = data;
-
 		try {
-			if (await doesNotExist(email)) return;
-			if (cookies.user) {
-				toast.error('You are already signed in.');
-				return;
-			}
+			if (cookies.user) removeCookie('user');
+			if (cookies.admin) removeCookie('admin');
 
-			const { data } = await instance.post('/account/post/signin', {
-				email: email,
+			const { data } = await instance.post('/admin/signin', {
 				password: password
 			});
 
 			if (!data) {
-				if (!localStorage.getItem('loginAttempts'))
-					localStorage.setItem('loginAttempts', '0');
+				if (!localStorage.getItem('adminLoginAttempts'))
+					localStorage.setItem('adminLoginAttempts', '0');
 				const loginAttempts = parseInt(
-					localStorage.getItem('loginAttempts') || '0'
+					localStorage.getItem('adminLoginAttempts') || '0'
 				);
 				if (loginAttempts < 2) {
-					localStorage.setItem('loginAttempts', (loginAttempts + 1).toString());
-					toast.error(
-						"Invalid password. If you've forgotten your password, please contact an administrator."
+					localStorage.setItem(
+						'adminLoginAttempts',
+						(loginAttempts + 1).toString()
 					);
+					toast.error('Invalid password.');
 					toast.error('You have ' + (3 - loginAttempts) + ' attempt(s) left.');
 					return;
 				}
 
 				const currentTime = new Date().getTime();
-				const lockoutTime = new Date(currentTime + 1000 * 60 * 60); // Lockout for 1 hour
-				localStorage.setItem('lockoutTime', lockoutTime.toString());
+				const lockoutTime = new Date(currentTime + 1000 * 60 * 60 + 6); // Lockout for 6 hours
+				localStorage.setItem('adminLockoutTime', lockoutTime.toString());
 				toast.error(
-					'You have exceeded the maximum login attempts. Please try again after 1 hour.'
+					'You have exceeded the maximum login attempts. Please try again after 6 hours.'
 				);
 				return;
 			}
@@ -151,14 +104,14 @@ export default function SignIn() {
 			}
 
 			const { token } = data;
-			setCookie('user', token, {
+			setCookie('admin', token, {
 				httpOnly: false,
 				path: '/',
 				expires: token.expires
 			});
 
 			// Allow the user to continue
-			setData({} as FormVals);
+			setPassword('');
 			toast.success('Sign in successful. Welcome back.');
 			new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
 				window.location.reload();
@@ -183,7 +136,7 @@ export default function SignIn() {
 			<Center>
 				<Stack spacing={4}>
 					<Stack align='center'>
-						<Heading fontSize='2xl'>Sign in to your account</Heading>
+						<Heading fontSize='2xl'>Welcome, Admin</Heading>
 					</Stack>
 					<VStack
 						as='form'
@@ -204,33 +157,13 @@ export default function SignIn() {
 						onSubmit={handleSubmit}
 					>
 						<VStack spacing={4} w='100%'>
-							<FormControl isRequired isInvalid={error.emailErr}>
-								<FormLabel>Email</FormLabel>
-								<Input
-									type='email'
-									placeholder='123456@pdsb.net'
-									value={data.email}
-									onChange={handleEmailInputChange}
-								/>
-								{!error.emailErr ? (
-									<></>
-								) : (
-									<FormErrorMessage>
-										A valid PDSB email is required.
-									</FormErrorMessage>
-								)}
-							</FormControl>
-							<FormControl
-								id='password'
-								isRequired
-								isInvalid={error.passwordErr}
-							>
+							<FormControl id='password' isRequired isInvalid={error}>
 								<FormLabel>Password</FormLabel>
 								<InputGroup size='md'>
 									<Input
 										rounded='md'
 										type={show ? 'text' : 'password'}
-										value={data.password}
+										value={password}
 										onChange={handlePasswordInputChange}
 									/>
 									<InputRightElement width='4.5rem'>
@@ -248,7 +181,7 @@ export default function SignIn() {
 										</Button>
 									</InputRightElement>
 								</InputGroup>
-								{!error.passwordErr ? (
+								{!error ? (
 									<></>
 								) : (
 									<FormErrorMessage>

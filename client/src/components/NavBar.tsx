@@ -36,7 +36,7 @@ export default function NavBar() {
 	// Hooks for managing state and behavior
 	const { isOpen, onToggle } = useDisclosure();
 	const { colorMode, toggleColorMode } = useColorMode();
-	const [cookies, , removeCookie] = useCookies(['user']);
+	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 
 	return (
 		<Box>
@@ -83,14 +83,15 @@ export default function NavBar() {
 					spacing={6}
 				>
 					{/* Sign Out Button */}
-					{cookies.user ? (
+					{cookies.user || cookies.admin ? (
 						<Button
 							as={'a'}
 							fontSize={'sm'}
 							fontWeight={600}
 							href={'#'}
 							onClick={() => {
-								removeCookie('user');
+								if (cookies.user) removeCookie('user');
+								else removeCookie('admin');
 								window.location.reload();
 							}}
 						>
@@ -128,6 +129,8 @@ const DesktopNav = () => {
 	const linkColor = useColorModeValue('gray.600', 'gray.200');
 	const linkHoverColor = useColorModeValue('gray.800', 'white');
 	const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+
+	const [cookies] = useCookies(['user', 'admin']);
 
 	return (
 		<Stack direction={'row'} spacing={4}>
@@ -170,6 +173,31 @@ const DesktopNav = () => {
 					</Popover>
 				</Box>
 			))}
+
+			{cookies.admin ? (
+				<Box>
+					<Popover trigger={'hover'} placement={'bottom-start'}>
+						<PopoverTrigger>
+							<Box
+								as='a'
+								p={2}
+								href={'/admin'}
+								fontSize={'sm'}
+								fontWeight={600}
+								color={linkColor}
+								_hover={{
+									textDecoration: 'none',
+									color: linkHoverColor
+								}}
+							>
+								Admin
+							</Box>
+						</PopoverTrigger>
+					</Popover>
+				</Box>
+			) : (
+				<></>
+			)}
 		</Stack>
 	);
 };
@@ -218,6 +246,8 @@ const MobileNav = () => {
 	// Hooks for managing color mode
 	const { colorMode, toggleColorMode } = useColorMode();
 
+	const [cookies] = useCookies(['user', 'admin']);
+
 	return (
 		<Stack
 			bg={useColorModeValue('white', 'gray.800')}
@@ -227,6 +257,11 @@ const MobileNav = () => {
 			{NavItems.map((navItem) => (
 				<MobileNavItem key={navItem.label} {...navItem} />
 			))}
+			{cookies.admin ? (
+				<MobileNavItem label={'Admin'} href={'/admin'} />
+			) : (
+				<></>
+			)}
 			<Button as={'a'} py={2} href={'#'} onClick={toggleColorMode}>
 				{colorMode === 'light' ? '🌑' : '🌕'}
 			</Button>

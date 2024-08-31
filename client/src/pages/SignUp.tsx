@@ -62,14 +62,14 @@ export default function SignUp() {
 			...prevData,
 			username: e.target.value
 		}));
-		if (
-			e.target.value === '' ||
-			e.target.value.length < 2 ||
-			e.target.value.length > 20 ||
-			!/^[a-zA-Z0-9._%+-]+$/.test(e.target.value)
-		)
-			setError({ ...error, usernameErr: true });
-		else setError({ ...error, usernameErr: false });
+		setError({
+			...error,
+			usernameErr:
+				e.target.value === '' ||
+				e.target.value.length < 2 ||
+				e.target.value.length > 20 ||
+				!/^[a-zA-Z0-9._%+-]+$/.test(e.target.value)
+		});
 	};
 
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -77,14 +77,14 @@ export default function SignUp() {
 			...prevData,
 			email: e.target.value
 		}));
-		if (
-			!e.target.value.endsWith('@pdsb.net') ||
-			e.target.value.length < 15 ||
-			e.target.value.length > 20 ||
-			!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
-		)
-			setError({ ...error, emailErr: true });
-		else setError({ ...error, emailErr: false });
+		setError({
+			...error,
+			emailErr:
+				!e.target.value.endsWith('@pdsb.net') ||
+				e.target.value.length < 15 ||
+				e.target.value.length > 20 ||
+				!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
+		});
 	};
 
 	const handlePasswordInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -92,8 +92,7 @@ export default function SignUp() {
 			...prevData,
 			password: e.target.value
 		}));
-		if (e.target.value.length > 50) setError({ ...error, passwordErr: true });
-		else setError({ ...error, passwordErr: false });
+		setError({ ...error, passwordErr: e.target.value.length > 50 });
 	};
 
 	function canSubmit(): boolean {
