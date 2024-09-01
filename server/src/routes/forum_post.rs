@@ -2,20 +2,11 @@ use std::cmp::Reverse;
 
 use actix_web::web::{self, Json};
 use actix_web::{get, post, web::Data, HttpResponse};
-use mongodb::bson::{doc, Bson};
-use serde::Deserialize;
+use mongodb::bson::Bson;
 use validator::Validate;
 use crate::models::comment::{Comment, CommentRequest};
 use crate::services::db::Database;
-use crate::models::forum_post::{Post, PostRequest};
-
-#[derive(Deserialize)]
-struct PaginationArgs {
-  page: u32,
-  limit: u32,
-	search: String,
-	field: String,
-}
+use crate::{models::forum_post::{Post, PostRequest}, utilities::pagination_args::PaginationArgs};
 
 #[get("/forum/general/get/amount")]
 pub async fn return_amount_of_posts(db: Data<Database>) -> HttpResponse {

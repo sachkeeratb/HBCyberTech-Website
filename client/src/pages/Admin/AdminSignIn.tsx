@@ -107,7 +107,7 @@ export default function AdminSignIn() {
 			setCookie('admin', token, {
 				httpOnly: false,
 				path: '/',
-				expires: token.expires
+				expires: new Date(Date.now() + 60 * 60 * 1000)
 			});
 
 			// Allow the user to continue

@@ -1,17 +1,19 @@
 use std::time::SystemTime;
 use chrono::Utc;
-use mongodb::bson::{oid::ObjectId, DateTime};
+use mongodb::bson::{oid::ObjectId, DateTime, Uuid};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Admin {
   pub _id: ObjectId,
+  pub token: Uuid,
   pub password: String,
   pub last_reset: DateTime
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct AdminRequest {
+  pub token: String,
   pub password: String,
   pub last_reset: String
 }
@@ -27,6 +29,7 @@ impl TryFrom<AdminRequest> for Admin {
 
     Ok(Self {
       _id: ObjectId::new(),
+      token: Uuid::new(),
       password: item.password,
       last_reset: DateTime::from(chrono_datetime)
     })

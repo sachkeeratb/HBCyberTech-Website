@@ -1,6 +1,6 @@
 use std::env;
 use futures_util::TryStreamExt;
-use mongodb::{bson::{doc, oid::ObjectId, DateTime}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
+use mongodb::{bson::{doc, oid::ObjectId, DateTime, Uuid}, error::Error, results::{InsertOneResult, UpdateResult}, Collection};
 use passwords::{PasswordGenerator, analyzer, scorer};
 use rand::Rng;
 
@@ -88,7 +88,20 @@ impl Database {
 
     Ok(result)
   }
-
+  pub async fn get_all_general_members(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<GeneralMember>, Error> {
+    let skip = (page - 1) * limit;
+    let filter = if search.is_empty() {
+      doc! {}
+    } else if field == "grade".to_owned() {
+      let num = search.parse::<i32>().unwrap_or(9);
+      doc! { "grade": { "$regex": num, "$options": "i" } }
+    } else {
+      doc! { field : { "$regex": search, "$options": "i" } }
+    };
+    let cursor = self.general_member.find(filter).skip(skip.into()).limit(limit.into()).await?;
+    let members = cursor.try_collect().await?;
+    Ok(members)
+  }
 
   pub async fn exec_mem_does_exist_full_name(&self, full_name: String) -> bool {
     let existing_member = self.executive_member.find_one(doc! { "full_name": &full_name }).await.ok();
@@ -128,7 +141,22 @@ impl Database {
 
     Ok(result)
   }
-
+  pub async fn get_all_executive_members(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<ExecutiveMember>, Error> {
+    let skip = (page - 1) * limit;
+    let filter = if field == "marketing" || field == "events" || field == "development" {
+      doc! { "exec_type": field }
+    } else if search.is_empty() {
+      doc! {}
+    } else if field == "grade".to_owned() {
+      let num = search.parse::<i32>().unwrap_or(9);
+      doc! { "grade": { "$regex": num, "$options": "i" } }
+    } else {
+      doc! { field : { "$regex": search, "$options": "i" } }
+    };
+    let cursor = self.executive_member.find(filter).skip(skip.into()).limit(limit.into()).await?;
+    let members = cursor.try_collect().await?;
+    Ok(members)
+  }
 
   pub async fn get_announcement_forum_posts(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<Announcement>, Error> {
     let skip = (page - 1) * limit;
@@ -252,6 +280,20 @@ impl Database {
 
     Ok(result)
   }
+  pub async fn get_all_accounts(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<Account>, Error> {
+    let skip = (page - 1) * limit;
+    let filter = if field == "verified".to_owned() || field == "unverified".to_owned() {
+      let boolean = field == "verified".to_owned();
+      doc! { "verified": { "$regex": boolean, "$options": "i" } }
+    } else if search.is_empty() {
+      doc! {}
+    } else {
+      doc! { field : { "$regex": search, "$options": "i" } }
+    };
+    let cursor = self.account.find(filter).skip(skip.into()).limit(limit.into()).await?;
+    let members = cursor.try_collect().await?;
+    Ok(members)
+  }
 
 
   pub async fn update_admin(&self) -> Result<UpdateResult, Error> {
@@ -275,11 +317,13 @@ impl Database {
     while scorer::score(&analyzer::analyze(&new_password)) < 90.0 {
       new_password = pgi.next().unwrap();
     }
+
+    let new_token = Uuid::new();
     
     // Update the admin account with the new password and the current time
     let result = self.admin.update_one(
       doc! {},
-      doc! { "$set": { "password": new_password, "last_reset": DateTime::now() } }
+      doc! { "$set": { "token": new_token, "password": new_password, "last_reset": DateTime::now() } }
     ).await?;
   
     // Return the result of the update operation
@@ -291,11 +335,5 @@ impl Database {
     let admin = self.admin.find_one(doc! { }).await.expect("Admin does not exist.").unwrap();
 
     return Ok(admin);
-  }
-  pub async fn get_admin_hashed_password(&self) -> Result<String, Error> {
-    // Get the admin account
-    let admin = self.get_admin().await.unwrap();
-
-    return Ok(bcrypt::hash(admin.password, bcrypt::DEFAULT_COST).unwrap());
   }
 }

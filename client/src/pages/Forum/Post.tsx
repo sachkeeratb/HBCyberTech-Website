@@ -211,7 +211,7 @@ const MobileComment: React.FC<Comment> = (comment: Comment, BG: string) => {
 };
 
 export default function Post() {
-	const [cookies] = useCookies(['user']);
+	const [cookies] = useCookies(['user', 'admin']);
 	const navigate = useNavigate();
 
 	const [isMobile, setIsMobile] = useState(
@@ -256,6 +256,12 @@ export default function Post() {
 				verified: boolean;
 			}>(cookies.user);
 			setData({ ...data, author: decoded.username, email: decoded.email });
+		} else if (cookies.admin) {
+			setData({
+				...data,
+				author: 'The Team',
+				email: import.meta.env.VITE_EMAIL
+			});
 		}
 	}, []);
 
@@ -318,7 +324,7 @@ export default function Post() {
 	};
 
 	const fetchComments = async () => {
-		if (!hasMore) return;
+		if (!hasMore || loading) return;
 		try {
 			const response = await instance.post(
 				`/forum/general/post/${id}/comments`,
@@ -329,19 +335,15 @@ export default function Post() {
 					field: filter
 				}
 			);
-			const responseArr: CommentRequest[] = [];
 			const commentArr: Comment[] = [];
 			for (let i = 0; i < response.data.length; i++) {
-				responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-				const ymd =
-					responseArr[i].date_created.toString().substring(0, 10) + 'T';
+				const currItem = JSON.parse(JSON.stringify(response.data[i]));
+				const ymd = currItem.date_created.toString().substring(0, 10) + 'T';
 				let hms =
-					responseArr[i].date_created
+					currItem.date_created
 						.toString()
-						.substring(
-							11,
-							responseArr[i].date_created.toString().indexOf('.')
-						) + '.000Z';
+						.substring(11, currItem.date_created.toString().indexOf('.')) +
+					'.000Z';
 				if (hms.length != 13) {
 					hms = '0' + hms;
 				}
@@ -356,9 +358,9 @@ export default function Post() {
 					minute: 'numeric',
 					hour12: true
 				});
-				const author = responseArr[i].author;
-				const email = responseArr[i].email;
-				const body = responseArr[i].body;
+				const author = currItem.author;
+				const email = currItem.email;
+				const body = currItem.body;
 				commentArr.push({ author, email, date, time, body });
 			}
 			if (page == lastPage) return;
@@ -483,7 +485,7 @@ export default function Post() {
 				<></>
 			)}
 			<VStack spacing={4} align='center'>
-				{cookies.user ? (
+				{cookies.user || cookies.admin ? (
 					<Box as='form' onSubmit={handleCommentSubmit} w='100%' pt={5}>
 						<FormControl id='comment' isRequired isInvalid={error}>
 							<FormLabel>Leave a Comment</FormLabel>

@@ -18,11 +18,15 @@ import CreatePost from './pages/Forum/CreatePost.tsx';
 import Announcements from './pages/Forum/Announcements.tsx';
 import General from './pages/Forum/GeneralDiscussion.tsx';
 import Post from './pages/Forum/Post.tsx';
+import GenMemList from './pages/Admin/GenMemList';
+import ExecMemList from './pages/Admin/ExecMemList';
+import AccountList from './pages/Admin/AccountList';
 const GeneralForm = lazy(() => import('./pages/Misc/GeneralForm.tsx'));
 const ExecForm = lazy(() => import('./pages/Misc/ExecForm.tsx'));
 
 import theme from './theme.ts';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 /**
  * Renders the main application component.
@@ -31,18 +35,34 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
  */
 
 function App() {
+	const [cookies] = useCookies(['admin']);
 	return (
 		<ChakraProvider theme={theme}>
 			<NavBar />
 			<Router>
 				<Routes>
 					<Route index path='/' element={<Home />} />
-					<Route path='/admin' element={<AdminDashboard />} />
+					<Route
+						path='/admin'
+						element={cookies.admin ? <AdminDashboard /> : <Home />}
+					/>
+					<Route path='/admin/signin' element={<AdminSignIn />} />
+					<Route
+						path='/admin/generals'
+						element={cookies.admin ? <GenMemList /> : <Home />}
+					/>
+					<Route
+						path='/admin/executives'
+						element={cookies.admin ? <ExecMemList /> : <Home />}
+					/>{' '}
+					<Route
+						path='/admin/accounts'
+						element={cookies.admin ? <AccountList /> : <Home />}
+					/>
 					<Route path='/about' element={<About />} />
 					<Route path='/links' element={<Links />} />
 					<Route path='/signup' element={<SignUp />} />
 					<Route path='/signin' element={<SignIn />} />
-					<Route path='/admin/signin' element={<AdminSignIn />} />
 					<Route path='/forum' element={<Forum />} />
 					<Route path='/forum/create' element={<CreatePost />} />
 					<Route path='/forum/announcements' element={<Announcements />} />

@@ -15,15 +15,6 @@ import {
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-interface ForumPostRequest {
-	id: string;
-	author: string;
-	email: string;
-	date_created: string;
-	title: string;
-	body: string;
-}
-
 interface ForumPost {
 	id: string;
 	author: string;
@@ -163,7 +154,7 @@ export default function General() {
 
 	const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
 	const [page, setPage] = useState(1);
-	const [canGoForward, setCanGoForward] = useState(false);
+	const [hasMore, setHasMore] = useState(false);
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('title');
 
@@ -179,15 +170,14 @@ export default function General() {
 				search: search,
 				field: filter
 			});
-			const responseArr: ForumPostRequest[] = [];
 			const postArr: ForumPost[] = [];
 			for (let i = 0; i < response.data.length; i++) {
-				responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-				const ymd = responseArr[i].date_created.substring(0, 10) + 'T';
+				const currItem = JSON.parse(JSON.stringify(response.data[i]));
+				const ymd = currItem.date_created.substring(0, 10) + 'T';
 				let hms =
-					responseArr[i].date_created.substring(
+					currItem.date_created.substring(
 						11,
-						responseArr[i].date_created.indexOf('.')
+						currItem.date_created.indexOf('.')
 					) + '.000Z';
 				if (hms.length != 13) {
 					hms = '0' + hms;
@@ -203,14 +193,14 @@ export default function General() {
 					minute: 'numeric',
 					hour12: true
 				});
-				const id = responseArr[i].id;
-				const author = responseArr[i].author;
-				const email = responseArr[i].email;
-				const title = responseArr[i].title;
-				const body = responseArr[i].body;
+				const id = currItem.id;
+				const author = currItem.author;
+				const email = currItem.email;
+				const title = currItem.title;
+				const body = currItem.body;
 				postArr.push({ id, author, email, date, time, title, body });
 			}
-			setCanGoForward(postArr.length === 10);
+			setHasMore(postArr.length === 10);
 			setForumPosts(postArr);
 		} catch (error) {
 			console.error('Error fetching announcements:', error);
@@ -221,7 +211,7 @@ export default function General() {
 		setSearch(event.target.value);
 		setPage(1);
 		setForumPosts([]);
-		setCanGoForward(true);
+		setHasMore(true);
 	};
 
 	const BG = useColorModeValue('gray.700', 'purple.700');
@@ -303,7 +293,7 @@ export default function General() {
 					<Text pt={'1vh'}>Page {page}</Text>
 					<Button
 						onClick={() => {
-							if (canGoForward) setPage((page) => page + 1);
+							if (hasMore) setPage((page) => page + 1);
 						}}
 					>
 						Next

@@ -154,7 +154,7 @@ export default function SignIn() {
 			setCookie('user', token, {
 				httpOnly: false,
 				path: '/',
-				expires: token.expires
+				expires: new Date(Date.now() + 60 * 60 * 1000 * 6)
 			});
 
 			// Allow the user to continue

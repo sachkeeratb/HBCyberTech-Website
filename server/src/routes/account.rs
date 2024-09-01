@@ -7,7 +7,7 @@ use serde_json::json;
 use bcrypt::{hash, verify, DEFAULT_COST};
 use jsonwebtoken::{encode, Header, EncodingKey};
 
-use crate::{models::account::{Account, AccountRequest}, services::db::Database};
+use crate::{models::account::{Account, AccountRequest}, services::db::Database, utilities::admin_pagination_args::AdminPaginationArgs};
 
 #[derive(Deserialize)]
 struct AccountGiven {
@@ -50,6 +50,27 @@ pub async fn verify_account(db: Data<Database>, id: web::Path<String>) -> HttpRe
 	}
 }
 
+#[post("/account/get_all")]
+pub async fn get_all_accounts(db: Data<Database>, request: Json<AdminPaginationArgs>) -> HttpResponse {
+  if !verify(request.token.clone(), hash(db.get_admin().await.unwrap().token.to_string(), DEFAULT_COST).unwrap().as_str()).unwrap() {
+    return HttpResponse::Unauthorized().body("Unauthorized.");
+  }
+
+  match db.get_all_accounts(request.page, request.limit, request.search.clone(), request.field.clone()).await {
+    Ok(accs) => {
+      let accounts: Vec<AccountRequest> = accs.into_iter().rev().map(|acc| AccountRequest {
+        username: acc.username.clone(),
+        email: acc.email.clone(),
+        password: "********".to_string(),
+        verified: acc.verified.clone(),
+        date_created: acc.date_created.to_string()
+      }).collect();
+      HttpResponse::Ok().json(accounts)
+    },
+    Err(_) => HttpResponse::InternalServerError().body("Error getting accounts.")
+  }
+}
+
 #[post("/account/post/signin")]
 pub async fn account_sign_in(db: Data<Database>, request: web::Json<AccountGiven>) -> HttpResponse {
 	if !check_account_exists(&db, &request.email).await {
@@ -86,8 +107,8 @@ pub async fn account_sign_in(db: Data<Database>, request: web::Json<AccountGiven
 #[post("/account/post/signup")]
 pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -> HttpResponse {
   match request.validate() {
-	Ok(_) => (),
-	Err(err) => return HttpResponse::BadRequest().body(err.to_string())
+		Ok(_) => (),
+		Err(err) => return HttpResponse::BadRequest().body(err.to_string())
   }
   
   match db

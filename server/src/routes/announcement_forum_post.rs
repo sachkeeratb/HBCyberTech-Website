@@ -1,16 +1,7 @@
 use std::cmp::Reverse;
 use actix_web::{get, post, web::{Data, Json}, HttpResponse};
-use serde::Deserialize;
 use crate::services::db::Database;
-use crate::models::announcement_forum_post::AnnouncementRequest;
-
-#[derive(Deserialize)]
-struct PaginationArgs {
-  page: u32,
-  limit: u32,
-	search: String,
-	field: String,
-}
+use crate::{models::announcement_forum_post::AnnouncementRequest, utilities::pagination_args::PaginationArgs};
 
 #[get("/forum/announcements/get/amount")]
 pub async fn return_amount_of_announcements(db: Data<Database>) -> HttpResponse {
