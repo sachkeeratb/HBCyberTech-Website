@@ -2,9 +2,11 @@ use std::cmp::Reverse;
 
 use actix_web::web::{self, Json};
 use actix_web::{get, post, web::Data, HttpResponse};
+use mongodb::bson::oid::ObjectId;
 use mongodb::bson::Bson;
 use validator::Validate;
 use crate::models::comment::{Comment, CommentRequest};
+use crate::models::forum_post::PostRequestRequest;
 use crate::services::db::Database;
 use crate::{models::forum_post::{Post, PostRequest}, utilities::pagination_args::PaginationArgs};
 
@@ -59,7 +61,7 @@ pub async fn return_posts(db: Data<Database>, request: Json<PaginationArgs>) -> 
 }
 
 #[post("/forum/general/create")]
-pub async fn create_post(db: Data<Database>, request: Json<PostRequest>) -> HttpResponse {
+pub async fn create_post(db: Data<Database>, request: Json<PostRequestRequest>) -> HttpResponse {
   match request.validate() {
     Ok(_) => (),
     Err(err) => return HttpResponse::BadRequest().body(err.to_string())
@@ -68,7 +70,7 @@ pub async fn create_post(db: Data<Database>, request: Json<PostRequest>) -> Http
   match db
     .create_forum_post(
       Post::try_from(PostRequest {
-				id: request.id.clone(),
+				id: ObjectId::new().to_string(),
         author: request.author.clone(),
 				email: request.email.clone(),
         date_created: request.date_created.clone(),
@@ -122,7 +124,7 @@ pub async fn get_comments_by_post_id(db: Data<Database>, id: web::Path<String>, 
 	match db.get_forum_post_by_id(id.to_string()).await {
 		Ok(Some(post)) => {
 			let skip = (page - 1) * limit;
-			let comments: Vec<CommentRequest> = post.comments.into_iter().skip(skip as usize).take(limit as usize).map(|comment| {
+			let comments: Vec<CommentRequest> = post.comments.into_iter().rev().skip(skip as usize).take(limit as usize).map(|comment| {
 				let author = comment.as_document().and_then(|doc| doc.get("author")).and_then(Bson::as_str).unwrap_or("").to_string();
 				let email = comment.as_document().and_then(|doc| doc.get("email")).and_then(Bson::as_str).unwrap_or("").to_string();
 				let date_created = comment.as_document().and_then(|doc| doc.get("date_created")).and_then(|bson| Bson::as_datetime(bson)).map(|datetime| datetime.to_string()).unwrap_or_else(|| mongodb::bson::DateTime::now().to_string());

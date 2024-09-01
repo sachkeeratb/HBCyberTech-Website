@@ -4,10 +4,11 @@ use mongodb::bson::{oid::ObjectId, DateTime};
 use serde::{Serialize, Deserialize};
 use lazy_static::lazy_static;
 use regex::Regex;
+use validator::ValidationError;
 
 lazy_static! {
-  static ref RE_USERNAME: Regex = Regex::new(r"^^[a-zA-Z0-9._%+-]{2,20}$").unwrap();
-  static ref RE_EMAIL: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]+@pdsb.net$").unwrap();
+  static ref RE_USERNAME: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]{2,20}$").unwrap();
+  static ref RE_EMAIL: Regex = Regex::new(r"^[0-9]{6,7}@pdsb.net$").unwrap();
 }
 
 #[derive(Serialize, Deserialize)]
@@ -20,19 +21,25 @@ pub struct Account {
   pub date_created: DateTime
 }
 
+fn validate_username(username: &String) -> Result<(), ValidationError> {
+  if !RE_USERNAME.is_match(username) && username != "The Team" {
+    return Err(ValidationError::new("Invalid username."));
+  }
+  Ok(())
+}
+
+fn validate_email(email: &String) -> Result<(), ValidationError> {
+  if !RE_EMAIL.is_match(email) && email != &format!("{}@gmail.com", dotenv!("EMAIL_NAME")) {
+    return Err(ValidationError::new("Email must be a valid PDSB email."));
+  }
+  Ok(())
+}
+
 #[derive(Serialize, Deserialize, Validate)]
 pub struct AccountRequest {
-  #[validate(regex(
-    path = *RE_USERNAME,
-    message = "Invalid username."
-  ))]
+  #[validate(custom(function = "validate_username"))]
   pub username: String,
-  #[validate(
-    regex(
-      path = *RE_EMAIL,
-      message = "Email must be a valid PDSB email."
-    )
-  )]
+  #[validate(custom(function = "validate_email"))]
   pub email: String,
   pub password: String,
   pub verified: bool,

@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -132,26 +133,6 @@ export default function AccountList() {
 	);
 
 	useEffect(() => {
-		(async function verify() {
-			if (cookies.admin) {
-				const request = instance.post('/admin/verify', {
-					token: cookies.admin
-				});
-				request
-					.then((response) => {
-						if (response.data !== true) {
-							navigate('/');
-						}
-					})
-					.catch((error) => {
-						console.error(error);
-						navigate('/');
-					});
-			} else navigate('/');
-		})();
-	}, []);
-
-	useEffect(() => {
 		function handleResize() {
 			setIsMobile(window.innerWidth < 1024);
 		}
@@ -164,12 +145,31 @@ export default function AccountList() {
 		};
 	}, [isMobile]);
 
-	const [cookies] = useCookies(['user', 'admin']);
+	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 	const [members, setMembers] = useState<Account[]>([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('username');
+
+	useEffect(() => {
+		if (!cookies.admin) navigate('/');
+		(async function verify() {
+			try {
+				const request = await instance.post('/admin/verify', {
+					token: cookies.admin
+				});
+
+				if (request.data !== true) {
+					removeCookie('admin');
+					navigate('/');
+				}
+			} catch (error) {
+				console.error(error);
+				navigate('/');
+			}
+		})();
+	}, []);
 
 	useEffect(() => {
 		fetchMembers();

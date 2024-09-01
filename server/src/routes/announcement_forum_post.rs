@@ -1,6 +1,7 @@
 use std::cmp::Reverse;
 use actix_web::{get, post, web::{Data, Json}, HttpResponse};
-use crate::services::db::Database;
+use validator::Validate;
+use crate::{models::announcement_forum_post::Announcement, services::db::Database};
 use crate::{models::announcement_forum_post::AnnouncementRequest, utilities::pagination_args::PaginationArgs};
 
 #[get("/forum/announcements/get/amount")]
@@ -19,6 +20,7 @@ pub async fn return_announcements(db: Data<Database>, request: Json<PaginationAr
 			let announcements: Vec<AnnouncementRequest> = posts.into_iter().map(|post| {
 				AnnouncementRequest {
 					author: post.author.clone(),
+					email: post.email.clone(),
 					date_created: post.date_created.to_string(),
 					title: post.title.clone(),
 					body: post.body.clone(),
@@ -29,4 +31,27 @@ pub async fn return_announcements(db: Data<Database>, request: Json<PaginationAr
 		},
 		Err(_) => HttpResponse::Ok().json("")
 	}
+}
+
+#[post("/forum/announcements/create")]
+pub async fn create_announcement_post(db: Data<Database>, request: Json<AnnouncementRequest>) -> HttpResponse {
+  match request.validate() {
+    Ok(_) => (),
+    Err(err) => return HttpResponse::BadRequest().body(err.to_string())
+  }
+  
+  match db
+    .create_announcement_forum_post(
+      Announcement::try_from(AnnouncementRequest {
+        author: "The Team".to_string(),
+				email: format!("{}@gmail.com", dotenv!("EMAIL_NAME")),
+        date_created: request.date_created.clone(),
+        title: request.title.clone(),
+        body: request.body.clone()
+      })
+      .expect("Error converting PostRequest to Post.")
+    ).await {
+      Ok(post) => HttpResponse::Ok().json(post),
+      Err(err) => HttpResponse::InternalServerError().body(err.to_string())
+    }
 }

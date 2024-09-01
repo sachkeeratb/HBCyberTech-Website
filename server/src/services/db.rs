@@ -174,6 +174,16 @@ impl Database {
     Ok(amount)
   }
 
+  pub async fn create_announcement_forum_post(&self, announcement: Announcement) -> Result<InsertOneResult, Error> {
+    let result = self
+      .announcement_forum_post
+      .insert_one(announcement)
+      .await
+      .ok()
+      .expect("Error creating announcement.");
+
+    Ok(result)
+  }
   
   pub async fn get_forum_posts(&self, page: u32, limit: u32, search: String, field: String) -> Result<Vec<Post>, Error> {
     let skip = (page - 1) * limit;

@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -27,26 +28,27 @@ const instance = axios.create({
 
 export default function AdminDashboard() {
 	const navigate = useNavigate();
-	const [cookies] = useCookies(['user', 'admin']);
+	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
+
 	useEffect(() => {
+		if (!cookies.admin) navigate('/');
 		(async function verify() {
-			if (cookies.admin) {
-				const request = instance.post('/admin/verify', {
+			try {
+				const request = await instance.post('/admin/verify', {
 					token: cookies.admin
 				});
-				request
-					.then((response) => {
-						if (response.data !== true) {
-							navigate('/');
-						}
-					})
-					.catch((error) => {
-						console.error(error);
-						navigate('/');
-					});
-			} else navigate('/');
+
+				if (request.data !== true) {
+					removeCookie('admin');
+					navigate('/');
+				}
+			} catch (error) {
+				console.error(error);
+				navigate('/');
+			}
 		})();
 	}, []);
+
 	return (
 		<>
 			<Container maxW='5xl' py={2} pb={10} mx='auto'>

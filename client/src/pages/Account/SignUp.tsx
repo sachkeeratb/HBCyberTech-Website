@@ -33,6 +33,7 @@ interface FormErrors {
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -64,11 +65,7 @@ export default function SignUp() {
 		}));
 		setError({
 			...error,
-			usernameErr:
-				e.target.value === '' ||
-				e.target.value.length < 2 ||
-				e.target.value.length > 20 ||
-				!/^[a-zA-Z0-9._%+-]+$/.test(e.target.value)
+			usernameErr: !/^[a-zA-Z0-9._%+-]{2,20}$/.test(e.target.value)
 		});
 	};
 
@@ -77,13 +74,22 @@ export default function SignUp() {
 			...prevData,
 			email: e.target.value
 		}));
+
+		let isEmailErr = true;
+		if (
+			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
+			e.target.value.charAt(0) === '1' &&
+			parseInt(e.target.value.charAt(1)) <= 2
+		)
+			isEmailErr = false;
+		else if (
+			/^[0-9]{6}@pdsb.net$/.test(e.target.value) &&
+			parseInt(e.target.value.charAt(0)) >= 6
+		)
+			isEmailErr = false;
 		setError({
 			...error,
-			emailErr:
-				!e.target.value.endsWith('@pdsb.net') ||
-				e.target.value.length < 15 ||
-				e.target.value.length > 20 ||
-				!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
+			emailErr: isEmailErr
 		});
 	};
 

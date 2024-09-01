@@ -6,23 +6,24 @@ import './App.css';
 const NavBar = lazy(() => import('./components/NavBar'));
 
 // Pages
-const Home = lazy(() => import('./pages/General/Home.tsx'));
-const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard.tsx'));
-const About = lazy(() => import('./pages/General/About.tsx'));
-const Links = lazy(() => import('./pages/Misc/Links.tsx'));
-const SignUp = lazy(() => import('./pages/Account/SignUp.tsx'));
-const SignIn = lazy(() => import('./pages/Account/SignIn.tsx'));
-const AdminSignIn = lazy(() => import('./pages/Admin/AdminSignIn.tsx'));
-const Forum = lazy(() => import('./pages/Forum/Forum.tsx'));
-import CreatePost from './pages/Forum/CreatePost.tsx';
-import Announcements from './pages/Forum/Announcements.tsx';
-import General from './pages/Forum/GeneralDiscussion.tsx';
-import Post from './pages/Forum/Post.tsx';
+const Home = lazy(() => import('./pages/General/Home'));
+const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'));
+const About = lazy(() => import('./pages/General/About'));
+const Links = lazy(() => import('./pages/Misc/Links'));
+const SignUp = lazy(() => import('./pages/Account/SignUp'));
+const SignIn = lazy(() => import('./pages/Account/SignIn'));
+const AdminSignIn = lazy(() => import('./pages/Admin/AdminSignIn'));
+const Forum = lazy(() => import('./pages/Forum/Forum'));
+import CreatePost from './pages/Forum/CreatePost';
+import CreateAnnouncement from './pages/Forum/CreateAnnouncement';
+import Announcements from './pages/Forum/Announcements';
+import General from './pages/Forum/GeneralDiscussion';
+import Post from './pages/Forum/Post';
 import GenMemList from './pages/Admin/GenMemList';
 import ExecMemList from './pages/Admin/ExecMemList';
 import AccountList from './pages/Admin/AccountList';
-const GeneralForm = lazy(() => import('./pages/Misc/GeneralForm.tsx'));
-const ExecForm = lazy(() => import('./pages/Misc/ExecForm.tsx'));
+const GeneralForm = lazy(() => import('./pages/Misc/GeneralForm'));
+const ExecForm = lazy(() => import('./pages/Misc/ExecForm'));
 
 import theme from './theme.ts';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -64,9 +65,13 @@ function App() {
 					<Route path='/signup' element={<SignUp />} />
 					<Route path='/signin' element={<SignIn />} />
 					<Route path='/forum' element={<Forum />} />
-					<Route path='/forum/create' element={<CreatePost />} />
 					<Route path='/forum/announcements' element={<Announcements />} />
+					<Route
+						path='/forum/announcements/create'
+						element={cookies.admin ? <CreateAnnouncement /> : <Home />}
+					/>
 					<Route path='/forum/general' element={<General />} />
+					<Route path='/forum/generalcreate' element={<CreatePost />} />
 					<Route path='/forum/general/:id' element={<Post />} />
 					<Route path='/form/general' element={<GeneralForm />} />
 					<Route path='/form/executive' element={<ExecForm />} />

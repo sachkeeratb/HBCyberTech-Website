@@ -51,7 +51,7 @@ interface CharCount {
 // Create an instance of axios with custom configurations
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
-	timeout: 1000, // Request timeout in milliseconds
+	timeout: 60000, // Request timeout in milliseconds
 	withCredentials: false, // Whether to send cookies with the request
 	headers: {
 		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
@@ -105,13 +105,21 @@ export default function ExecForm() {
 	};
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, email: e.target.value });
+		let isEmailErr = true;
+		if (
+			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
+			e.target.value.charAt(0) === '1' &&
+			parseInt(e.target.value.charAt(1)) <= 2
+		)
+			isEmailErr = false;
+		else if (
+			/^[0-9]{6}@pdsb.net$/.test(e.target.value) &&
+			parseInt(e.target.value.charAt(0)) >= 6
+		)
+			isEmailErr = false;
 		setError({
 			...error,
-			emailErr:
-				!e.target.value.endsWith('@pdsb.net') ||
-				e.target.value.length < 15 ||
-				e.target.value.length > 20 ||
-				!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
+			emailErr: isEmailErr
 		});
 	};
 	const handleWhyInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

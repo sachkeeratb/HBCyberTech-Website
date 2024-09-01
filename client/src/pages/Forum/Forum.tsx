@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',

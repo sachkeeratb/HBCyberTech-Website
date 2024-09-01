@@ -59,13 +59,22 @@ export default function SignIn() {
 			...prevData,
 			email: e.target.value
 		}));
+
+		let isEmailErr = true;
+		if (
+			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
+			e.target.value.charAt(0) === '1' &&
+			parseInt(e.target.value.charAt(1)) <= 2
+		)
+			isEmailErr = false;
+		else if (
+			/^[0-9]{6}@pdsb.net$/.test(e.target.value) &&
+			parseInt(e.target.value.charAt(0)) >= 6
+		)
+			isEmailErr = false;
 		setError({
 			...error,
-			emailErr:
-				!e.target.value.endsWith('@pdsb.net') ||
-				e.target.value.length < 15 ||
-				e.target.value.length > 20 ||
-				!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e.target.value)
+			emailErr: isEmailErr
 		});
 	};
 

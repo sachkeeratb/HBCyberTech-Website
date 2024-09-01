@@ -7,7 +7,7 @@ use regex::Regex;
 
 lazy_static! {
   static ref RE_FULL_NAME: Regex = Regex::new(r"^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ ']{2,40}$").unwrap();
-  static ref RE_EMAIL: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]+@pdsb.net$").unwrap();
+  static ref RE_EMAIL: Regex = Regex::new(r"^[0-9]{6,7}@pdsb.net$").unwrap();
   static ref RE_EXTRA: Regex = Regex::new(r"^.{0,350}$").unwrap();
 }
 

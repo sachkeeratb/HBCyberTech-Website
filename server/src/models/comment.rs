@@ -4,10 +4,11 @@ use mongodb::bson::{self, doc, oid::ObjectId, DateTime};
 use serde::{Serialize, Deserialize};
 use lazy_static::lazy_static;
 use regex::Regex;
+use validator::ValidationError;
 
 lazy_static! {
   static ref RE_USERNAME: Regex = Regex::new(r"^^[a-zA-Z0-9._%+-]{2,20}$").unwrap();
-  static ref RE_EMAIL: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]+@pdsb.net$").unwrap();
+  static ref RE_EMAIL: Regex = Regex::new(r"^[0-9]{6,7}@pdsb.net$").unwrap();
   static ref RE_BODY: Regex = Regex::new(r"^.{20,600}$").unwrap();
 }
 
@@ -20,19 +21,25 @@ pub struct Comment {
 	pub body: String
 }
 
+fn validate_author(author: &String) -> Result<(), ValidationError> {
+  if !RE_USERNAME.is_match(author) && author != "The Team" {
+    return Err(ValidationError::new("Invalid username."));
+  }
+  Ok(())
+}
+
+fn validate_email(email: &String) -> Result<(), ValidationError> {
+  if !RE_EMAIL.is_match(email) && email != &format!("{}@gmail.com", dotenv!("EMAIL_NAME")) {
+    return Err(ValidationError::new("Email must be a valid PDSB email."));
+  }
+  Ok(())
+}
+
 #[derive(Clone, Serialize, Deserialize, Validate)]
 pub struct CommentRequest {
-  #[validate(regex(
-    path = *RE_USERNAME,
-    message = "Invalid username."
-  ))]
+  #[validate(custom(function = "validate_author"))]
   pub author: String,
-  #[validate(
-    regex(
-      path = *RE_EMAIL,
-      message = "Email must be a valid PDSB email."
-    )
-  )]
+  #[validate(custom(function = "validate_email"))]
   pub email: String,
 	pub date_created: String,
   #[validate(regex(

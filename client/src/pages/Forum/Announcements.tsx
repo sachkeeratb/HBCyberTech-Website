@@ -13,6 +13,8 @@ import {
 	Select
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 // Define the shape of the announcement request
 interface AnnouncementRequest {
@@ -124,7 +126,7 @@ const MobileAnnouncementPost: React.FC<Announcement> = ({
 // Create an instance of axios with custom configurations
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
-	timeout: 1000, // Request timeout in milliseconds
+	timeout: 60000, // Request timeout in milliseconds
 	withCredentials: false, // Whether to send cookies with the request
 	headers: {
 		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
@@ -153,6 +155,7 @@ export default function Announcements() {
 		};
 	}, [isMobile]);
 
+	const [cookies] = useCookies(['admin']);
 	const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(false);
@@ -221,6 +224,15 @@ export default function Announcements() {
 		<Box>
 			<Heading as='h1' size='xl' mb={6} mt={4}>
 				Announcements
+				<Flex justify='right' mb={4}>
+					{cookies.admin ? (
+						<Link to='/forum/announcements/create'>
+							<Button colorScheme='purple'>Create New Post</Button>
+						</Link>
+					) : (
+						<></>
+					)}
+				</Flex>
 			</Heading>
 			<div>
 				<Box>

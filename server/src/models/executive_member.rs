@@ -8,7 +8,7 @@ use validator::ValidationError;
 
 lazy_static! {
   static ref RE_FULL_NAME: Regex = Regex::new(r"^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ ']{2,40}$").unwrap();
-  static ref RE_EMAIL: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]+@pdsb.net$").unwrap();
+  static ref RE_EMAIL: Regex = Regex::new(r"^[[0-9]{6,7}@pdsb.net$").unwrap();
   static ref RE_EXEC_TYPE: Regex = Regex::new(r"^(development|marketing|events)$").unwrap();
   static ref RE_PORTFOLIO: Regex = Regex::new(r"^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$i").unwrap();
   static ref RE_200: Regex = Regex::new(r"^.{0,200}$").unwrap();

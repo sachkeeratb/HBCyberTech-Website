@@ -18,7 +18,6 @@ import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
-import { jwtDecode } from 'jwt-decode';
 
 // Define the data types
 interface FormData {
@@ -39,7 +38,6 @@ interface Chars {
 interface UserData {
 	username: string;
 	email: string;
-	verified: boolean;
 }
 
 // Create an instance of axios with custom configurations
@@ -55,9 +53,9 @@ const instance = axios.create({
 	}
 });
 
-export default function CreatePost() {
+export default function CreateAnnouncement() {
 	const navigate = useNavigate();
-	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
+	const [cookies, , removeCookie] = useCookies(['admin']);
 
 	// Store the data, errors, and the available characters
 	const [data, setData] = useState<FormData>({
@@ -76,42 +74,31 @@ export default function CreatePost() {
 	// Store the user data
 	const [user, setUser] = useState<UserData>({
 		username: '',
-		email: '',
-		verified: false
+		email: ''
 	});
 
-	// Fetch the user data from the local storage
 	useEffect(() => {
-		if (cookies.user) {
-			const decoded = jwtDecode<UserData>(cookies.user);
-			setUser({
-				username: decoded.username,
-				email: decoded.email,
-				verified: decoded.verified
-			});
-		} else if (cookies.admin) {
-			(async function verify() {
-				try {
-					const request = await instance.post('/admin/verify', {
-						token: cookies.admin
-					});
+		if (!cookies.admin) navigate('/');
+		(async function verify() {
+			try {
+				const request = await instance.post('/admin/verify', {
+					token: cookies.admin
+				});
 
-					if (request.data === true) {
-						setUser({
-							username: 'The Team',
-							email: import.meta.env.VITE_EMAIL,
-							verified: true
-						});
-					} else {
-						removeCookie('admin');
-						navigate('/');
-					}
-				} catch (error) {
-					console.error(error);
+				if (request.data !== true) {
+					removeCookie('admin');
 					navigate('/');
+				} else {
+					setUser({
+						username: 'The Team',
+						email: import.meta.env.VITE_EMAIL
+					});
 				}
-			})();
-		}
+			} catch (error) {
+				console.error(error);
+				navigate('/');
+			}
+		})();
 	}, []);
 
 	// Handle the input change for the title
@@ -160,7 +147,7 @@ export default function CreatePost() {
 		const { username, email } = user;
 		const { title, body } = data;
 		try {
-			const { data } = await instance.post('/forum/general/create', {
+			const { data } = await instance.post('/forum/announcements/create', {
 				author: username,
 				email: email,
 				date_created: new Date().toISOString(),
@@ -176,7 +163,7 @@ export default function CreatePost() {
 			setData({} as FormData);
 			toast.success('Post created successfully.');
 			new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
-				navigate('/forum/general');
+				navigate('/forum/announcements');
 			});
 		} catch (error) {
 			console.log(error);
@@ -185,21 +172,6 @@ export default function CreatePost() {
 
 	const toastColour = useColorModeValue('black', 'white');
 	const bgColour = useColorModeValue('#F2F3F4', '#181818');
-
-	// If the user is not verified, display a message
-	if (!user.verified) {
-		return (
-			<Container maxW='7xl' p={{ base: 5, md: 10 }}>
-				<Center>
-					<Text>
-						A verified account is required to create forum posts. You may need
-						to sign out and sign back in to do so. To verify, you must click the
-						link in your email.
-					</Text>
-				</Center>
-			</Container>
-		);
-	}
 
 	return (
 		<Container maxW='7xl' p={{ base: 5, md: 10 }}>

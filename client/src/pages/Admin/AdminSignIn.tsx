@@ -20,6 +20,7 @@ import { useCookies } from 'react-cookie';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',

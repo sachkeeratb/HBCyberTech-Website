@@ -47,7 +47,7 @@ interface Slider {
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -86,47 +86,46 @@ export default function GeneralForm() {
 
 	const handleNameInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, fullName: e.target.value });
-		validateName(e.target.value);
+		setError({
+			...error,
+			nameErr:
+				e.target.value === '' ||
+				e.target.value.length < 2 ||
+				e.target.value.length > 40 ||
+				!/^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ\s']*$/u.test(
+					e.target.value
+				)
+		});
 	};
 
 	const handleEmailInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, email: e.target.value });
-		validateEmail(e.target.value);
+
+		let isEmailErr = true;
+		if (
+			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
+			e.target.value.charAt(0) === '1' &&
+			parseInt(e.target.value.charAt(1)) <= 2
+		)
+			isEmailErr = false;
+		else if (
+			/^[0-9]{6}@pdsb.net$/.test(e.target.value) &&
+			parseInt(e.target.value.charAt(0)) >= 6
+		)
+			isEmailErr = false;
+		setError({
+			...error,
+			emailErr: isEmailErr
+		});
 	};
 
 	const handleExtraInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, extra: e.target.value });
 		setExtrInpChars(350 - e.target.value.length);
-		validateExtra(350 - e.target.value.length);
-	};
-
-	const validateName = (val: string) => {
-		if (
-			val === '' ||
-			val.length < 2 ||
-			val.length > 40 ||
-			!/^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ\s']*$/u.test(
-				val
-			)
-		)
-			setError({ ...error, nameErr: true });
-		else setError({ ...error, nameErr: false });
-	};
-
-	const validateEmail = (val: string) => {
-		if (
-			!val.endsWith('@pdsb.net') ||
-			val.length < 15 ||
-			val.length > 20 ||
-			!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val)
-		)
-			setError({ ...error, emailErr: true });
-		else setError({ ...error, emailErr: false });
-	};
-
-	const validateExtra = (val: number) => {
-		if (val < 0 || val > 350) setError({ ...error, extraErr: true });
-		else setError({ ...error, extraErr: false });
+		setError({
+			...error,
+			extraErr: e.target.value.length < 0 || e.target.value.length > 350
+		});
 	};
 
 	function canSubmit(): boolean {

@@ -24,7 +24,7 @@ import { jwtDecode } from 'jwt-decode';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -211,7 +211,7 @@ const MobileComment: React.FC<Comment> = (comment: Comment, BG: string) => {
 };
 
 export default function Post() {
-	const [cookies] = useCookies(['user', 'admin']);
+	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 	const navigate = useNavigate();
 
 	const [isMobile, setIsMobile] = useState(
@@ -257,11 +257,27 @@ export default function Post() {
 			}>(cookies.user);
 			setData({ ...data, author: decoded.username, email: decoded.email });
 		} else if (cookies.admin) {
-			setData({
-				...data,
-				author: 'The Team',
-				email: import.meta.env.VITE_EMAIL
-			});
+			(async function verify() {
+				try {
+					const request = await instance.post('/admin/verify', {
+						token: cookies.admin
+					});
+
+					if (request.data === true) {
+						setData({
+							...data,
+							author: 'The Team',
+							email: import.meta.env.VITE_EMAIL
+						});
+					} else {
+						removeCookie('admin');
+						navigate('/');
+					}
+				} catch (error) {
+					console.error(error);
+					navigate('/');
+				}
+			})();
 		}
 	}, []);
 
@@ -390,11 +406,12 @@ export default function Post() {
 			return;
 		} else localStorage.setItem('lastCommentTime', now.toString());
 
-		if (!cookies.user) {
+		if (!cookies.user && !cookies.admin) {
 			toast.error('You must be signed in to post a comment.');
 			return;
 		}
 		if (
+			!cookies.admin &&
 			!jwtDecode<{
 				username: string;
 				email: string;

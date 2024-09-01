@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router';
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -239,7 +240,7 @@ export default function ExecMemList() {
 		};
 	}, [isMobile]);
 
-	const [cookies] = useCookies(['user', 'admin']);
+	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 	const [members, setMembers] = useState<ExecutiveMember[]>([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
@@ -248,22 +249,21 @@ export default function ExecMemList() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		if (!cookies.admin) navigate('/');
 		(async function verify() {
-			if (cookies.admin) {
-				const request = instance.post('/admin/verify', {
+			try {
+				const request = await instance.post('/admin/verify', {
 					token: cookies.admin
 				});
-				request
-					.then((response) => {
-						if (response.data !== true) {
-							navigate('/');
-						}
-					})
-					.catch((error) => {
-						console.error(error);
-						navigate('/');
-					});
-			} else navigate('/');
+
+				if (request.data !== true) {
+					removeCookie('admin');
+					navigate('/');
+				}
+			} catch (error) {
+				console.error(error);
+				navigate('/');
+			}
 		})();
 	}, []);
 

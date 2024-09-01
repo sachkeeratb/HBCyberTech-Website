@@ -124,7 +124,7 @@ const MobileForumPost: React.FC<ForumPost> = ({
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
+	timeout: 60000,
 	withCredentials: false,
 	headers: {
 		'Access-Control-Allow-Origin': '*',
@@ -221,7 +221,7 @@ export default function General() {
 			<Heading as='h1' size='xl' mt={4}>
 				General Discussion
 				<Flex justify='right' mb={4}>
-					<Link to='/forum/create'>
+					<Link to='/forum/general/create'>
 						<Button colorScheme='purple'>Create New Post</Button>
 					</Link>
 				</Flex>

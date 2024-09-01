@@ -7,7 +7,7 @@ use actix_cors::Cors;
 use routes::{
 	account::{account_sign_in, create_account, get_account_by_username_or_email, get_all_accounts, verify_account}, 
 	admin::{admin_sign_in, verify_admin}, 
-	announcement_forum_post::{return_amount_of_announcements, return_announcements}, 
+	announcement_forum_post::{create_announcement_post, return_amount_of_announcements, return_announcements}, 
 	executive_member::{create_executive_member, get_all_executive_members, get_executive_member_by_full_name_or_email}, 
 	forum_post::{create_post, get_comments_by_post_id, get_post_by_id, post_comment, return_amount_of_posts, return_posts}, 
 	general_member::{create_general_member, get_all_general_members, get_general_member_by_full_name_or_email}
@@ -42,6 +42,7 @@ async fn main() -> std::io::Result<()> {
 			.service(create_executive_member)
 			.service(get_executive_member_by_full_name_or_email)
 			.service(get_all_executive_members)
+			.service(create_announcement_post)
 			.service(return_announcements)
 			.service(return_amount_of_announcements)
 			.service(get_account_by_username_or_email)
