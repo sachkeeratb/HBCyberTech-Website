@@ -172,9 +172,8 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 			// Setup the verify URL
 			let object_id = acc.inserted_id.to_string();
 			let verify_url = format!(
-				"http://{}:{}/account/verify/{}",
-				dotenv!("HOST"),
-				dotenv!("PORT"),
+				"http://{}/account/verify/{}",
+				dotenv!("SERVER_URL"),
 				&object_id[10..object_id.len() - 2]
 			);
 
