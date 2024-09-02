@@ -1,3 +1,4 @@
+use std::env::var;
 use crate::{
 	models::{
 		comment::{ Comment, CommentRequest, CommentRequestRequest },
@@ -248,7 +249,7 @@ pub async fn delete_post_as_user(
 	// Decode the JWT
 	let claims = decode::<UserClaims>(
 		token,
-		&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+		&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 		&Validation::default()
 	);
 
@@ -298,7 +299,7 @@ pub async fn delete_post_as_admin(
 	// Decode the JWT
 	let claims = decode::<AdminClaims>(
 		token,
-		&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+		&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 		&Validation::default()
 	);
 
@@ -362,7 +363,7 @@ pub async fn delete_comment(
 	// Decode the JWT
 	let claims = decode::<UserClaims>(
 		token,
-		&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+		&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 		&Validation::default()
 	);
 
@@ -415,7 +416,7 @@ pub async fn delete_comment_as_admin(
 	// Decode the JWT
 	let claims = decode::<AdminClaims>(
 		token,
-		&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+		&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 		&Validation::default()
 	);
 

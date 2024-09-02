@@ -1,3 +1,4 @@
+use std::env::var;
 use chrono::Utc;
 use mongodb::bson::{ oid::ObjectId, DateTime };
 use serde::{ Deserialize, Serialize };
@@ -24,7 +25,7 @@ fn validate_author(author: &String) -> Result<(), ValidationError> {
 }
 
 fn validate_email(email: &String) -> Result<(), ValidationError> {
-	if email != &format!("{}@gmail.com", dotenv!("EMAIL_NAME")) {
+	if email != &format!("{}@gmail.com", var("EMAIL_NAME").unwrap()) {
 		return Err(ValidationError::new("Email must be a valid PDSB email."));
 	}
 	Ok(())

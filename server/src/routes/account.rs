@@ -1,3 +1,4 @@
+use std::env::var;
 use actix_web::{ get, post, web::{ self, Data, Json }, HttpResponse };
 use bcrypt::{ hash, verify, DEFAULT_COST };
 use jsonwebtoken::{ encode, EncodingKey, Header };
@@ -130,7 +131,7 @@ pub async fn account_sign_in(db: Data<Database>, request: web::Json<AccountGiven
 						let token = encode(
 							&Header::default(),
 							&claims,
-							&EncodingKey::from_secret(dotenv!("SECRET").as_ref())
+							&EncodingKey::from_secret(var("SECRET").unwrap().as_ref())
 						).unwrap();
 
 						// Return the token
@@ -173,13 +174,13 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 			let object_id = acc.inserted_id.to_string();
 			let verify_url = format!(
 				"http://{}/account/verify/{}",
-				dotenv!("SERVER_URL"),
+				var("SERVER_URL").unwrap(),
 				&object_id[10..object_id.len() - 2]
 			);
 
 			// Create the message
 			let message = MessageBuilder::new()
-				.from(("HB CyberTech".to_owned(), dotenv!("EMAIL_NAME").to_string() + "@gmail.com"))
+				.from(("HB CyberTech".to_owned(), var("EMAIL_NAME").unwrap().to_string() + "@gmail.com"))
 				.to(request.email.clone())
 				.subject("Please verify your account!")
 				.html_body(
@@ -190,7 +191,7 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 			// Send the message
 			SmtpClientBuilder::new("smtp.gmail.com", 587)
 				.implicit_tls(false)
-				.credentials((dotenv!("EMAIL_NAME"), dotenv!("EMAIL_PASSWORD")))
+				.credentials((var("EMAIL_NAME").unwrap().as_str(), var("EMAIL_PASSWORD").unwrap().as_str()))
 				.connect().await
 				.unwrap()
 				.send(message).await

@@ -3,6 +3,7 @@ mod routes;
 mod services;
 mod utilities;
 
+use std::env::var;
 use actix_cors::Cors;
 use actix_web::{ web::Data, App, HttpServer };
 use routes::{
@@ -46,9 +47,6 @@ use routes::{
 use services::db::Database;
 
 #[macro_use]
-extern crate dotenv_codegen;
-
-#[macro_use]
 extern crate validator_derive;
 
 #[actix_web::main]
@@ -61,7 +59,7 @@ async fn main() -> std::io::Result<()> {
 	HttpServer::new(move || {
 		// Enable CORS
 		let cors = Cors::default()
-			.allowed_origin(dotenv!("CLIENT_URL"))
+			.allowed_origin(&var("CLIENT_URL").unwrap())
 			.allowed_methods(vec!["GET", "POST", "DELETE"])
 			.allow_any_header()
 			.max_age(3600)
@@ -100,7 +98,13 @@ async fn main() -> std::io::Result<()> {
 			.service(verify_admin)
 	})
 		// Bind the server to the host and port
-		.bind((dotenv!("HOST"), dotenv!("PORT").parse::<u16>().unwrap()))?
+		.bind((
+			var("HOST").unwrap_or_else(|_| "localhost".to_string()),
+			var("PORT")
+				.unwrap_or_else(|_| "8080".to_string())
+				.parse::<u16>()
+				.unwrap(),
+		))?
 		// Start the server
 		.run().await
 }

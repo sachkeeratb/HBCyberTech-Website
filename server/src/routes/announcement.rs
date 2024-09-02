@@ -1,3 +1,4 @@
+use std::env::var;
 use crate::models::announcement::AnnouncementRequestRequest;
 use crate::utilities::claims::AdminClaims;
 use crate::{ models::announcement::Announcement, services::db::Database };
@@ -66,7 +67,7 @@ pub async fn create_announcement(
 ) -> HttpResponse {
 	let claims = decode::<AdminClaims>(
 		&request.token,
-		&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+		&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 		&Validation::default()
 	);
 
@@ -101,7 +102,7 @@ pub async fn create_announcement(
 			Announcement::try_from(AnnouncementRequest {
 				id: ObjectId::new().to_string(),
 				author: "The Team".to_string(),
-				email: format!("{}@gmail.com", dotenv!("EMAIL_NAME")),
+				email: format!("{}@gmail.com", var("EMAIL_NAME").unwrap()),
 				date_created: request.date_created.clone(),
 				title: request.title.clone(),
 				body: request.body.clone(),
@@ -131,7 +132,7 @@ pub async fn delete_announcement(
 	// Decode the JWT
 	let claims = decode::<AdminClaims>(
 		token,
-		&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+		&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 		&Validation::default()
 	);
 

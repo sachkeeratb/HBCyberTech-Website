@@ -1,3 +1,4 @@
+use std::env::var;
 use actix_web::{ post, web::{ self, Data }, HttpResponse };
 use bcrypt::{ hash, verify, DEFAULT_COST };
 use chrono::{ DateTime, Duration, Local, Utc };
@@ -20,7 +21,7 @@ pub async fn verify_admin(db: Data<Database>, request: web::Json<Token>) -> Http
 	match
 		decode::<AdminClaims>(
 			&request.token,
-			&DecodingKey::from_secret(dotenv!("SECRET").as_ref()),
+			&DecodingKey::from_secret(var("SECRET").unwrap().as_ref()),
 			&Validation::default()
 		)
 	{
@@ -79,7 +80,7 @@ pub async fn admin_sign_in(db: Data<Database>, request: web::Json<Given>) -> Htt
 			let token = encode(
 				&Header::default(),
 				&claims,
-				&EncodingKey::from_secret(dotenv!("SECRET").as_ref())
+				&EncodingKey::from_secret(var("SECRET").unwrap().as_ref())
 			).unwrap();
 
 			// Output the sign in time

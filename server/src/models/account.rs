@@ -1,3 +1,4 @@
+use std::env::var;
 use chrono::Utc;
 use lazy_static::lazy_static;
 use mongodb::bson::{ oid::ObjectId, DateTime };
@@ -32,7 +33,7 @@ fn validate_username(username: &String) -> Result<(), ValidationError> {
 }
 
 fn validate_email(email: &String) -> Result<(), ValidationError> {
-	if !RE_EMAIL.is_match(email) && email != &format!("{}@gmail.com", dotenv!("EMAIL_NAME")) {
+	if !RE_EMAIL.is_match(email) && email != &format!("{}@gmail.com", var("EMAIL_NAME").unwrap()) {
 		return Err(ValidationError::new("Email must be a valid PDSB email."));
 	}
 	Ok(())
