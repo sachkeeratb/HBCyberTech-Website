@@ -1,3 +1,6 @@
+// A list of all accounts that have been created by users. The admin can view all accounts and their details.
+
+// React and Chakra UI components
 import React, { useEffect, useState } from 'react';
 import {
 	Box,
@@ -11,24 +14,23 @@ import {
 	useColorModeValue,
 	VStack
 } from '@chakra-ui/react';
+
+// Axios for making HTTP requests
 import axios from 'axios';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
+
+// To decode JWT tokens
 import { jwtDecode } from 'jwt-decode';
+
+// Framer Motion for animations
 import { motion } from 'framer-motion';
+
+// To navigate to different pages
 import { useNavigate } from 'react-router-dom';
 
-const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 60000,
-	withCredentials: false,
-	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
-	}
-});
-
+// Interface for account data
 interface Account {
 	username: string;
 	email: string;
@@ -37,6 +39,20 @@ interface Account {
 	time: string;
 }
 
+// Create an instance of axios with custom configurations
+const instance = axios.create({
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
+	headers: {
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
+	}
+});
+
+// View an account made for a desktop view
 const DesktopEntry: React.FC<Account> = ({
 	username,
 	email,
@@ -79,6 +95,8 @@ const DesktopEntry: React.FC<Account> = ({
 		</Box>
 	);
 };
+
+// View an account made for a mobile view
 const MobileEntry: React.FC<Account> = ({
 	username,
 	email,
@@ -126,12 +144,17 @@ const MobileEntry: React.FC<Account> = ({
 	);
 };
 
+// Display a list of accounts
 export default function AccountList() {
+	// Use the navigate hook to navigate to different pages
 	const navigate = useNavigate();
+
+	// Check if the user is on a mobile device
 	const [isMobile, setIsMobile] = useState(
 		typeof window !== 'undefined' && window.innerWidth < 1024
 	);
 
+	// Check if the user's screen has resized to mobile
 	useEffect(() => {
 		function handleResize() {
 			setIsMobile(window.innerWidth < 1024);
@@ -145,13 +168,19 @@ export default function AccountList() {
 		};
 	}, [isMobile]);
 
+	// Cookies for storing and removing user data
 	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
+
+	// State variables for account data
 	const [members, setMembers] = useState<Account[]>([]);
+
+	// State variables for pagination
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('username');
 
+	// Check if the user is an admin
 	useEffect(() => {
 		if (!cookies.admin) navigate('/');
 		(async function verify() {
@@ -160,6 +189,7 @@ export default function AccountList() {
 					token: cookies.admin
 				});
 
+				// If the user is not an admin, remove the cookie and navigate to the home page
 				if (request.data !== true) {
 					removeCookie('admin');
 					navigate('/');
@@ -171,10 +201,12 @@ export default function AccountList() {
 		})();
 	}, []);
 
+	// Fetch account data
 	useEffect(() => {
 		fetchMembers();
 	}, [page, filter, search]);
 
+	// Fetch account data from the database
 	const fetchMembers = async () => {
 		try {
 			const response = await instance.post('/account/get_all', {
@@ -184,9 +216,14 @@ export default function AccountList() {
 				search: search,
 				field: filter
 			});
+
+			// Parse the account data and store it in an array
 			const accArr: Account[] = [];
 			for (let i = 0; i < response.data.length; i++) {
+				// Create a variable for the current item
 				const currItem = JSON.parse(JSON.stringify(response.data[i]));
+
+				// Get the date and time of the account creation
 				const ymd = currItem.date_created.substring(0, 10) + 'T';
 				let hms =
 					currItem.date_created.substring(
@@ -207,6 +244,8 @@ export default function AccountList() {
 					minute: 'numeric',
 					hour12: true
 				});
+
+				// Store the account data in an array
 				const username = currItem.username;
 				const email = currItem.email;
 				const verified = currItem.verified;
@@ -218,13 +257,17 @@ export default function AccountList() {
 					time
 				});
 			}
+			// Check if there are more accounts to fetch
 			setHasMore(accArr.length === 10);
+
+			// Set the account data in the members list
 			setMembers(accArr);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
+	// Handle the search input
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearch(event.target.value);
 		setPage(1);
@@ -232,6 +275,7 @@ export default function AccountList() {
 		setHasMore(true);
 	};
 
+	// Set the background and outline colors based on the color mode
 	const OUTLINE = useColorModeValue('gray.700', 'purple.700');
 	const BG = useColorModeValue('white', 'gray.800');
 

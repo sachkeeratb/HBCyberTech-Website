@@ -1,3 +1,7 @@
+// Admin dashboard to navigate to different admin pages
+
+// React and Chakra UI components
+import { useEffect } from 'react';
 import {
 	Text,
 	Container,
@@ -8,28 +12,40 @@ import {
 	Button,
 	chakra
 } from '@chakra-ui/react';
+
+// Axios for making HTTP requests
 import axios from 'axios';
+
+// Framer Motion for animations
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
+
+// To navigate to different pages
 import { useNavigate } from 'react-router-dom';
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 60000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
+// Admin dashboard component
 export default function AdminDashboard() {
+	// To navigate to different pages
 	const navigate = useNavigate();
+	// To get and remove cookies
 	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 
+	// Check if the user is an admin
 	useEffect(() => {
 		if (!cookies.admin) navigate('/');
 		(async function verify() {
@@ -38,6 +54,7 @@ export default function AdminDashboard() {
 					token: cookies.admin
 				});
 
+				// If the user is not an admin, remove the cookie and redirect to the home page
 				if (request.data !== true) {
 					removeCookie('admin');
 					navigate('/');
@@ -101,6 +118,7 @@ export default function AdminDashboard() {
 	);
 }
 
+// Links to different admin pages
 interface Link {
 	label: string;
 	href: string;

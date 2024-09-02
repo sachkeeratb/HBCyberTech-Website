@@ -5,6 +5,7 @@ use regex::Regex;
 use serde::{ Deserialize, Serialize };
 use std::time::SystemTime;
 
+// Store the regex patterns for various fields
 lazy_static! {
 	static ref RE_FULL_NAME: Regex = Regex::new(
 		r"^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ ']{2,40}$"
@@ -13,6 +14,7 @@ lazy_static! {
 	static ref RE_EXTRA: Regex = Regex::new(r"^.{0,350}$").unwrap();
 }
 
+// Define the GeneralMember struct
 #[derive(Serialize, Deserialize)]
 pub struct GeneralMember {
 	pub _id: ObjectId,
@@ -24,6 +26,7 @@ pub struct GeneralMember {
 	pub date_created: DateTime,
 }
 
+// Define the GeneralMemberRequest struct
 #[derive(Serialize, Deserialize, Validate)]
 pub struct GeneralMemberRequest {
 	#[validate(regex(path = *RE_FULL_NAME, message = "Invalid name."))]
@@ -39,6 +42,7 @@ pub struct GeneralMemberRequest {
 	pub date_created: String,
 }
 
+// Implement the TryFrom trait for GeneralMemberRequest
 impl TryFrom<GeneralMemberRequest> for GeneralMember {
 	type Error = Box<dyn std::error::Error>;
 

@@ -1,3 +1,6 @@
+// For users and admins to create forum posts
+
+// React and Chakra UI components
 import React, { useState, useEffect } from 'react';
 import {
 	Container,
@@ -14,10 +17,20 @@ import {
 	Text,
 	FormErrorMessage
 } from '@chakra-ui/react';
+
+// Toast notifications
 import { toast, Toaster } from 'react-hot-toast';
+
+// Axios for making HTTP requests
 import axios from 'axios';
+
+// To navigate to different pages
 import { useNavigate } from 'react-router-dom';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
+
+// To decode JWT tokens
 import { jwtDecode } from 'jwt-decode';
 
 // Define the data types
@@ -55,8 +68,12 @@ const instance = axios.create({
 	}
 });
 
+// Main component for creating a forum post
 export default function CreatePost() {
+	// To navigate to different pages
 	const navigate = useNavigate();
+
+	// Get the user data from the cookies and possibly remove them
 	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 
 	// Store the data, errors, and the available characters
@@ -80,29 +97,37 @@ export default function CreatePost() {
 		verified: false
 	});
 
-	// Fetch the user data from the local storage
+	// Set the user's data
 	useEffect(() => {
 		if (cookies.user) {
+			// Decode the JWT token
 			const decoded = jwtDecode<UserData>(cookies.user);
+			// Set the user data
 			setUser({
 				username: decoded.username,
 				email: decoded.email,
 				verified: decoded.verified
 			});
-		} else if (cookies.admin) {
+		}
+		// If the user is an admin
+		else if (cookies.admin) {
 			(async function verify() {
 				try {
 					const request = await instance.post('/admin/verify', {
 						token: cookies.admin
 					});
 
+					// If the user is an admin, set the user data
 					if (request.data === true) {
 						setUser({
 							username: 'The Team',
 							email: import.meta.env.VITE_EMAIL,
 							verified: true
 						});
-					} else {
+					}
+
+					// If the user is not an admin, remove the cookie and navigate to the home page
+					else {
 						removeCookie('admin');
 						navigate('/');
 					}
@@ -145,21 +170,30 @@ export default function CreatePost() {
 	// Handle the form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
+
+		// Check if the title and body are valid
 		if (!data.title || !data.body) {
 			toast.error('Please fill in all fields.');
 			return;
 		}
 
+		// Check if the user has posted within the last 10 minutes
 		const lastPostTime = localStorage.getItem('lastPostTime');
 		const now = new Date().getTime();
+
+		// If the user has posted within the last 10 minutes, display an error message
 		if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
 			toast.error('You must wait 10 minutes between posting.');
 			return;
-		} else localStorage.setItem('lastPostTime', now.toString());
+		}
+		// Otherwise, store the current time
+		else localStorage.setItem('lastPostTime', now.toString());
 
+		// Get the user data and the post data
 		const { username, email } = user;
 		const { title, body } = data;
 		try {
+			// Send a POST request to create a forum post
 			const { data } = await instance.post('/forum/general/create', {
 				author: username,
 				email: email,
@@ -168,11 +202,13 @@ export default function CreatePost() {
 				body: body
 			});
 
+			// Display an error message if there is one
 			if (data.error) {
 				toast.error(data.error);
 				throw new Error(data.error);
 			}
 
+			// Display a success message if the post was created
 			setData({} as FormData);
 			toast.success('Post created successfully.');
 			new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
@@ -183,6 +219,7 @@ export default function CreatePost() {
 		}
 	};
 
+	// Set the toast colours
 	const toastColour = useColorModeValue('black', 'white');
 	const bgColour = useColorModeValue('#F2F3F4', '#181818');
 

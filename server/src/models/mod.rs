@@ -1,3 +1,5 @@
+// Module: models
+
 pub mod account;
 pub mod admin;
 pub mod announcement;

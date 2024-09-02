@@ -4,6 +4,7 @@ use serde::{ Deserialize, Serialize };
 use std::time::SystemTime;
 use validator::ValidationError;
 
+// Define the Announcement struct
 #[derive(Serialize, Deserialize)]
 pub struct Announcement {
 	pub _id: ObjectId,
@@ -14,6 +15,7 @@ pub struct Announcement {
 	pub body: String,
 }
 
+// Create functions to validate the author and email
 fn validate_author(author: &String) -> Result<(), ValidationError> {
 	if author != "The Team" {
 		return Err(ValidationError::new("Invalid username."));
@@ -28,6 +30,7 @@ fn validate_email(email: &String) -> Result<(), ValidationError> {
 	Ok(())
 }
 
+// Define the AnnouncementRequest struct
 #[derive(Serialize, Deserialize, Validate)]
 pub struct AnnouncementRequest {
 	pub id: String,
@@ -40,6 +43,7 @@ pub struct AnnouncementRequest {
 	pub body: String,
 }
 
+// Define the AnnouncementRequestRequest struct (no id with token)
 #[derive(Serialize, Deserialize, Validate)]
 pub struct AnnouncementRequestRequest {
 	#[validate(custom(function = "validate_author"))]
@@ -49,8 +53,10 @@ pub struct AnnouncementRequestRequest {
 	pub date_created: String,
 	pub title: String,
 	pub body: String,
+	pub token: String,
 }
 
+// Implement the TryFrom trait for AnnouncementRequest
 impl TryFrom<AnnouncementRequest> for Announcement {
 	type Error = Box<dyn std::error::Error>;
 

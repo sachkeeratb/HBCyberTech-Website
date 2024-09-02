@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+// A button for admins to create new accounts
+
+// React and Chakra UI components
+import { useState, useEffect } from 'react';
 import {
 	Container,
 	FormControl,
@@ -14,9 +17,17 @@ import {
 	Text,
 	FormErrorMessage
 } from '@chakra-ui/react';
+
+// Toast notifications
 import { toast, Toaster } from 'react-hot-toast';
+
+// Axios for making HTTP requests
 import axios from 'axios';
+
+// To navigate to different pages
 import { useNavigate } from 'react-router-dom';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
 
 // Define the data types
@@ -53,8 +64,12 @@ const instance = axios.create({
 	}
 });
 
+// Main component for creating an announcement
 export default function CreateAnnouncement() {
+	// To navigate to different pages
 	const navigate = useNavigate();
+
+	// To store the admin and possibly remove it
 	const [cookies, , removeCookie] = useCookies(['admin']);
 
 	// Store the data, errors, and the available characters
@@ -77,6 +92,7 @@ export default function CreateAnnouncement() {
 		email: ''
 	});
 
+	// Check if the user is an admin
 	useEffect(() => {
 		if (!cookies.admin) navigate('/');
 		(async function verify() {
@@ -85,6 +101,7 @@ export default function CreateAnnouncement() {
 					token: cookies.admin
 				});
 
+				// If the user is not an admin, remove the cookie and navigate to the home page
 				if (request.data !== true) {
 					removeCookie('admin');
 					navigate('/');
@@ -132,18 +149,26 @@ export default function CreateAnnouncement() {
 	// Handle the form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
+
+		// Check if the title and body are filled in
 		if (!data.title || !data.body) {
 			toast.error('Please fill in all fields.');
 			return;
 		}
 
+		// Check if the user has posted within the last 10 minutes
 		const lastPostTime = localStorage.getItem('lastPostTime');
 		const now = new Date().getTime();
+
+		// If the user has posted within the last 10 minutes, display an error message
 		if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
 			toast.error('You must wait 10 minutes between posting.');
 			return;
-		} else localStorage.setItem('lastPostTime', now.toString());
+		}
+		// Otherwise, store the current time in local storage
+		else localStorage.setItem('lastPostTime', now.toString());
 
+		// Get the user data and the post data
 		const { username, email } = user;
 		const { title, body } = data;
 		try {
@@ -152,14 +177,17 @@ export default function CreateAnnouncement() {
 				email: email,
 				date_created: new Date().toISOString(),
 				title: title,
-				body: body
+				body: body,
+				token: cookies.admin
 			});
 
+			// Display an error message if the post was not created
 			if (data.error) {
 				toast.error(data.error);
 				throw new Error(data.error);
 			}
 
+			// Display a success message if the post was created
 			setData({} as FormData);
 			toast.success('Post created successfully.');
 			new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
@@ -170,6 +198,7 @@ export default function CreateAnnouncement() {
 		}
 	};
 
+	// Set the toast colour and its background colour
 	const toastColour = useColorModeValue('black', 'white');
 	const bgColour = useColorModeValue('#F2F3F4', '#181818');
 

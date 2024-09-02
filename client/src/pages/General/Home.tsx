@@ -1,3 +1,6 @@
+// A home page for the general public to see what the club is about
+
+// Chakra UI Components
 import {
 	Container,
 	Heading,
@@ -8,8 +11,11 @@ import {
 	Box,
 	Icon
 } from '@chakra-ui/react';
-// Here we have used framer-motion package for animations
+
+// Framer motion for animations
 import { motion } from 'framer-motion';
+
+// React Icons
 import { MdOutlinePersonPin } from 'react-icons/md';
 import { FaSlideshare, FaNetworkWired } from 'react-icons/fa';
 import { GrWorkshop } from 'react-icons/gr';
@@ -72,6 +78,7 @@ export default function Home() {
 	);
 }
 
+// Features of the club and website
 interface Feature {
 	heading: string;
 	content: string;

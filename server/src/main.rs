@@ -27,6 +27,8 @@ use routes::{
 	},
 	forum_post::{
 		create_post,
+		delete_comment,
+		delete_comment_as_admin,
 		delete_post_as_admin,
 		delete_post_as_user,
 		get_comments_by_post_id,
@@ -51,16 +53,21 @@ extern crate validator_derive;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+	// Initialize the database
 	let db = Database::init().await;
 	let db_data = Data::new(db);
 
+	// Start the server
 	HttpServer::new(move || {
+		// Enable CORS
 		let cors = Cors::default()
 			.allowed_origin(dotenv!("CLIENT_URL"))
 			.allowed_methods(vec!["GET", "POST", "DELETE"])
 			.allow_any_header()
 			.max_age(3600)
 			.send_wildcard();
+
+		// Create the app with all of the services created in the routes module
 		App::new()
 			.wrap(cors)
 			.app_data(db_data.clone())
@@ -83,6 +90,8 @@ async fn main() -> std::io::Result<()> {
 			.service(return_amount_of_posts)
 			.service(get_comments_by_post_id)
 			.service(post_comment)
+			.service(delete_comment)
+			.service(delete_comment_as_admin)
 			.service(create_account)
 			.service(account_sign_in)
 			.service(verify_account)
@@ -90,6 +99,8 @@ async fn main() -> std::io::Result<()> {
 			.service(admin_sign_in)
 			.service(verify_admin)
 	})
+		// Bind the server to the host and port
 		.bind((dotenv!("HOST"), dotenv!("PORT").parse::<u16>().unwrap()))?
+		// Start the server
 		.run().await
 }

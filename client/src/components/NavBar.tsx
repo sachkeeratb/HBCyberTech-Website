@@ -1,5 +1,7 @@
+// The Navigation Bar
 'use client';
 
+// Import the Chakra UI components
 import {
 	Box,
 	Flex,
@@ -17,13 +19,18 @@ import {
 	useColorMode
 } from '@chakra-ui/react';
 
+// Import the Chakra UI icons
 import {
 	HamburgerIcon,
 	CloseIcon,
 	ChevronDownIcon,
 	ChevronRightIcon
 } from '@chakra-ui/icons';
+
+// Import the Club Logo
 import HBCyberTechLogo from '../assets/HB-CyberTechCircle.png';
+
+// The useCookies hook is used to access the cookies stored in the browser
 import { useCookies } from 'react-cookie';
 
 /**
@@ -33,14 +40,17 @@ import { useCookies } from 'react-cookie';
  */
 
 export default function NavBar() {
-	// Hooks for managing state and behavior
+	// If the side bar is open for mobile devices
 	const { isOpen, onToggle } = useDisclosure();
+
+	// Hooks for managing color mode and cookies
 	const { colorMode, toggleColorMode } = useColorMode();
+
+	// Hooks for managing cookies
 	const [cookies, , removeCookie] = useCookies(['user', 'admin']);
 
 	return (
 		<Box>
-			{/* Desktop Navigation */}
 			<Flex
 				bg={useColorModeValue('white', 'gray.800')}
 				color={useColorModeValue('gray.600', 'white')}
@@ -71,6 +81,7 @@ export default function NavBar() {
 						</a>
 					</Flex>
 
+					{/* Desktop Navigation */}
 					<Flex display={{ base: 'none', md: 'flex' }} ml={10} mt={7}>
 						<DesktopNav />
 					</Flex>
@@ -131,6 +142,7 @@ const DesktopNav = () => {
 	const linkHoverColor = useColorModeValue('gray.800', 'white');
 	const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
+	// Hooks for managing cookies
 	const [cookies] = useCookies(['user', 'admin']);
 
 	return (
@@ -175,6 +187,7 @@ const DesktopNav = () => {
 				</Box>
 			))}
 
+			{/* Admin Link */}
 			{cookies.admin ? (
 				<Box>
 					<Popover trigger={'hover'} placement={'bottom-start'}>
@@ -247,6 +260,7 @@ const MobileNav = () => {
 	// Hooks for managing color mode
 	const { colorMode, toggleColorMode } = useColorMode();
 
+	// Hooks for managing cookies
 	const [cookies] = useCookies(['user', 'admin']);
 
 	return (
@@ -258,6 +272,8 @@ const MobileNav = () => {
 			{NavItems.map((navItem) => (
 				<MobileNavItem key={navItem.label} {...navItem} />
 			))}
+
+			{/* Admin Link */}
 			{cookies.admin ? (
 				<MobileNavItem label={'Admin'} href={'/admin'} />
 			) : (

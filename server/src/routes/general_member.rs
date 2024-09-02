@@ -8,6 +8,7 @@ use crate::{
 	utilities::pagination_args::AdminPaginationArgs,
 };
 
+// Get the general member by full name or email
 #[get("/general_member/get/{full_name_or_email}")]
 pub async fn get_general_member_by_full_name_or_email(
 	db: Data<Database>,
@@ -23,11 +24,13 @@ pub async fn get_general_member_by_full_name_or_email(
 	}
 }
 
+// Get all general members
 #[post("/general_member/get_all")]
 pub async fn get_all_general_members(
 	db: Data<Database>,
 	request: Json<AdminPaginationArgs>
 ) -> HttpResponse {
+	// Verify the admin token
 	if
 		!verify(
 			request.token.clone(),
@@ -37,6 +40,7 @@ pub async fn get_all_general_members(
 		return HttpResponse::Unauthorized().body("Unauthorized.");
 	}
 
+	// Get the paginated general members
 	match
 		db.get_all_general_members(
 			request.page,
@@ -46,6 +50,7 @@ pub async fn get_all_general_members(
 		).await
 	{
 		Ok(members) => {
+			// Sort the members by date_created in descending order
 			let general_members: Vec<GeneralMemberRequest> = members
 				.into_iter()
 				.rev()
@@ -64,11 +69,13 @@ pub async fn get_all_general_members(
 	}
 }
 
+// Create a general member
 #[post("/general_member/post")]
 pub async fn create_general_member(
 	db: Data<Database>,
 	request: Json<GeneralMemberRequest>
 ) -> HttpResponse {
+	// Validate the request
 	match request.validate() {
 		Ok(_) => (),
 		Err(err) => {
@@ -76,6 +83,7 @@ pub async fn create_general_member(
 		}
 	}
 
+	// Create the general member
 	match
 		db.create_general_member(
 			GeneralMember::try_from(GeneralMemberRequest {

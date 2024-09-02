@@ -1,6 +1,6 @@
 use futures_util::TryStreamExt;
 use mongodb::{
-	bson::{ doc, oid::ObjectId, DateTime, Uuid },
+	bson::{ doc, oid::ObjectId, Bson, DateTime, Uuid },
 	error::Error,
 	results::{ DeleteResult, InsertOneResult, UpdateResult },
 	Collection,
@@ -18,6 +18,7 @@ use crate::models::{
 	general_member::GeneralMember,
 };
 
+// Define the Database struct
 pub struct Database {
 	general_member: Collection<GeneralMember>,
 	executive_member: Collection<ExecutiveMember>,
@@ -29,15 +30,18 @@ pub struct Database {
 
 impl Database {
 	pub async fn init() -> Self {
+		// Initialize the database
 		dotenv::dotenv().expect("Failed to read .env file");
 		let uri = match env::var("MONGO_URI") {
 			Ok(val) => val.to_string(),
 			Err(_) => "mongodb://localhost:27017/?directConnection=true".to_string(),
 		};
 
+		// Connect to the MongoDB database
 		let client = mongodb::Client::with_uri_str(&uri).await.unwrap();
 		let db = client.database("cybertechdb");
 
+		// Get the collections
 		let general_member: Collection<GeneralMember> = db.collection("GeneralMemberForms");
 		let executive_member: Collection<ExecutiveMember> = db.collection("ExecutiveMemberForms");
 		let announcement: Collection<Announcement> = db.collection("Announcements");
@@ -45,6 +49,7 @@ impl Database {
 		let account: Collection<Account> = db.collection("Accounts");
 		let admin: Collection<Admin> = db.collection("Admin");
 
+		// Return the Database struct
 		Database {
 			general_member,
 			executive_member,
@@ -55,6 +60,7 @@ impl Database {
 		}
 	}
 
+	// General Members
 	pub async fn gen_mem_does_exist_full_name(&self, full_name: String) -> bool {
 		let existing_member = self.general_member.find_one(doc! { "full_name": &full_name }).await.ok();
 		if let Some(existing_member) = existing_member {
@@ -80,7 +86,6 @@ impl Database {
 		}
 		false
 	}
-
 	pub async fn create_general_member(
 		&self,
 		general_member: GeneralMember
@@ -121,6 +126,7 @@ impl Database {
 		Ok(members)
 	}
 
+	// Executive Members
 	pub async fn exec_mem_does_exist_full_name(&self, full_name: String) -> bool {
 		let existing_member = self.executive_member
 			.find_one(doc! { "full_name": &full_name }).await
@@ -148,7 +154,6 @@ impl Database {
 		}
 		false
 	}
-
 	pub async fn create_executive_member(
 		&self,
 		executive_member: ExecutiveMember
@@ -191,6 +196,7 @@ impl Database {
 		Ok(members)
 	}
 
+	// Announcements
 	pub async fn get_announcements(
 		&self,
 		page: u32,
@@ -217,7 +223,6 @@ impl Database {
 		let post = self.announcement.find_one(doc! { "_id": object_id }).await?;
 		Ok(post)
 	}
-
 	pub async fn create_announcement(
 		&self,
 		announcement: Announcement
@@ -239,6 +244,7 @@ impl Database {
 		Ok(result)
 	}
 
+	// Forum Posts and their Comments
 	pub async fn get_forum_posts(
 		&self,
 		page: u32,
@@ -265,7 +271,6 @@ impl Database {
 		let post = self.forum_post.find_one(doc! { "_id": object_id }).await?;
 		Ok(post)
 	}
-
 	pub async fn create_forum_post(&self, post: Post) -> Result<InsertOneResult, Error> {
 		let result = self.forum_post.insert_one(post).await.ok().expect("Error creating forum post.");
 
@@ -292,7 +297,43 @@ impl Database {
 
 		Ok(result)
 	}
+	pub async fn get_comment_by_id(
+		&self,
+		id: String,
+		comment_id: String
+	) -> Result<Option<Bson>, Error> {
+		let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
+		let post = self.forum_post.find_one(doc! { "_id": object_id }).await?;
+		if let Some(post) = post {
+			for comment in post.comments {
+				if
+					comment.as_document().unwrap().get("_id").and_then(Bson::as_object_id) ==
+					Some(ObjectId::parse_str(&comment_id).unwrap())
+				{
+					return Ok(Some(comment));
+				}
+			}
+		}
+		Ok(None)
+	}
+	pub async fn delete_comment(
+		&self,
+		id: String,
+		comment_id: String
+	) -> Result<UpdateResult, Error> {
+		let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
+		let result = self.forum_post
+			.update_one(
+				doc! { "_id": object_id },
+				doc! { "$pull": { "comments": { "_id": ObjectId::parse_str(&comment_id).unwrap() } } }
+			).await
+			.ok()
+			.expect("Error deleting comment.");
 
+		Ok(result)
+	}
+
+	// Accounts
 	pub async fn account_does_exist_full_name(&self, username: String) -> bool {
 		let acc = self.account.find_one(doc! { "username": &username }).await.ok();
 		if let Some(acc) = acc {
@@ -316,7 +357,6 @@ impl Database {
 		}
 		false
 	}
-
 	pub async fn get_account_password_by_email(
 		&self,
 		email: String
@@ -331,7 +371,6 @@ impl Database {
 		let account = self.account.find_one(doc! { "email": &email }).await?;
 		Ok(account)
 	}
-
 	pub async fn verify_account(&self, id: String) -> Result<UpdateResult, Error> {
 		let object_id = ObjectId::parse_str(&id).expect("Error parsing ID.");
 		let result = self.account
@@ -375,6 +414,16 @@ impl Database {
 		Ok(members)
 	}
 
+	// Admin
+	pub async fn get_admin(&self) -> Result<Admin, Error> {
+		// Get the admin account
+		let admin = self.admin
+			.find_one(doc! {}).await
+			.expect("Admin does not exist.")
+			.unwrap();
+
+		return Ok(admin);
+	}
 	pub async fn update_admin(&self) -> Result<UpdateResult, Error> {
 		// Generate a number between 30 and 45
 		let num = rand::thread_rng().gen_range(30..=45);
@@ -409,15 +458,5 @@ impl Database {
 
 		// Return the result of the update operation
 		Ok(result)
-	}
-
-	pub async fn get_admin(&self) -> Result<Admin, Error> {
-		// Get the admin account
-		let admin = self.admin
-			.find_one(doc! {}).await
-			.expect("Admin does not exist.")
-			.unwrap();
-
-		return Ok(admin);
 	}
 }

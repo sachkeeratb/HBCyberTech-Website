@@ -1,5 +1,7 @@
+// Displaying announcements
+
+// React and Chakra UI components
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
 	Box,
 	Heading,
@@ -12,9 +14,20 @@ import {
 	Input,
 	Select
 } from '@chakra-ui/react';
+
+// Axios for making HTTP requests
+import axios from 'axios';
+
+// Framer Motion for animations
 import { motion } from 'framer-motion';
+
+// Link for navigation
 import { Link } from 'react-router-dom';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
+
+// Toast notifications
 import toast, { Toaster } from 'react-hot-toast';
 
 // Define the shape of the announcement
@@ -42,10 +55,12 @@ const instance = axios.create({
 
 // Main component for displaying announcements
 export default function Announcements() {
+	// Check if the user is on a mobile device
 	const [isMobile, setIsMobile] = useState(
 		typeof window !== 'undefined' && window.innerWidth < 1024
 	);
 
+	// Update the isMobile state when the window is resized
 	useEffect(() => {
 		function handleResize() {
 			setIsMobile(window.innerWidth < 1024);
@@ -59,18 +74,24 @@ export default function Announcements() {
 		};
 	}, [isMobile]);
 
+	// Cookies for managing users
 	const [cookies] = useCookies(['admin']);
+
+	// Store the announcements
 	const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+
+	// Store the arguments for pagination
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(false);
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('title');
 
+	// Fetch announcements from the server
 	useEffect(() => {
-		// Fetch announcements from the server
 		fetchAnnouncements();
 	}, [page, search, filter]);
 
+	// Function to fetch announcements
 	const fetchAnnouncements = async () => {
 		try {
 			const response = await instance.post('/forum/announcements/get', {
@@ -79,9 +100,14 @@ export default function Announcements() {
 				search: search,
 				field: filter
 			});
+
+			// Parse the response data and store it in the announcements array
 			const anouncementArr: Announcement[] = [];
 			for (let i = 0; i < response.data.length; i++) {
+				// Create a variable for the current item
 				const currItem = JSON.parse(JSON.stringify(response.data[i]));
+
+				// Extract the date and time from the given date
 				const ymd = currItem.date_created.substring(0, 10) + 'T';
 				let hms =
 					currItem.date_created.substring(
@@ -104,17 +130,23 @@ export default function Announcements() {
 					minute: 'numeric',
 					hour12: true
 				});
+
+				// Store the announcement data in an array
 				const title = currItem.title;
 				const body = currItem.body;
 				anouncementArr.push({ id, author, date, time, title, body });
 			}
+			// Store if there are more announcements
 			setHasMore(anouncementArr.length === 10);
+
+			// Update the announcements array
 			setAnnouncements(anouncementArr);
 		} catch (error) {
 			console.error('Error fetching announcements:', error);
 		}
 	};
 
+	// Function to delete an announcement for admins
 	const deleteAnnouncement = async (id: string) => {
 		try {
 			const response = await instance.delete(
@@ -126,6 +158,7 @@ export default function Announcements() {
 				}
 			);
 
+			// Display a success message if the post was deleted
 			if (response.status === 200) {
 				toast.success('Post deleted successfully');
 				setTimeout(() => {
@@ -138,6 +171,7 @@ export default function Announcements() {
 		}
 	};
 
+	// Function to handle search input changes
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearch(event.target.value);
 		setPage(1);
@@ -145,6 +179,7 @@ export default function Announcements() {
 		setHasMore(true);
 	};
 
+	// Set the colours based on the colour modes
 	const BG = useColorModeValue('gray.700', 'purple.700');
 	const POST_BG = useColorModeValue('white', 'gray.800');
 	const toastColour = useColorModeValue('black', 'white');

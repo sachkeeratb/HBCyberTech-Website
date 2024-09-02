@@ -6,11 +6,13 @@ use serde::{ Deserialize, Serialize };
 use std::time::SystemTime;
 use validator::ValidationError;
 
+// Store the regex patterns for username and email
 lazy_static! {
 	static ref RE_USERNAME: Regex = Regex::new(r"^[a-zA-Z0-9._%+-]{2,20}$").unwrap();
 	static ref RE_EMAIL: Regex = Regex::new(r"^[0-9]{6,7}@pdsb.net$").unwrap();
 }
 
+// Define the Account struct
 #[derive(Serialize, Deserialize)]
 pub struct Account {
 	pub _id: ObjectId,
@@ -21,6 +23,7 @@ pub struct Account {
 	pub date_created: DateTime,
 }
 
+// Create functions to validate the username and email
 fn validate_username(username: &String) -> Result<(), ValidationError> {
 	if !RE_USERNAME.is_match(username) && username != "The Team" {
 		return Err(ValidationError::new("Invalid username."));
@@ -35,6 +38,7 @@ fn validate_email(email: &String) -> Result<(), ValidationError> {
 	Ok(())
 }
 
+// Define the AccountRequest struct
 #[derive(Serialize, Deserialize, Validate)]
 pub struct AccountRequest {
 	#[validate(custom(function = "validate_username"))]
@@ -46,6 +50,7 @@ pub struct AccountRequest {
 	pub date_created: String,
 }
 
+// Implement the TryFrom trait for AccountRequest
 impl TryFrom<AccountRequest> for Account {
 	type Error = Box<dyn std::error::Error>;
 

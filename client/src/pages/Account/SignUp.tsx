@@ -1,5 +1,5 @@
+// React and Chakra UI components
 import { ChangeEvent, useState } from 'react';
-import axios from 'axios'; // Import axios
 import {
 	Container,
 	FormControl,
@@ -16,35 +16,55 @@ import {
 	InputRightElement,
 	FormErrorMessage
 } from '@chakra-ui/react';
+
+// Toast notifications
 import { toast, Toaster } from 'react-hot-toast';
+
+// To navigate to different pages
 import { useNavigate } from 'react-router';
 
+// Axios for making HTTP requests
+import axios from 'axios';
+
+// Cookies for storing user data
+import { useCookies } from 'react-cookie';
+
+// Interface for form values
 interface FormVals {
 	username: string;
 	email: string;
 	password: string;
 }
 
+// Interface for form errors
 interface FormErrors {
 	usernameErr: boolean;
 	emailErr: boolean;
 	passwordErr: boolean;
 }
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 60000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
+// Sign up component
 export default function SignUp() {
+	// Navigate to different pages
 	const navigate = useNavigate();
+
+	// Cookies for storing user data
+	const [cookies] = useCookies(['user', 'admin']);
+
+	// State variables for form values and errors
 	const [data, setData] = useState<FormVals>({
 		username: '',
 		email: '',
@@ -55,9 +75,11 @@ export default function SignUp() {
 		emailErr: false,
 		passwordErr: false
 	});
+	// State variable for showing the password
 	const [show, setShow] = useState(false);
 	const handleClick = () => setShow(!show);
 
+	// Handle username input change
 	const handleUsernameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
 			...prevData,
@@ -69,12 +91,14 @@ export default function SignUp() {
 		});
 	};
 
+	// Handle email input change
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
 			...prevData,
 			email: e.target.value
 		}));
 
+		// Check if the email is valid
 		let isEmailErr = true;
 		if (
 			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
@@ -93,6 +117,7 @@ export default function SignUp() {
 		});
 	};
 
+	// Handle password input change
 	const handlePasswordInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
 			...prevData,
@@ -101,36 +126,53 @@ export default function SignUp() {
 		setError({ ...error, passwordErr: e.target.value.length > 50 });
 	};
 
+	// Check if the user can submit the form
 	function canSubmit(): boolean {
 		return !(error.usernameErr || error.emailErr || error.passwordErr);
 	}
 
+	// Check if the user has already signed up
 	const isDuplicate = async (
 		username: string,
 		email: string
 	): Promise<boolean> => {
+		// Check if there is a user with the same username or email
 		const recievedUsername = await instance.get(`/account/get/${username}`);
 		const recievedEmail = await instance.get(`/account/get/${email}`);
 
+		// If the user doesn't exist, return false
 		if (recievedUsername.data.length <= 0 && recievedEmail.data.length <= 0)
 			return false;
 
+		// If the user exists, show an error message and return true
 		toast.error('You have already signed up.');
 		return true;
 	};
 
+	// Handle form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
+
+		// Check if the user has invalid inputs
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
 			return;
 		}
 
+		// Get the username, email, and password from the form
 		const { username, email, password } = data;
 
 		try {
+			// Check if the user has already signed up
 			if (await isDuplicate(username, email)) return;
 
+			// Check if the user is already signed in
+			if (cookies.user || cookies.admin) {
+				toast.error('You are already signed in.');
+				return;
+			}
+
+			// Make a POST request to the server to sign up the user
 			const { data } = await instance.post('/account/post/signup', {
 				username: username,
 				email: email,

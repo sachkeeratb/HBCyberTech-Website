@@ -13,12 +13,14 @@ use crate::{
 	utilities::{ claims::UserClaims, pagination_args::AdminPaginationArgs },
 };
 
+// Define the AccountGiven struct
 #[derive(Deserialize)]
 struct AccountGiven {
 	email: String,
 	password: String,
 }
 
+// Check if the account exists
 async fn check_account_exists(db: &Database, username_or_email: &str) -> bool {
 	if db.account_does_exist_full_name(username_or_email.to_owned()).await {
 		true
@@ -27,6 +29,7 @@ async fn check_account_exists(db: &Database, username_or_email: &str) -> bool {
 	}
 }
 
+// Get the account by username or email
 #[get("/account/get/{username_or_email}")]
 pub async fn get_account_by_username_or_email(
 	db: Data<Database>,
@@ -42,6 +45,7 @@ pub async fn get_account_by_username_or_email(
 	}
 }
 
+// Verify the account for them to be able to use the forums
 #[get("/account/verify/{id}")]
 pub async fn verify_account(db: Data<Database>, id: web::Path<String>) -> HttpResponse {
 	match db.verify_account(id.to_string()).await {
@@ -50,11 +54,13 @@ pub async fn verify_account(db: Data<Database>, id: web::Path<String>) -> HttpRe
 	}
 }
 
+// Get all accounts
 #[post("/account/get_all")]
 pub async fn get_all_accounts(
 	db: Data<Database>,
 	request: Json<AdminPaginationArgs>
 ) -> HttpResponse {
+	// Verify the admin token
 	if
 		!verify(
 			request.token.clone(),
@@ -73,6 +79,7 @@ pub async fn get_all_accounts(
 		).await
 	{
 		Ok(accs) => {
+			// Convert the accounts to account requests and reverse the accounts to get the most recent accounts first
 			let accounts: Vec<AccountRequest> = accs
 				.into_iter()
 				.rev()
@@ -90,31 +97,43 @@ pub async fn get_all_accounts(
 	}
 }
 
+// Let users sign into their accounts
 #[post("/account/post/signin")]
 pub async fn account_sign_in(db: Data<Database>, request: web::Json<AccountGiven>) -> HttpResponse {
+	// Check if the account exists
 	if !check_account_exists(&db, &request.email).await {
 		return HttpResponse::NotFound().json("Account does not exist.");
 	}
 
+	// Get the account password (hashed) by email
 	let password_option = db.get_account_password_by_email(request.email.clone()).await;
 
+	// Verify the password
 	match password_option {
 		Ok(Some(password_option)) =>
+			// Check if the password matches
 			match verify(&request.password, &password_option) {
 				Ok(matches) => {
 					if matches {
+						// Get the account by email
 						let account = db.get_account_by_email(request.email.clone()).await.unwrap();
+
+						// Create the token
 						let claims = UserClaims {
 							username: account.as_ref().unwrap().username.clone(),
 							email: account.as_ref().unwrap().email.clone(),
 							verified: account.as_ref().unwrap().verified.clone(),
 							exp: (chrono::Utc::now() + chrono::Duration::hours(24)).timestamp() as usize,
 						};
+
+						// Encode the token
 						let token = encode(
 							&Header::default(),
 							&claims,
 							&EncodingKey::from_secret(dotenv!("SECRET").as_ref())
 						).unwrap();
+
+						// Return the token
 						HttpResponse::Ok().json(json!({ "token": token }))
 					} else {
 						HttpResponse::Ok().json("")
@@ -126,8 +145,10 @@ pub async fn account_sign_in(db: Data<Database>, request: web::Json<AccountGiven
 	}
 }
 
+// Create an account
 #[post("/account/post/signup")]
 pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -> HttpResponse {
+	// Validate the request
 	match request.validate() {
 		Ok(_) => (),
 		Err(err) => {
@@ -135,6 +156,7 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 		}
 	}
 
+	// Create the account
 	match
 		db.create_account(
 			Account::try_from(AccountRequest {
@@ -147,6 +169,7 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 		).await
 	{
 		Ok(acc) => {
+			// Setup the verify URL
 			let object_id = acc.inserted_id.to_string();
 			let verify_url = format!(
 				"http://{}:{}/account/verify/{}",
@@ -154,6 +177,8 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 				dotenv!("PORT"),
 				&object_id[10..object_id.len() - 2]
 			);
+
+			// Create the message
 			let message = MessageBuilder::new()
 				.from(("HB CyberTech".to_owned(), dotenv!("EMAIL_NAME").to_string() + "@gmail.com"))
 				.to(request.email.clone())
@@ -163,6 +188,7 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 				)
 				.text_body(format!("Verify your account at the following link: {}", verify_url));
 
+			// Send the message
 			SmtpClientBuilder::new("smtp.gmail.com", 587)
 				.implicit_tls(false)
 				.credentials((dotenv!("EMAIL_NAME"), dotenv!("EMAIL_PASSWORD")))
@@ -170,6 +196,8 @@ pub async fn create_account(db: Data<Database>, request: Json<AccountRequest>) -
 				.unwrap()
 				.send(message).await
 				.unwrap();
+
+			// Return the account
 			HttpResponse::Ok().json(acc)
 		}
 		Err(err) => HttpResponse::InternalServerError().body(err.to_string()),

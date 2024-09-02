@@ -3,6 +3,7 @@ use chrono::Utc;
 use mongodb::bson::{ oid::ObjectId, DateTime, Uuid };
 use serde::{ Serialize, Deserialize };
 
+// Define the Admin struct
 #[derive(Serialize, Deserialize)]
 pub struct Admin {
 	pub _id: ObjectId,
@@ -11,6 +12,7 @@ pub struct Admin {
 	pub last_reset: DateTime,
 }
 
+// Define the AdminRequest struct
 #[derive(Serialize, Deserialize)]
 pub struct AdminRequest {
 	pub token: String,
@@ -18,6 +20,7 @@ pub struct AdminRequest {
 	pub last_reset: String,
 }
 
+// Implement the TryFrom trait for AdminRequest
 impl TryFrom<AdminRequest> for Admin {
 	type Error = Box<dyn std::error::Error>;
 

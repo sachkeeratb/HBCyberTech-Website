@@ -6,6 +6,7 @@ use serde::{ Deserialize, Serialize };
 use std::time::SystemTime;
 use validator::ValidationError;
 
+// Store the regex patterns for various fields
 lazy_static! {
 	static ref RE_FULL_NAME: Regex = Regex::new(
 		r"^[A-Za-zÀ-ÖØ-öø-įĴ-őŔ-žǍ-ǰǴ-ǵǸ-țȞ-ȟȤ-ȳɃɆ-ɏḀ-ẞƀ-ƓƗ-ƚƝ-ơƤ-ƥƫ-ưƲ-ƶẠ-ỿ ']{2,40}$"
@@ -19,6 +20,7 @@ lazy_static! {
 	static ref RE_600: Regex = Regex::new(r"^.{1,600}$").unwrap();
 }
 
+// Create a function to validate the portfolio link
 fn validate_portfolio(portfolio: &str) -> Result<(), ValidationError> {
 	if (portfolio.len() > 0 && RE_PORTFOLIO.is_match(portfolio)) || portfolio.len() == 0 {
 		return Ok(());
@@ -27,6 +29,7 @@ fn validate_portfolio(portfolio: &str) -> Result<(), ValidationError> {
 	}
 }
 
+// Define the ExecutiveMember struct
 #[derive(Serialize, Deserialize)]
 pub struct ExecutiveMember {
 	pub _id: ObjectId,
@@ -41,6 +44,7 @@ pub struct ExecutiveMember {
 	pub date_created: DateTime,
 }
 
+// Define the ExecutiveMemberRequest struct
 #[derive(Serialize, Deserialize, Validate)]
 pub struct ExecutiveMemberRequest {
 	#[validate(regex(path = *RE_FULL_NAME, message = "Invalid name."))]
@@ -67,6 +71,7 @@ pub struct ExecutiveMemberRequest {
 	pub date_created: String,
 }
 
+// Implement the TryFrom trait for ExecutiveMemberRequest
 impl TryFrom<ExecutiveMemberRequest> for ExecutiveMember {
 	type Error = Box<dyn std::error::Error>;
 

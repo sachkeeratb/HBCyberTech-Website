@@ -12,7 +12,7 @@ This is a website created for the HB CyberTech club. The website serves as a pla
 
 ## Introduction
 
-HB CyberTech is a club focused on CyberSecurity, Embedded Programming, and more. This website serves as a platform to share information, connect with members, and organize activities and workshops.
+HB CyberTech is a club focused on CyberSecurity, Embedded Programming, and the like. This website serves as a platform to share information, connect with members, and organize activities and workshops.
 
 ## Purpose
 
@@ -23,14 +23,17 @@ HB CyberTech is a club focused on CyberSecurity, Embedded Programming, and more.
 
 ## Features
 
-- **Forum**: Create posts, comment on posts, and engage with the community.
+- **Forum**: Create posts, comment on posts, delete your posts, and engage with the community.
 - **Users**: Sign up, sign in, and verify accounts through email.
 - **Password Hashing**: Securely hash user passwords before storing them in the database.
 - **Verification**: All values are verified before usage. No value slips up.
+- **Admin Panel**: An admin account is securly generated which can manage users, applications, posts, and comments, as well as create them.
 
 ## Installation
 
 ### Prerequisites
+
+Using all the code, from features to regulvar expressions, create an amazing README.md
 
 - Node.js
 - pnpm (or npm/yarn)

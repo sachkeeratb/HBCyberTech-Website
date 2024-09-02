@@ -1,5 +1,6 @@
 use serde::Deserialize;
 
+// Define the PaginationArgs struct
 #[derive(Deserialize)]
 pub struct PaginationArgs {
 	pub page: u32,
@@ -8,6 +9,7 @@ pub struct PaginationArgs {
 	pub field: String,
 }
 
+// Define the AdminPaginationArgs struct
 #[derive(Deserialize)]
 pub struct AdminPaginationArgs {
 	pub token: String,

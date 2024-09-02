@@ -1,3 +1,6 @@
+// A page that displays information about the club and its executives
+
+// Chakra UI Components
 import {
 	Flex,
 	Avatar,
@@ -9,6 +12,7 @@ import {
 	SlideFade
 } from '@chakra-ui/react';
 
+// Framer Motion Components
 import { motion, isValidMotionProp } from 'framer-motion';
 
 // Import images
@@ -28,6 +32,7 @@ import {
 	FaLinkedin as LinkedInIcon
 } from 'react-icons/fa';
 
+// A Motion Box
 export const MotionBox = motion(
 	forwardRef((props, ref) => {
 		const chakraProps = Object.fromEntries(

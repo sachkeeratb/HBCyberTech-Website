@@ -1,5 +1,7 @@
+// General discussion page for users
+
+// React and Chakra UI components
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
 	Box,
 	Heading,
@@ -12,12 +14,26 @@ import {
 	Input,
 	Select
 } from '@chakra-ui/react';
+
+// Axios for making HTTP requests
+import axios from 'axios';
+
+// Framer Motion for animations
 import { Link } from 'react-router-dom';
+
+// Cookies for storing user data
 import { motion } from 'framer-motion';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
+
+// Toast notifications
 import toast, { Toaster } from 'react-hot-toast';
+
+// To decode JWT tokens
 import { jwtDecode } from 'jwt-decode';
 
+// Define the shape of the forum post
 interface ForumPost {
 	id: string;
 	author: string;
@@ -28,23 +44,27 @@ interface ForumPost {
 	body: string;
 }
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 60000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
+// Main component for displaying the general discussion forum
 export default function General() {
+	// Check if the user is on a mobile device
 	const [isMobile, setIsMobile] = useState(
 		typeof window !== 'undefined' && window.innerWidth < 1024
 	);
 
+	// Update the isMobile state when the window is resized
 	useEffect(() => {
 		function handleResize() {
 			setIsMobile(window.innerWidth < 1024);
@@ -58,17 +78,24 @@ export default function General() {
 		};
 	}, [isMobile]);
 
+	// Get the user and admin cookies
 	const [cookies] = useCookies(['user', 'admin']);
+
+	// Store the forum posts
 	const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
+
+	// Store the pagination arguments
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(false);
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('title');
 
+	// Fetch forum posts from the server
 	useEffect(() => {
 		fetchForumPosts();
 	}, [page, search, filter]);
 
+	// Fetch forum posts from the server
 	const fetchForumPosts = async () => {
 		try {
 			const response = await instance.post('/forum/general/get', {
@@ -77,9 +104,14 @@ export default function General() {
 				search: search,
 				field: filter
 			});
+
+			// Parse the response data
 			const postArr: ForumPost[] = [];
 			for (let i = 0; i < response.data.length; i++) {
+				// Store the current item in a variable
 				const currItem = JSON.parse(JSON.stringify(response.data[i]));
+
+				// Get the date and time of the post
 				const ymd = currItem.date_created.substring(0, 10) + 'T';
 				let hms =
 					currItem.date_created.substring(
@@ -100,6 +132,8 @@ export default function General() {
 					minute: 'numeric',
 					hour12: true
 				});
+
+				// Store the post data in the array
 				const id = currItem.id;
 				const author = currItem.author;
 				const email = currItem.email;
@@ -107,13 +141,17 @@ export default function General() {
 				const body = currItem.body;
 				postArr.push({ id, author, email, date, time, title, body });
 			}
+			// Store if there are more posts
 			setHasMore(postArr.length === 10);
+
+			// Store the posts in the forumPosts array
 			setForumPosts(postArr);
 		} catch (error) {
 			console.error('Error fetching announcements:', error);
 		}
 	};
 
+	// Function for a user to delete their own post
 	const deleteUserPost = async (id: string) => {
 		try {
 			const response = await instance.delete(`/forum/general/delete/${id}`, {
@@ -133,6 +171,8 @@ export default function General() {
 			console.error(error);
 		}
 	};
+
+	// Function for an admin to delete a post
 	const deleteAdminPost = async (id: string) => {
 		try {
 			const response = await instance.delete(
@@ -156,6 +196,7 @@ export default function General() {
 		}
 	};
 
+	// Function to handle the search input
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearch(event.target.value);
 		setPage(1);
@@ -163,9 +204,11 @@ export default function General() {
 		setHasMore(true);
 	};
 
+	// Set the colours of the list based on the colour mode
 	const BG = useColorModeValue('gray.700', 'purple.700');
 	const POST_BG = useColorModeValue('white', 'gray.800');
 
+	// Set the toast colour and its background colour based on the colour mode
 	const toastColour = useColorModeValue('black', 'white');
 	const bgColour = useColorModeValue('#F2F3F4', '#181818');
 

@@ -1,3 +1,7 @@
+// A form for the general public to sign up to be a general member of the club
+
+// React and Chakra UI Components
+import { useState } from 'react';
 import {
 	Container,
 	FormControl,
@@ -21,7 +25,6 @@ import {
 	Tooltip,
 	Select
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import axios from 'axios';
 import { toast, Toaster } from 'react-hot-toast';
 
@@ -45,19 +48,21 @@ interface Slider {
 	showTooltip: boolean;
 }
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 60000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
 export default function GeneralForm() {
+	// Store the styles
 	const labelStyles = {
 		mt: '2',
 		ml: '-2.5',
@@ -65,6 +70,7 @@ export default function GeneralForm() {
 	};
 	const formBG = useColorModeValue('white', 'gray.700');
 
+	// Store the form data, errors, and character count
 	const [data, setData] = useState<FormVals>({
 		fullName: '',
 		email: '',
@@ -79,11 +85,14 @@ export default function GeneralForm() {
 		extraErr: false
 	});
 	const [extrInpChars, setExtrInpChars] = useState(350);
+
+	// Store the slider value and tooltip visibility
 	const [slider, setSlider] = useState<Slider>({
 		value: 50,
 		showTooltip: false
 	});
 
+	// Handle input changes
 	const handleNameInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, fullName: e.target.value });
 		setError({
@@ -97,7 +106,6 @@ export default function GeneralForm() {
 				)
 		});
 	};
-
 	const handleEmailInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, email: e.target.value });
 
@@ -118,7 +126,6 @@ export default function GeneralForm() {
 			emailErr: isEmailErr
 		});
 	};
-
 	const handleExtraInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, extra: e.target.value });
 		setExtrInpChars(350 - e.target.value.length);
@@ -128,6 +135,7 @@ export default function GeneralForm() {
 		});
 	};
 
+	// Check if the form can be submitted
 	function canSubmit(): boolean {
 		return !(
 			error.nameErr ||
@@ -137,6 +145,7 @@ export default function GeneralForm() {
 		);
 	}
 
+	// Check if the user has already signed up
 	const isDuplicate = async (
 		fullName: string,
 		email: string
@@ -153,12 +162,15 @@ export default function GeneralForm() {
 		return true;
 	};
 
+	// Handle form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
+		// Check if the user has already submitted a form today
 		const lastSubmission = localStorage.getItem('generalFormLastSubmission');
 		const now = new Date().getTime();
 
+		// If the user has already submitted a form today, show an error
 		if (
 			lastSubmission &&
 			now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
@@ -167,16 +179,20 @@ export default function GeneralForm() {
 			return;
 		}
 
+		// If the user has invalid inputs, show an error
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
 			return;
 		}
 
+		// Deconstruct the data
 		const { fullName, email, grade, skills, extra } = data;
 
 		try {
+			// Check if the user has already signed up
 			if (await isDuplicate(fullName, email)) return;
 
+			// Send the data to the server
 			const { data } = await instance.post('/general_member/post', {
 				full_name: fullName,
 				email: email,
@@ -310,7 +326,8 @@ export default function GeneralForm() {
 							</Stack>
 							<FormControl isRequired>
 								<FormLabel>
-									Skills In CyberSecurity or Low Level Programming
+									Skills In CyberSecurity or Low Level Programming (for the pace
+									of the club)
 								</FormLabel>
 							</FormControl>
 							<Slider

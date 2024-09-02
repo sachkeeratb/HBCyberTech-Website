@@ -1,5 +1,7 @@
+// Sign in page for users to sign in to their accounts
+
+// React and Chakra UI components
 import { ChangeEvent, useState } from 'react';
-import axios from 'axios';
 import {
 	Container,
 	FormControl,
@@ -15,34 +17,47 @@ import {
 	InputRightElement,
 	FormErrorMessage
 } from '@chakra-ui/react';
+
+// Toast notifications
 import { toast, Toaster } from 'react-hot-toast';
+
+// Cookies for storing user data
 import { useCookies } from 'react-cookie';
 
+// Axios for making HTTP requests
+import axios from 'axios';
+
+// Interface for form values
 interface FormVals {
 	email: string;
 	password: string;
 }
 
+// Interface for form errors
 interface FormErrors {
 	emailErr: boolean;
 	passwordErr: boolean;
 }
 
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 1000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
+// Sign in component
 export default function SignIn() {
-	const [cookies, setCookie] = useCookies(['user']);
+	// Cookies for storing user data
+	const [cookies, setCookie] = useCookies(['user', 'admin']);
 
+	// State variables for form values and errors
 	const [data, setData] = useState<FormVals>({
 		email: '',
 		password: ''
@@ -51,15 +66,18 @@ export default function SignIn() {
 		emailErr: false,
 		passwordErr: false
 	});
+	// State variable for showing the password
 	const [show, setShow] = useState(false);
 	const handleClick = () => setShow(!show);
 
+	// Handle input change for email
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
 			...prevData,
 			email: e.target.value
 		}));
 
+		// Check if the email is valid
 		let isEmailErr = true;
 		if (
 			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
@@ -78,6 +96,7 @@ export default function SignIn() {
 		});
 	};
 
+	// Check if the user exists in the database
 	const doesNotExist = async (email: string): Promise<boolean> => {
 		const recievedEmail = await instance.get(`/account/get/${email}`);
 
@@ -87,6 +106,7 @@ export default function SignIn() {
 		return true;
 	};
 
+	// Handle input change for password
 	const handlePasswordInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
 			...prevData,
@@ -95,14 +115,19 @@ export default function SignIn() {
 		setError({ ...error, passwordErr: e.target.value.length > 50 });
 	};
 
+	// Handle form submission
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
+
+		// Check if the user has invalid inputs
 		if (error.emailErr || error.passwordErr) {
 			toast.error('You have invalid inputs. Please try again.');
 			return;
 		}
 
+		// Check if the user has exceeded the maximum login attempts
 		if (localStorage.getItem('lockoutTime')) {
+			// Keep the user locked out while the lockout time is still in effect
 			const currentTime = new Date().getTime();
 			const lockoutTime = new Date(localStorage.getItem('lockoutTime') || '');
 			if (currentTime < lockoutTime.getTime()) {
@@ -111,30 +136,41 @@ export default function SignIn() {
 				);
 				return;
 			}
+
+			// Otherwise, remove the lockout time and login attempts
 			localStorage.removeItem('lockoutTime');
 			localStorage.removeItem('loginAttempts');
 		}
 
+		// Get the email and password from the form
 		const { email, password } = data;
 
 		try {
+			// Check if the user exists in the database
 			if (await doesNotExist(email)) return;
-			if (cookies.user) {
+
+			// Check if the user is already signed in
+			if (cookies.user || cookies.admin) {
 				toast.error('You are already signed in.');
 				return;
 			}
 
+			// Sign in the user
 			const { data } = await instance.post('/account/post/signin', {
 				email: email,
 				password: password
 			});
 
+			// Check if the user has entered the wrong password
 			if (!data) {
+				// Keep track of the number of login attempts
 				if (!localStorage.getItem('loginAttempts'))
 					localStorage.setItem('loginAttempts', '0');
 				const loginAttempts = parseInt(
 					localStorage.getItem('loginAttempts') || '0'
 				);
+
+				// Lock the user out if they have exceeded the maximum login attempts
 				if (loginAttempts < 2) {
 					localStorage.setItem('loginAttempts', (loginAttempts + 1).toString());
 					toast.error(
@@ -144,6 +180,7 @@ export default function SignIn() {
 					return;
 				}
 
+				// Lock the user out for 1 hour
 				const currentTime = new Date().getTime();
 				const lockoutTime = new Date(currentTime + 1000 * 60 * 60); // Lockout for 1 hour
 				localStorage.setItem('lockoutTime', lockoutTime.toString());
@@ -159,11 +196,14 @@ export default function SignIn() {
 				throw new Error(data.error);
 			}
 
+			// Store the user's token in a cookie
 			const { token } = data;
 			setCookie('user', token, {
 				httpOnly: false,
+				sameSite: 'lax',
+				secure: true,
 				path: '/',
-				expires: new Date(Date.now() + 60 * 60 * 1000 * 6)
+				expires: new Date(Date.now() + 60 * 60 * 1000 * 6) // Expires in 6 hours
 			});
 
 			// Allow the user to continue

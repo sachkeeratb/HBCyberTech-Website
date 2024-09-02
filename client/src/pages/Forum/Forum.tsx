@@ -1,3 +1,7 @@
+// To show the general and announcements sections of the forum
+
+// Import necessary components from React and Chakra UI
+import { useEffect, useState } from 'react';
 import {
 	Box,
 	Heading,
@@ -8,29 +12,36 @@ import {
 	Tr,
 	Td
 } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 
+// Import the Link component from React Router
+import { Link as RouterLink } from 'react-router-dom';
+
+// Import Axios for making HTTP requests
+import axios from 'axios';
+
+// Create an instance of axios with custom configurations
 const instance = axios.create({
-	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
-	timeout: 60000,
-	withCredentials: false,
+	baseURL: import.meta.env.VITE_AXIOS_BASE_URL, // Base URL for API requests
+	timeout: 60000, // Request timeout in milliseconds
+	withCredentials: false, // Whether to send cookies with the request
 	headers: {
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': '*',
-		'Access-Control-Allow-Headers': '*',
-		'Content-Type': 'application/json'
+		'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+		'Access-Control-Allow-Methods': '*', // Allow any HTTP method
+		'Access-Control-Allow-Headers': '*', // Allow any headers
+		'Content-Type': 'application/json' // Set the content type to JSON
 	}
 });
 
+// Main component for displaying the forum
 export default function Forum() {
+	// Define the amount of posts in each category
 	const [amount, setAmount] = useState({
 		announcements: 0,
 		general: 0
 	});
 
 	useEffect(() => {
+		// Fetch the amount of posts in each category
 		(async function fetchData() {
 			try {
 				const responseAnnouncements = await instance.get(

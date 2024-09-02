@@ -1,3 +1,6 @@
+// General Links for the club
+
+// Chakra UI Components
 import {
 	Box,
 	Button,
@@ -8,6 +11,8 @@ import {
 	Stack,
 	Text
 } from '@chakra-ui/react';
+
+// Framer motion for animations
 import { motion } from 'framer-motion';
 
 export default function Links() {

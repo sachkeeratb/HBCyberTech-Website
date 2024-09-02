@@ -1,3 +1,6 @@
+// A form where people can apply to be an executive member of the club
+
+// React and Chakra UI Components
 import { useState, ChangeEvent } from 'react';
 import {
 	Container,
@@ -16,7 +19,11 @@ import {
 	FormErrorMessage,
 	Textarea
 } from '@chakra-ui/react';
+
+// React Hot Toast for notifications
 import { toast, Toaster } from 'react-hot-toast';
+
+// Axios for API requests
 import axios from 'axios';
 
 // Define the data types
@@ -103,8 +110,11 @@ export default function ExecForm() {
 				)
 		});
 	};
+	// Handle email input changes
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, email: e.target.value });
+
+		// Check if the email is valid
 		let isEmailErr = true;
 		if (
 			/^[0-9]{7}@pdsb.net$/.test(e.target.value) &&
@@ -139,6 +149,7 @@ export default function ExecForm() {
 		setChars({ ...chars, experience: 600 - e.target.value.length });
 		setError({ ...error, experienceErr: chars.experience <= 0 });
 	};
+	// Handle portfolio input changes
 	const handlePortfolioInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, portfolio: e.target.value });
 		if (e.target.value.length > 0)
@@ -149,14 +160,14 @@ export default function ExecForm() {
 	// Check if the URL is valid
 	const isValidUrl = (urlString: string): boolean => {
 		const urlPattern = new RegExp(
-			'^(https?:\\/\\/)?' + // validate protocol
-				'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // validate domain name
-				'((\\d{1,3}\\.){3}\\d{1,3}))' + // validate OR ip (v4) address
-				'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // validate port and path
-				'(\\?[;&a-z\\d%_.~+=-]*)?' + // validate query string
+			'^(https?:\\/\\/)?' + // Validate protocol
+				'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // Validate domain name
+				'((\\d{1,3}\\.){3}\\d{1,3}))' + // Validate OR ip (v4) address
+				'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // Validate port and path
+				'(\\?[;&a-z\\d%_.~+=-]*)?' + // Validate query string
 				'(\\#[-a-z\\d_]*)?$',
 			'i'
-		); // validate fragment locator
+		); // Validate fragment locator
 		return !!urlPattern.test(urlString);
 	};
 
@@ -199,6 +210,7 @@ export default function ExecForm() {
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
+		// Check if the user has already submitted the form
 		const lastSubmission = localStorage.getItem('execFormLastSubmission');
 		const now = new Date().getTime();
 
@@ -206,6 +218,7 @@ export default function ExecForm() {
 			lastSubmission &&
 			now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
 		) {
+			// Inform the user that they can only apply once per day
 			toast.error('You can only apply once per day.');
 			return;
 		}
@@ -262,6 +275,7 @@ export default function ExecForm() {
 		}
 	};
 
+	// Set the background color of the form
 	const formBG = useColorModeValue('white', 'gray.700');
 
 	return (

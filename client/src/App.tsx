@@ -36,6 +36,7 @@ import { useCookies } from 'react-cookie';
  */
 
 function App() {
+	// Get the admin cookie
 	const [cookies] = useCookies(['admin']);
 	return (
 		<ChakraProvider theme={theme}>

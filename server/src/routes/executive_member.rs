@@ -7,6 +7,7 @@ use actix_web::{ get, post, web::{ self, Data, Json }, HttpResponse };
 use bcrypt::{ hash, verify, DEFAULT_COST };
 use validator::Validate;
 
+// Get the executive member by full name or email
 #[get("/executive_member/get/{full_name_or_email}")]
 pub async fn get_executive_member_by_full_name_or_email(
 	db: Data<Database>,
@@ -22,11 +23,13 @@ pub async fn get_executive_member_by_full_name_or_email(
 	}
 }
 
+// Get all executive members
 #[post("/executive_member/get_all")]
 pub async fn get_all_executive_members(
 	db: Data<Database>,
 	request: Json<AdminPaginationArgs>
 ) -> HttpResponse {
+	// Verify the admin token
 	if
 		!verify(
 			request.token.clone(),
@@ -36,6 +39,7 @@ pub async fn get_all_executive_members(
 		return HttpResponse::Unauthorized().body("Unauthorized.");
 	}
 
+	// Get the paginated executive members
 	match
 		db.get_all_executive_members(
 			request.page,
@@ -45,6 +49,7 @@ pub async fn get_all_executive_members(
 		).await
 	{
 		Ok(members) => {
+			// Sort the members by date_created in descending order
 			let executive_members: Vec<ExecutiveMemberRequest> = members
 				.into_iter()
 				.rev()
@@ -66,11 +71,13 @@ pub async fn get_all_executive_members(
 	}
 }
 
+// Create an executive member
 #[post("/executive_member/post")]
 pub async fn create_executive_member(
 	db: Data<Database>,
 	request: Json<ExecutiveMemberRequest>
 ) -> HttpResponse {
+	// Validate the request
 	match request.validate() {
 		Ok(_) => (),
 		Err(err) => {
@@ -78,6 +85,7 @@ pub async fn create_executive_member(
 		}
 	}
 
+	// Create the executive member
 	match
 		db.create_executive_member(
 			ExecutiveMember::try_from(ExecutiveMemberRequest {
