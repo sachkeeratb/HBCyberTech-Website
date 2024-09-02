@@ -6,3 +6,6 @@ Cargo.lock
 
 # The Environment file
 .env
+
+# Prettier
+.prettierrc.json

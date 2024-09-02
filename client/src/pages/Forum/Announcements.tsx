@@ -15,113 +15,17 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
-
-// Define the shape of the announcement request
-interface AnnouncementRequest {
-	author: string;
-	date_created: string;
-	title: string;
-	body: string;
-}
+import toast, { Toaster } from 'react-hot-toast';
 
 // Define the shape of the announcement
 interface Announcement {
+	id: string;
 	author: string;
 	date: string;
 	time: string;
 	title: string;
 	body: string;
 }
-
-// Component for displaying announcement on desktop
-const DesktopAnnouncementPost: React.FC<Announcement> = ({
-	author,
-	date,
-	time,
-	title,
-	body
-}) => {
-	const BG = useColorModeValue('white', 'gray.800');
-	return (
-		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
-			<Flex justify='space-between' align='center'>
-				<Flex>
-					<SlideFade in={true} offsetY='50vh'>
-						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-							<Text
-								fontSize='xl'
-								fontWeight='bold'
-								mr={2}
-								align='left'
-								overflow='hidden'
-							>
-								{title}
-							</Text>
-						</motion.div>
-					</SlideFade>
-					<Text
-						fontSize='md'
-						color='gray.400'
-						mt={1}
-						align='left'
-						overflow='hidden'
-					>
-						by {author}
-					</Text>
-				</Flex>
-				<Text fontSize='sm' color='gray.400' align='right' overflow='hidden'>
-					{date} at {time}
-				</Text>
-			</Flex>
-			<Flex mt={4}>
-				<Text fontSize='md' align='left' overflow='hidden'>
-					{body}
-				</Text>
-			</Flex>
-		</Box>
-	);
-};
-
-// Component for displaying announcement on mobile
-const MobileAnnouncementPost: React.FC<Announcement> = ({
-	author,
-	date,
-	time,
-	title,
-	body
-}) => {
-	const BG = useColorModeValue('white', 'gray.800');
-	return (
-		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
-			<Flex direction='column' align='left'>
-				<SlideFade in={true} offsetY='50vh'>
-					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-						<Text
-							fontSize='xl'
-							fontWeight='bold'
-							mr={2}
-							align='left'
-							overflow='hidden'
-						>
-							{title}
-						</Text>
-					</motion.div>
-				</SlideFade>
-				<Text fontSize='md' color='gray.400' align='left' overflow='hidden'>
-					by {author}
-				</Text>
-			</Flex>
-			<Text fontSize='sm' color='gray.400' align='left' overflow='hidden'>
-				{date} at {time}
-			</Text>
-			<Flex mt={4}>
-				<Text fontSize='md' align='left' overflow='hidden'>
-					{body}
-				</Text>
-			</Flex>
-		</Box>
-	);
-};
 
 // Create an instance of axios with custom configurations
 const instance = axios.create({
@@ -175,21 +79,21 @@ export default function Announcements() {
 				search: search,
 				field: filter
 			});
-			const responseArr: AnnouncementRequest[] = [];
 			const anouncementArr: Announcement[] = [];
 			for (let i = 0; i < response.data.length; i++) {
-				responseArr.push(JSON.parse(JSON.stringify(response.data[i])));
-				const ymd = responseArr[i].date_created.substring(0, 10) + 'T';
+				const currItem = JSON.parse(JSON.stringify(response.data[i]));
+				const ymd = currItem.date_created.substring(0, 10) + 'T';
 				let hms =
-					responseArr[i].date_created.substring(
+					currItem.date_created.substring(
 						11,
-						responseArr[i].date_created.indexOf('.')
+						currItem.date_created.indexOf('.')
 					) + '.000Z';
 				if (hms.length != 13) {
 					hms = '0' + hms;
 				}
 				const givenDate = new Date(ymd + hms);
-				const author = responseArr[i].author;
+				const id = currItem.id;
+				const author = currItem.author;
 				const date = givenDate.toLocaleDateString('en-US', {
 					year: 'numeric',
 					month: 'long',
@@ -200,14 +104,37 @@ export default function Announcements() {
 					minute: 'numeric',
 					hour12: true
 				});
-				const title = responseArr[i].title;
-				const body = responseArr[i].body;
-				anouncementArr.push({ author, date, time, title, body });
+				const title = currItem.title;
+				const body = currItem.body;
+				anouncementArr.push({ id, author, date, time, title, body });
 			}
 			setHasMore(anouncementArr.length === 10);
 			setAnnouncements(anouncementArr);
 		} catch (error) {
 			console.error('Error fetching announcements:', error);
+		}
+	};
+
+	const deleteAnnouncement = async (id: string) => {
+		try {
+			const response = await instance.delete(
+				`/forum/announcements/delete/${id}`,
+				{
+					headers: {
+						Authorization: cookies.admin
+					}
+				}
+			);
+
+			if (response.status === 200) {
+				toast.success('Post deleted successfully');
+				setTimeout(() => {
+					window.location.reload();
+				}, 1500);
+			}
+		} catch (error) {
+			toast.error('Failed to delete post');
+			console.error(error);
 		}
 	};
 
@@ -219,9 +146,22 @@ export default function Announcements() {
 	};
 
 	const BG = useColorModeValue('gray.700', 'purple.700');
+	const POST_BG = useColorModeValue('white', 'gray.800');
+	const toastColour = useColorModeValue('black', 'white');
+	const toastBG = useColorModeValue('#F2F3F4', '#181818');
 
 	return (
 		<Box>
+			<Toaster
+				position='bottom-right'
+				reverseOrder={false}
+				toastOptions={{
+					style: {
+						color: toastColour,
+						background: toastBG
+					}
+				}}
+			/>
 			<Heading as='h1' size='xl' mb={6} mt={4}>
 				Announcements
 				<Flex justify='right' mb={4}>
@@ -266,21 +206,116 @@ export default function Announcements() {
 						{announcements.map((announcement, key) => (
 							<VStack spacing={4} w='100%' key={key}>
 								{isMobile ? (
-									<MobileAnnouncementPost
-										author={announcement.author}
-										date={announcement.date}
-										time={announcement.time}
-										title={announcement.title}
-										body={announcement.body}
-									/>
+									<Box bg={POST_BG} p={5} borderRadius='md' minWidth={'100%'}>
+										<Flex direction='column' align='left'>
+											<SlideFade in={true} offsetY='50vh'>
+												<motion.div
+													whileHover={{ scale: 1.1 }}
+													whileTap={{ scale: 0.9 }}
+												>
+													<Text
+														fontSize='xl'
+														fontWeight='bold'
+														mr={2}
+														align='left'
+														overflow='hidden'
+													>
+														{announcement.title}
+													</Text>
+												</motion.div>
+											</SlideFade>
+											<Text
+												fontSize='md'
+												color='gray.400'
+												align='left'
+												overflow='hidden'
+											>
+												by {announcement.author}
+											</Text>
+										</Flex>
+										<Text
+											fontSize='sm'
+											color='gray.400'
+											align='left'
+											overflow='hidden'
+										>
+											{announcement.date} at {announcement.time}
+										</Text>
+										<Flex mt={4}>
+											<Text fontSize='md' align='left' overflow='hidden'>
+												{announcement.body}
+											</Text>
+										</Flex>
+										<Flex mt={2}>
+											{cookies.admin ? (
+												<Button
+													colorScheme='red'
+													onClick={() => deleteAnnouncement(announcement.id)}
+												>
+													Delete
+												</Button>
+											) : (
+												<></>
+											)}
+										</Flex>
+									</Box>
 								) : (
-									<DesktopAnnouncementPost
-										author={announcement.author}
-										date={announcement.date}
-										time={announcement.time}
-										title={announcement.title}
-										body={announcement.body}
-									/>
+									<Box bg={POST_BG} p={5} borderRadius='md' minWidth={'100%'}>
+										<Flex justify='space-between' align='center'>
+											<Flex>
+												<SlideFade in={true} offsetY='50vh'>
+													<motion.div
+														whileHover={{ scale: 1.1 }}
+														whileTap={{ scale: 0.9 }}
+													>
+														<Text
+															fontSize='xl'
+															fontWeight='bold'
+															mr={2}
+															align='left'
+															overflow='hidden'
+														>
+															{announcement.title}
+														</Text>
+													</motion.div>
+												</SlideFade>
+												<Text
+													fontSize='md'
+													color='gray.400'
+													mt={1}
+													align='left'
+													overflow='hidden'
+												>
+													by {announcement.author}
+												</Text>
+											</Flex>
+											<Text
+												fontSize='sm'
+												color='gray.400'
+												align='right'
+												overflow='hidden'
+											>
+												{announcement.date} at {announcement.time}
+											</Text>
+										</Flex>
+										<Flex mt={4}>
+											<Text fontSize='md' align='left' overflow='hidden'>
+												{announcement.body}
+											</Text>
+										</Flex>
+										<Flex mt={2}>
+											{cookies.admin ? (
+												<Button
+													colorScheme='red'
+													onClick={() => deleteAnnouncement(announcement.id)}
+												>
+													Delete
+												</Button>
+											) : (
+												<></>
+											)}
+										</Flex>
+									</Box>
 								)}
 							</VStack>
 						))}

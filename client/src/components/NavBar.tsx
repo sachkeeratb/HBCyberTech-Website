@@ -92,6 +92,7 @@ export default function NavBar() {
 							onClick={() => {
 								if (cookies.user) removeCookie('user');
 								else removeCookie('admin');
+								window.location.href = '/';
 								window.location.reload();
 							}}
 						>

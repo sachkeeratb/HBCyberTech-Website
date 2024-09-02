@@ -71,7 +71,7 @@ function App() {
 						element={cookies.admin ? <CreateAnnouncement /> : <Home />}
 					/>
 					<Route path='/forum/general' element={<General />} />
-					<Route path='/forum/generalcreate' element={<CreatePost />} />
+					<Route path='/forum/general/create' element={<CreatePost />} />
 					<Route path='/forum/general/:id' element={<Post />} />
 					<Route path='/form/general' element={<GeneralForm />} />
 					<Route path='/form/executive' element={<ExecForm />} />

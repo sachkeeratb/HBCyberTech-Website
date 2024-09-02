@@ -111,7 +111,7 @@ export default function CreatePost() {
 					navigate('/');
 				}
 			})();
-		}
+		} else navigate('/');
 	}, []);
 
 	// Handle the input change for the title

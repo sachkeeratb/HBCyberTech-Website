@@ -4,16 +4,44 @@ mod services;
 mod utilities;
 
 use actix_cors::Cors;
+use actix_web::{ web::Data, App, HttpServer };
 use routes::{
-	account::{account_sign_in, create_account, get_account_by_username_or_email, get_all_accounts, verify_account}, 
-	admin::{admin_sign_in, verify_admin}, 
-	announcement_forum_post::{create_announcement_post, return_amount_of_announcements, return_announcements}, 
-	executive_member::{create_executive_member, get_all_executive_members, get_executive_member_by_full_name_or_email}, 
-	forum_post::{create_post, get_comments_by_post_id, get_post_by_id, post_comment, return_amount_of_posts, return_posts}, 
-	general_member::{create_general_member, get_all_general_members, get_general_member_by_full_name_or_email}
+	account::{
+		account_sign_in,
+		create_account,
+		get_account_by_username_or_email,
+		get_all_accounts,
+		verify_account,
+	},
+	admin::{ admin_sign_in, verify_admin },
+	announcement::{
+		create_announcement,
+		delete_announcement,
+		return_amount_of_announcements,
+		return_announcements,
+	},
+	executive_member::{
+		create_executive_member,
+		get_all_executive_members,
+		get_executive_member_by_full_name_or_email,
+	},
+	forum_post::{
+		create_post,
+		delete_post_as_admin,
+		delete_post_as_user,
+		get_comments_by_post_id,
+		get_post_by_id,
+		post_comment,
+		return_amount_of_posts,
+		return_posts,
+	},
+	general_member::{
+		create_general_member,
+		get_all_general_members,
+		get_general_member_by_full_name_or_email,
+	},
 };
 use services::db::Database;
-use actix_web::{web::Data, App, HttpServer};
 
 #[macro_use]
 extern crate dotenv_codegen;
@@ -26,10 +54,10 @@ async fn main() -> std::io::Result<()> {
 	let db = Database::init().await;
 	let db_data = Data::new(db);
 
-	HttpServer::new(move || {	
+	HttpServer::new(move || {
 		let cors = Cors::default()
 			.allowed_origin(dotenv!("CLIENT_URL"))
-			.allowed_methods(vec!["GET", "POST"])
+			.allowed_methods(vec!["GET", "POST", "DELETE"])
 			.allow_any_header()
 			.max_age(3600)
 			.send_wildcard();
@@ -42,11 +70,14 @@ async fn main() -> std::io::Result<()> {
 			.service(create_executive_member)
 			.service(get_executive_member_by_full_name_or_email)
 			.service(get_all_executive_members)
-			.service(create_announcement_post)
+			.service(create_announcement)
+			.service(delete_announcement)
 			.service(return_announcements)
 			.service(return_amount_of_announcements)
 			.service(get_account_by_username_or_email)
 			.service(create_post)
+			.service(delete_post_as_user)
+			.service(delete_post_as_admin)
 			.service(return_posts)
 			.service(get_post_by_id)
 			.service(return_amount_of_posts)
@@ -60,6 +91,5 @@ async fn main() -> std::io::Result<()> {
 			.service(verify_admin)
 	})
 		.bind((dotenv!("HOST"), dotenv!("PORT").parse::<u16>().unwrap()))?
-		.run()
-		.await
+		.run().await
 }

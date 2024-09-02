@@ -14,6 +14,9 @@ import {
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useCookies } from 'react-cookie';
+import toast, { Toaster } from 'react-hot-toast';
+import { jwtDecode } from 'jwt-decode';
 
 interface ForumPost {
 	id: string;
@@ -24,103 +27,6 @@ interface ForumPost {
 	title: string;
 	body: string;
 }
-
-const DesktopForumPost: React.FC<ForumPost> = ({
-	id,
-	author,
-	email,
-	date,
-	time,
-	title,
-	body
-}) => {
-	const BG = useColorModeValue('white', 'gray.800');
-	return (
-		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
-			<Flex justify='space-between' align='center'>
-				<Flex>
-					<SlideFade in={true} offsetY='50vh'>
-						<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-							<Link to={'/forum/general/' + id}>
-								<Text
-									fontSize='xl'
-									fontWeight='bold'
-									mr={2}
-									align='left'
-									overflow='hidden'
-								>
-									{title}
-								</Text>
-							</Link>
-						</motion.div>
-					</SlideFade>
-					<Text
-						fontSize='md'
-						color='gray.400'
-						mt={1}
-						align='left'
-						overflow='hidden'
-					>
-						by {author} &lt;{email}&gt;
-					</Text>
-				</Flex>
-				<Text fontSize='sm' color='gray.400' align='right' overflow='hidden'>
-					{date} at {time}
-				</Text>
-			</Flex>
-			<Flex mt={4}>
-				<Text fontSize='md' align='left' overflow='hidden'>
-					{body}
-				</Text>
-			</Flex>
-		</Box>
-	);
-};
-
-const MobileForumPost: React.FC<ForumPost> = ({
-	id,
-	author,
-	email,
-	date,
-	time,
-	title,
-	body
-}) => {
-	const BG = useColorModeValue('white', 'gray.800');
-	return (
-		<Box bg={BG} p={5} borderRadius='md' minWidth={'100%'}>
-			<Flex direction='column' align='left'>
-				<SlideFade in={true} offsetY='50vh'>
-					<motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-						<Link to={'/forum/general/' + id}>
-							<Text
-								fontSize='xl'
-								fontWeight='bold'
-								mr={2}
-								align='left'
-								overflow='hidden'
-							>
-								{title}
-							</Text>
-						</Link>
-					</motion.div>
-				</SlideFade>
-			</Flex>
-
-			<Text fontSize='md' color='gray.400' align='left' overflow='hidden'>
-				by {author} &lt;{email}&gt;
-			</Text>
-			<Text fontSize='sm' color='gray.400' align='left' overflow='hidden'>
-				{date} at {time}
-			</Text>
-			<Flex mt={4}>
-				<Text fontSize='md' align='left' overflow='hidden'>
-					{body}
-				</Text>
-			</Flex>
-		</Box>
-	);
-};
 
 const instance = axios.create({
 	baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
@@ -152,6 +58,7 @@ export default function General() {
 		};
 	}, [isMobile]);
 
+	const [cookies] = useCookies(['user', 'admin']);
 	const [forumPosts, setForumPosts] = useState<ForumPost[]>([]);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(false);
@@ -207,6 +114,48 @@ export default function General() {
 		}
 	};
 
+	const deleteUserPost = async (id: string) => {
+		try {
+			const response = await instance.delete(`/forum/general/delete/${id}`, {
+				headers: {
+					Authorization: cookies.user
+				}
+			});
+
+			if (response.status === 200) {
+				toast.success('Post deleted successfully');
+				setTimeout(() => {
+					window.location.reload();
+				}, 1500);
+			}
+		} catch (error) {
+			toast.error('Failed to delete post');
+			console.error(error);
+		}
+	};
+	const deleteAdminPost = async (id: string) => {
+		try {
+			const response = await instance.delete(
+				`/forum/general/delete/as_admin/${id}`,
+				{
+					headers: {
+						Authorization: cookies.admin
+					}
+				}
+			);
+
+			if (response.status === 200) {
+				toast.success('Post deleted successfully');
+				setTimeout(() => {
+					window.location.reload();
+				}, 1500);
+			}
+		} catch (error) {
+			toast.error('Failed to delete post');
+			console.error(error);
+		}
+	};
+
 	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearch(event.target.value);
 		setPage(1);
@@ -215,9 +164,23 @@ export default function General() {
 	};
 
 	const BG = useColorModeValue('gray.700', 'purple.700');
+	const POST_BG = useColorModeValue('white', 'gray.800');
+
+	const toastColour = useColorModeValue('black', 'white');
+	const bgColour = useColorModeValue('#F2F3F4', '#181818');
 
 	return (
 		<Box>
+			<Toaster
+				position='bottom-right'
+				reverseOrder={false}
+				toastOptions={{
+					style: {
+						color: toastColour,
+						background: bgColour
+					}
+				}}
+			/>
 			<Heading as='h1' size='xl' mt={4}>
 				General Discussion
 				<Flex justify='right' mb={4}>
@@ -259,25 +222,138 @@ export default function General() {
 						{forumPosts.map((forumPost, key) => (
 							<VStack spacing={4} w='100%' key={key}>
 								{isMobile ? (
-									<MobileForumPost
-										id={forumPost.id}
-										author={forumPost.author}
-										email={forumPost.email}
-										date={forumPost.date}
-										time={forumPost.time}
-										title={forumPost.title}
-										body={forumPost.body}
-									/>
+									<Box bg={POST_BG} p={5} borderRadius='md' minWidth={'100%'}>
+										<Flex direction='column' align='left'>
+											<SlideFade in={true} offsetY='50vh'>
+												<motion.div
+													whileHover={{ scale: 1.1 }}
+													whileTap={{ scale: 0.9 }}
+												>
+													<Link to={'/forum/general/' + forumPost.id}>
+														<Text
+															fontSize='xl'
+															fontWeight='bold'
+															mr={2}
+															align='left'
+															overflow='hidden'
+														>
+															{forumPost.title}
+														</Text>
+													</Link>
+												</motion.div>
+											</SlideFade>
+										</Flex>
+
+										<Text
+											fontSize='md'
+											color='gray.400'
+											align='left'
+											overflow='hidden'
+										>
+											by {forumPost.author} &lt;{forumPost.email}&gt;
+										</Text>
+										<Text
+											fontSize='sm'
+											color='gray.400'
+											align='left'
+											overflow='hidden'
+										>
+											{forumPost.date} at {forumPost.time}
+										</Text>
+										<Flex mt={4}>
+											<Text fontSize='md' align='left' overflow='hidden'>
+												{forumPost.body}
+											</Text>
+										</Flex>
+										<Flex mt={2}>
+											{cookies.user &&
+											jwtDecode<{
+												username: string;
+												email: string;
+												verified: boolean;
+											}>(cookies.user).username === forumPost.author ? (
+												<Button
+													colorScheme='red'
+													onClick={() => deleteUserPost(forumPost.id)}
+												>
+													Delete
+												</Button>
+											) : cookies.admin ? (
+												<Button
+													colorScheme='red'
+													onClick={() => deleteAdminPost(forumPost.id)}
+												>
+													Delete
+												</Button>
+											) : (
+												<></>
+											)}
+										</Flex>
+									</Box>
 								) : (
-									<DesktopForumPost
-										id={forumPost.id}
-										author={forumPost.author}
-										email={forumPost.email}
-										date={forumPost.date}
-										time={forumPost.time}
-										title={forumPost.title}
-										body={forumPost.body}
-									/>
+									<Box bg={POST_BG} p={5} borderRadius='md' minWidth={'100%'}>
+										<Flex justify='space-between' align='center'>
+											<Flex>
+												<SlideFade in={true} offsetY='50vh'>
+													<motion.div
+														whileHover={{ scale: 1.1 }}
+														whileTap={{ scale: 0.9 }}
+													>
+														<Link to={'/forum/general/' + forumPost.id}>
+															<Text
+																fontSize='xl'
+																fontWeight='bold'
+																mr={2}
+																align='left'
+																overflow='hidden'
+															>
+																{forumPost.title}
+															</Text>
+														</Link>
+													</motion.div>
+												</SlideFade>
+												<Text
+													fontSize='md'
+													color='gray.400'
+													mt={1}
+													align='left'
+													overflow='hidden'
+												>
+													by {forumPost.author} &lt;{forumPost.email}&gt;
+												</Text>
+											</Flex>
+											<Text fontSize='sm' color='gray.400' overflow='hidden'>
+												{forumPost.date} at {forumPost.time}
+											</Text>
+										</Flex>
+										<Flex mt={4} justify='space-between'>
+											<Text fontSize='md' align='left' overflow='hidden'>
+												{forumPost.body}
+											</Text>
+											{cookies.user &&
+											jwtDecode<{
+												username: string;
+												email: string;
+												verified: boolean;
+											}>(cookies.user).username === forumPost.author ? (
+												<Button
+													colorScheme='red'
+													onClick={() => deleteUserPost(forumPost.id)}
+												>
+													Delete
+												</Button>
+											) : cookies.admin ? (
+												<Button
+													colorScheme='red'
+													onClick={() => deleteAdminPost(forumPost.id)}
+												>
+													Delete
+												</Button>
+											) : (
+												<></>
+											)}
+										</Flex>
+									</Box>
 								)}
 							</VStack>
 						))}

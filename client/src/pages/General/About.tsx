@@ -19,6 +19,7 @@ import PrathamDave from '../../assets/PrathamDave.jpg';
 import VanshSuri from '../../assets/VanshSuri.png';
 import EdwardLin from '../../assets/EdwardLin.jpg';
 import PranavThukral from '../../assets/PranavThukral.jpg';
+import NimayDesai from '../../assets/NimayDesai.png';
 
 // Import icons
 import {
@@ -397,7 +398,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
-								src={'https://avatars.githubusercontent.com/u/62720666?v=4'}
+								src={NimayDesai}
 							/>
 						</MotionBox>
 					</Box>
