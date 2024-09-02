@@ -89,7 +89,7 @@ const Features: Feature[] = [
 	{
 		heading: 'Informational Learning Sessions',
 		content:
-			'This club will provide a greate amount of knowledge regarding CyberSecurity, Embedded Programming, and more!',
+			'This club will provide a great amount of knowledge regarding CyberSecurity, Embedded Programming, and more!',
 		icon: FaSlideshare
 	},
 	{
@@ -101,7 +101,7 @@ const Features: Feature[] = [
 	{
 		heading: 'Activities and Workshops',
 		content:
-			'Instead of showing you a wall of text that will take you a long time to read and then that you quickly forget, we create wokshops and activities so you can learn through application and creation.',
+			'Instead of showing you a wall of text that will take a long time to read with forgettable words, we create wokshops and activities so you can learn through application and creation.',
 		icon: GrWorkshop
 	},
 	{
