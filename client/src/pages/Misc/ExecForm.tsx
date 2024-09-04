@@ -302,9 +302,6 @@ export default function ExecForm() {
 					<Text fontSize='md' textAlign='center'>
 						Collaborate with professionals and drive our tech community forward.
 					</Text>
-					<Text fontSize='md' textAlign='center'>
-						Collaborate with professionals and drive our tech community forward.
-					</Text>
 				</Flex>
 				<Divider />
 				<form onSubmit={handleSubmit}>
