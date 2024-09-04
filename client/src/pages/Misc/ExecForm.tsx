@@ -302,6 +302,9 @@ export default function ExecForm() {
 					<Text fontSize='md' textAlign='center'>
 						Collaborate with professionals and drive our tech community forward.
 					</Text>
+					<Text fontSize='md' textAlign='center'>
+						Collaborate with professionals and drive our tech community forward.
+					</Text>
 				</Flex>
 				<Divider />
 				<form onSubmit={handleSubmit}>
@@ -379,6 +382,15 @@ export default function ExecForm() {
 									<option value='marketing'>Marketing</option>
 									<option value='events'>Events</option>
 								</Select>
+								<Text align='left' ml={1}>
+									{data.execType === 'development'
+										? 'You will be responsible for developing slideshows and activities.'
+										: data.execType === 'marketing'
+										? 'You will be responsible for creating promotional material.'
+										: data.execType === 'events'
+										? 'You will be responsible for planning and hosting events for the club.'
+										: ''}
+								</Text>
 							</FormControl>
 							<FormControl isRequired>
 								<FormLabel>Select Your Grade</FormLabel>
@@ -409,7 +421,8 @@ export default function ExecForm() {
 							bg={formBG}
 							rounded='lg'
 							boxShadow='lg'
-							p={{ base: 5, sm: 10 }}
+							pl={{ base: 5, sm: 10 }}
+							pr={{ base: 5, sm: 10 }}
 						>
 							<FormControl id='why' isInvalid={error.whyErr} isRequired>
 								<FormLabel pl={1}>

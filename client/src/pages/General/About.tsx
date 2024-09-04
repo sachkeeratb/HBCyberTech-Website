@@ -24,6 +24,7 @@ import VanshSuri from '../../assets/VanshSuri.png';
 import EdwardLin from '../../assets/EdwardLin.jpg';
 import PranavThukral from '../../assets/PranavThukral.jpg';
 import NimayDesai from '../../assets/NimayDesai.png';
+import SharunArunanthy from '../../assets/SharunArunanthy.png';
 
 // Import icons
 import {
@@ -107,6 +108,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
+								loading='lazy'
 								src='https://avatars.githubusercontent.com/u/61165141?v=4'
 							/>
 						</MotionBox>
@@ -193,6 +195,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
+								loading='lazy'
 								src={UdeshwarSinghSandhu}
 							/>
 						</MotionBox>
@@ -263,6 +266,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
+								loading='lazy'
 								src={EdwardLin}
 							/>
 						</MotionBox>
@@ -335,6 +339,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
+								loading='lazy'
 								src={ParthKapoor}
 							/>
 						</MotionBox>
@@ -403,144 +408,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
-								src={NimayDesai}
-							/>
-						</MotionBox>
-					</Box>
-				</div>
-
-				<Flex
-					position='relative'
-					ml={['auto', 'auto', 16]}
-					m={['auto', 'initial']}
-					w={['90%', '85%', '80%']}
-					maxW='800px'
-					justifyContent='center'
-					direction='column'
-				>
-					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
-							<Box
-								as='h1'
-								mb={6}
-								fontSize='3xl'
-								lineHeight='shorter'
-								fontWeight='bold'
-								mt={0}
-								cursor='pointer'
-								width='max-content'
-								textAlign='left'
-							>
-								<Box as='span' display='inline-block' position='relative'>
-									Director of Events
-									<Box
-										as='span'
-										display='block'
-										position='absolute'
-										bg='blue.400'
-										w='100%'
-										h='1px'
-										bottom={-2}
-									/>
-								</Box>{' '}
-								<Box as='span' display={'flex'} pt={5}>
-									<Box pr={5}>
-										{GitHubContact('https://github.com/NimayDesai')}
-									</Box>
-									<Box>
-										{InstagramContact('https://www.instagram.com/paladinaoe2')}
-									</Box>
-								</Box>
-							</Box>
-						</MotionBox>
-					</Box>
-					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
-						Hello! My name is{' '}
-						<Box as='strong' fontWeight='600'>
-							Nimay Desai
-						</Box>
-						, and I am the event director of this club. I am a full stack
-						developer, but specialize in high-level langauges like JavaScript
-						and Python. I also adore history and grand strategy video games. If
-						you do too, check our History Club!
-					</Box>
-				</Flex>
-			</Flex>
-			<Flex direction={['column', 'column', 'row']}>
-				<div>
-					<Box m='auto' mb={[16, 16, 'auto']}>
-						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
-							<Avatar
-								size='2xl'
-								showBorder={true}
-								borderColor='blue.400'
-								src={PrathamDave}
-							/>
-						</MotionBox>
-					</Box>
-				</div>
-
-				<Flex
-					position='relative'
-					ml={['auto', 'auto', 16]}
-					m={['auto', 'initial']}
-					w={['90%', '85%', '80%']}
-					maxW='800px'
-					justifyContent='center'
-					direction='column'
-				>
-					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
-							<Box
-								as='h1'
-								mb={6}
-								fontSize='3xl'
-								lineHeight='shorter'
-								fontWeight='bold'
-								mt={0}
-								cursor='pointer'
-								width='max-content'
-								textAlign='left'
-							>
-								<Box as='span' display='inline-block' position='relative'>
-									Director of Marketing
-									<Box
-										as='span'
-										display='block'
-										position='absolute'
-										bg='blue.400'
-										w='100%'
-										h='1px'
-										bottom={-2}
-									/>
-								</Box>{' '}
-								<Box as='span' display={'flex'} pt={5}>
-									<Box>
-										{InstagramContact('https://www.instagram.com/pratham.d_/')}
-									</Box>
-								</Box>
-							</Box>
-						</MotionBox>
-					</Box>
-					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
-						Hello! My name is{' '}
-						<Box as='strong' fontWeight='600'>
-							Pratham Dave{' '}
-						</Box>
-						and I am the Marketing Director of this club. I have a good
-						understanding of languages such as Python, HTML, Javascript, and
-						C++. I also have an interest in aviation, and business.
-					</Box>
-				</Flex>
-			</Flex>
-			<Flex direction={['column', 'column', 'row']}>
-				<div>
-					<Box m='auto' mb={[16, 16, 'auto']}>
-						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
-							<Avatar
-								size='2xl'
-								showBorder={true}
-								borderColor='blue.400'
+								loading='lazy'
 								src={VanshSuri}
 							/>
 						</MotionBox>
@@ -620,6 +488,219 @@ export default function About() {
 					</Box>
 				</Flex>
 			</Flex>
+			<Flex direction={['column', 'column', 'row']}>
+				<div>
+					<Box m='auto' mb={[16, 16, 'auto']}>
+						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
+							<Avatar
+								size='2xl'
+								showBorder={true}
+								borderColor='blue.400'
+								loading='lazy'
+								src={NimayDesai}
+							/>
+						</MotionBox>
+					</Box>
+				</div>
+
+				<Flex
+					position='relative'
+					ml={['auto', 'auto', 16]}
+					m={['auto', 'initial']}
+					w={['90%', '85%', '80%']}
+					maxW='800px'
+					justifyContent='center'
+					direction='column'
+				>
+					<Box position='relative'>
+						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+							<Box
+								as='h1'
+								mb={6}
+								fontSize='3xl'
+								lineHeight='shorter'
+								fontWeight='bold'
+								mt={0}
+								cursor='pointer'
+								width='max-content'
+								textAlign='left'
+							>
+								<Box as='span' display='inline-block' position='relative'>
+									Director of Events
+									<Box
+										as='span'
+										display='block'
+										position='absolute'
+										bg='blue.400'
+										w='100%'
+										h='1px'
+										bottom={-2}
+									/>
+								</Box>{' '}
+								<Box as='span' display={'flex'} pt={5}>
+									<Box pr={5}>
+										{GitHubContact('https://github.com/NimayDesai')}
+									</Box>
+									<Box>
+										{InstagramContact('https://www.instagram.com/paladinaoe2')}
+									</Box>
+								</Box>
+							</Box>
+						</MotionBox>
+					</Box>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
+						Hello! My name is{' '}
+						<Box as='strong' fontWeight='600'>
+							Nimay Desai
+						</Box>
+						, and I am the event director of this club. I am a full stack
+						developer, but specialize in high-level langauges like JavaScript
+						and Python. I also adore history and grand strategy video games. If
+						you do too, check our History Club!
+					</Box>
+				</Flex>
+			</Flex>
+			<Flex direction={['column', 'column', 'row']}>
+				<div>
+					<Box m='auto' mb={[16, 16, 'auto']}>
+						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
+							<Avatar
+								size='2xl'
+								showBorder={true}
+								borderColor='blue.400'
+								loading='lazy'
+								src={PrathamDave}
+							/>
+						</MotionBox>
+					</Box>
+				</div>
+
+				<Flex
+					position='relative'
+					ml={['auto', 'auto', 16]}
+					m={['auto', 'initial']}
+					w={['90%', '85%', '80%']}
+					maxW='800px'
+					justifyContent='center'
+					direction='column'
+				>
+					<Box position='relative'>
+						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+							<Box
+								as='h1'
+								mb={6}
+								fontSize='3xl'
+								lineHeight='shorter'
+								fontWeight='bold'
+								mt={0}
+								cursor='pointer'
+								width='max-content'
+								textAlign='left'
+							>
+								<Box as='span' display='inline-block' position='relative'>
+									Director of Marketing
+									<Box
+										as='span'
+										display='block'
+										position='absolute'
+										bg='blue.400'
+										w='100%'
+										h='1px'
+										bottom={-2}
+									/>
+								</Box>{' '}
+								<Box as='span' display={'flex'} pt={5}>
+									<Box>
+										{InstagramContact('https://www.instagram.com/pratham.d_/')}
+									</Box>
+								</Box>
+							</Box>
+						</MotionBox>
+					</Box>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
+						Hello! My name is{' '}
+						<Box as='strong' fontWeight='600'>
+							Pratham Dave{' '}
+						</Box>
+						and I am the Marketing Director of this club. I have a good
+						understanding of languages such as Python, HTML, Javascript, and
+						C++. I also have an interest in aviation, and business.
+					</Box>
+				</Flex>
+			</Flex>
+			<Flex direction={['column', 'column', 'row']}>
+				<div>
+					<Box m='auto' mb={[16, 16, 'auto']}>
+						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
+							<Avatar
+								size='2xl'
+								showBorder={true}
+								borderColor='blue.400'
+								loading='lazy'
+								src={SharunArunanthy}
+							/>
+						</MotionBox>
+					</Box>
+				</div>
+
+				<Flex
+					position='relative'
+					ml={['auto', 'auto', 16]}
+					m={['auto', 'initial']}
+					w={['90%', '85%', '80%']}
+					maxW='800px'
+					justifyContent='center'
+					direction='column'
+				>
+					<Box position='relative'>
+						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+							<Box
+								as='h1'
+								mb={6}
+								fontSize='3xl'
+								lineHeight='shorter'
+								fontWeight='bold'
+								mt={0}
+								cursor='pointer'
+								width='max-content'
+								textAlign='left'
+							>
+								<Box as='span' display='inline-block' position='relative'>
+									Director of Marketing
+									<Box
+										as='span'
+										display='block'
+										position='absolute'
+										bg='blue.400'
+										w='100%'
+										h='1px'
+										bottom={-2}
+									/>
+								</Box>{' '}
+								<Box as='span' display={'flex'} pt={5}>
+									<Box pr={5}>
+										{InstagramContact('https://www.instagram.com/sharu_n_23')}
+									</Box>
+									<Box>
+										{LinkedInContact(
+											'https://www.linkedin.com/in/sharun-arunanthy-9789881aa'
+										)}
+									</Box>
+								</Box>
+							</Box>
+						</MotionBox>
+					</Box>
+					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
+						Welcome! My name is{' '}
+						<Box as='strong' fontWeight='600'>
+							Sharun Arunanthy
+						</Box>
+						! While my main programming language is Python, I also have a
+						passion for creating eye-catching designs on Canva to help our club
+						stand out and connect with the tech community.
+					</Box>
+				</Flex>
+			</Flex>
 
 			{/* Other various executives */}
 			<Flex direction={['column', 'column', 'row']}>
@@ -630,6 +711,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
+								loading='lazy'
 								src={GurvirSandhu}
 							/>
 						</MotionBox>
@@ -695,6 +777,7 @@ export default function About() {
 								size='2xl'
 								showBorder={true}
 								borderColor='blue.400'
+								loading='lazy'
 								src={PranavThukral}
 							/>
 						</MotionBox>
