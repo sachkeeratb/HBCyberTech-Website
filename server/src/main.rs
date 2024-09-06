@@ -59,7 +59,7 @@ async fn main() -> std::io::Result<()> {
 	HttpServer::new(move || {
 		// Enable CORS
 		let cors = Cors::default()
-			.allow_any_origin()
+			.allowed_origin(&var("CLIENT_URL").unwrap())
 			.allowed_methods(vec!["GET", "POST", "DELETE"])
 			.allow_any_header()
 			.max_age(3600)
