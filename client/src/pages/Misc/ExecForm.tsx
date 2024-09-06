@@ -544,7 +544,9 @@ export default function ExecForm() {
 									isInvalid={error.portfolioErr}
 									isRequired
 								>
-									<FormLabel pl={1}>Input a Link to Your Portfolio</FormLabel>
+									<FormLabel pl={1}>
+										Input a Link to Your Portfolio &#40;e.g. Google Drive&#41;
+									</FormLabel>
 									<Input
 										size='lg'
 										placeholder='https://www.example.com/example'
