@@ -521,7 +521,7 @@ export default function ExecForm() {
 								<FormControl id='portfolio' isInvalid={error.portfolioErr}>
 									<FormLabel pl={1}>
 										Input a Link to a Project or Portfolio You Believe Will
-										Enhance Your Application
+										Enhance Your Application &#40;e.g. Google Drive&#41;
 									</FormLabel>
 									<Input
 										size='lg'
