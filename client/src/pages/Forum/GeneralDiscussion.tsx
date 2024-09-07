@@ -155,7 +155,6 @@ export default function General() {
 
 	// Function for a user to delete their own post
 	const deleteUserPost = async (id: string) => {
-		if (loading) return;
 		try {
 			setLoading(true);
 			const response = await instance.delete(`/forum/general/delete/${id}`, {
@@ -329,7 +328,11 @@ export default function General() {
 												<Button
 													colorScheme='red'
 													isLoading={loading}
-													onClick={() => deleteUserPost(forumPost.id)}
+													onClick={() => {
+														if (!loading) {
+															deleteUserPost(forumPost.id);
+														}
+													}}
 												>
 													Delete
 												</Button>
