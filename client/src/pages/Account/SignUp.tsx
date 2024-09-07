@@ -318,7 +318,11 @@ export default function SignUp() {
 							</FormControl>
 						</VStack>
 						<VStack w='100%'>
-							<Text>Make sure to verify using the email sent to you.</Text>
+							<Text>
+								Make sure to verify using the email sent to you.
+								<br />
+								&#40;Check your spam folder&#41;
+							</Text>
 							<Button
 								type='submit'
 								bg='purple.500'
