@@ -4,7 +4,6 @@ use mongodb::bson::{ oid::ObjectId, DateTime };
 use regex::Regex;
 use serde::{ Deserialize, Serialize };
 use std::time::SystemTime;
-use validator::ValidationError;
 
 // Store the regex patterns for various fields
 lazy_static! {
@@ -13,20 +12,8 @@ lazy_static! {
 	).unwrap();
 	static ref RE_EMAIL: Regex = Regex::new(r"^[0-9]{6,7}@pdsb.net$").unwrap();
 	static ref RE_EXEC_TYPE: Regex = Regex::new(r"^(development|marketing|events)$").unwrap();
-	static ref RE_PORTFOLIO: Regex = Regex::new(
-		r"^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$i"
-	).unwrap();
 	static ref RE_200: Regex = Regex::new(r"^.{0,200}$").unwrap();
 	static ref RE_600: Regex = Regex::new(r"^.{1,600}$").unwrap();
-}
-
-// Create a function to validate the portfolio link
-fn validate_portfolio(portfolio: &str) -> Result<(), ValidationError> {
-	if (portfolio.len() > 0 && RE_PORTFOLIO.is_match(portfolio)) || portfolio.len() == 0 {
-		return Ok(());
-	} else {
-		return Err(ValidationError::new("Invalid portfolio link."));
-	}
 }
 
 // Define the ExecutiveMember struct
@@ -64,7 +51,6 @@ pub struct ExecutiveMemberRequest {
 	pub why: String,
 	#[validate(regex(path = *RE_600, message = "Experience should be from 1 to 600 characters."))]
 	pub experience: String,
-	#[validate(custom(function = "validate_portfolio", message = "Invalid portfolio link."))]
 	pub portfolio: String,
 	#[validate(regex(path = *RE_200, message = "Extra information should be from 0 to 200."))]
 	pub extra: String,

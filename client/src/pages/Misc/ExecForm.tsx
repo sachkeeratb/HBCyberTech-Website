@@ -210,25 +210,6 @@ export default function ExecForm() {
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
-		// Check if the user has already submitted the form
-		const lastSubmission = localStorage.getItem('execFormLastSubmission');
-		const now = new Date().getTime();
-
-		if (
-			lastSubmission &&
-			now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
-		) {
-			// Inform the user that they can only apply once per day
-			toast.error('You can only apply once per day.');
-			return;
-		}
-
-		// Check if the user can submit the form
-		if (!canSubmit()) {
-			toast.error('You have invalid inputs. Please try again.');
-			return;
-		}
-
 		// Destructure the data
 		const {
 			fullName,
@@ -243,6 +224,25 @@ export default function ExecForm() {
 		try {
 			// Check if the user has already signed up
 			if (await isDuplicate(fullName, email)) return;
+
+			// Check if the user has already submitted the form
+			const lastSubmission = localStorage.getItem('execFormLastSubmission');
+			const now = new Date().getTime();
+
+			if (
+				lastSubmission &&
+				now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
+			) {
+				// Inform the user that they can only apply once per day
+				toast.error('You can only apply once per day.');
+				return;
+			}
+
+			// Check if the user can submit the form
+			if (!canSubmit()) {
+				toast.error('You have invalid inputs. Please try again.');
+				return;
+			}
 
 			// Send the data to the server
 			const { data } = await instance.post('/executive_member/post', {

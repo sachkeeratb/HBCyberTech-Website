@@ -125,23 +125,6 @@ export default function SignIn() {
 			return;
 		}
 
-		// Check if the user has exceeded the maximum login attempts
-		if (localStorage.getItem('lockoutTime')) {
-			// Keep the user locked out while the lockout time is still in effect
-			const currentTime = new Date().getTime();
-			const lockoutTime = new Date(localStorage.getItem('lockoutTime') || '');
-			if (currentTime < lockoutTime.getTime()) {
-				toast.error(
-					'You have exceeded the maximum login attempts. Please try again later.'
-				);
-				return;
-			}
-
-			// Otherwise, remove the lockout time and login attempts
-			localStorage.removeItem('lockoutTime');
-			localStorage.removeItem('loginAttempts');
-		}
-
 		// Get the email and password from the form
 		const { email, password } = data;
 
@@ -153,6 +136,23 @@ export default function SignIn() {
 			if (cookies.user || cookies.admin) {
 				toast.error('You are already signed in.');
 				return;
+			}
+
+			// Check if the user has exceeded the maximum login attempts
+			if (localStorage.getItem('lockoutTime')) {
+				// Keep the user locked out while the lockout time is still in effect
+				const currentTime = new Date().getTime();
+				const lockoutTime = new Date(localStorage.getItem('lockoutTime') || '');
+				if (currentTime < lockoutTime.getTime()) {
+					toast.error(
+						'You have exceeded the maximum login attempts. Please try again later.'
+					);
+					return;
+				}
+
+				// Otherwise, remove the lockout time and login attempts
+				localStorage.removeItem('lockoutTime');
+				localStorage.removeItem('loginAttempts');
 			}
 
 			// Sign in the user

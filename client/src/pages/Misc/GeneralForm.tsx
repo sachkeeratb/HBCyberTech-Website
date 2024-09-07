@@ -166,19 +166,6 @@ export default function GeneralForm() {
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
-		// Check if the user has already submitted a form today
-		const lastSubmission = localStorage.getItem('generalFormLastSubmission');
-		const now = new Date().getTime();
-
-		// If the user has already submitted a form today, show an error
-		if (
-			lastSubmission &&
-			now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
-		) {
-			toast.error('You can only apply once per day!');
-			return;
-		}
-
 		// If the user has invalid inputs, show an error
 		if (!canSubmit()) {
 			toast.error('You have invalid inputs. Please try again.');
@@ -191,6 +178,19 @@ export default function GeneralForm() {
 		try {
 			// Check if the user has already signed up
 			if (await isDuplicate(fullName, email)) return;
+
+			// Check if the user has already submitted a form today
+			const lastSubmission = localStorage.getItem('generalFormLastSubmission');
+			const now = new Date().getTime();
+
+			// If the user has already submitted a form today, show an error
+			if (
+				lastSubmission &&
+				now - parseInt(lastSubmission) < 24 * 60 * 60 * 1000
+			) {
+				toast.error('You can only apply once per day!');
+				return;
+			}
 
 			// Send the data to the server
 			const { data } = await instance.post('/general_member/post', {
