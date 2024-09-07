@@ -79,6 +79,8 @@ export default function SignUp() {
 	const [show, setShow] = useState(false);
 	const handleClick = () => setShow(!show);
 
+	const [loading, setLoading] = useState(false);
+
 	// Handle username input change
 	const handleUsernameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
@@ -163,6 +165,7 @@ export default function SignUp() {
 		const { username, email, password } = data;
 
 		try {
+			setLoading(true);
 			// Check if the user has already signed up
 			if (await isDuplicate(username, email)) return;
 
@@ -194,6 +197,8 @@ export default function SignUp() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -332,6 +337,7 @@ export default function SignUp() {
 								}}
 								rounded='md'
 								w='100%'
+								isLoading={loading}
 							>
 								Sign in
 							</Button>

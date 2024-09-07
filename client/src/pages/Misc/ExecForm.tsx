@@ -96,6 +96,8 @@ export default function ExecForm() {
 		experience: 600
 	});
 
+	const [loading, setLoading] = useState(false);
+
 	// Handle input changes
 	const handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData({ ...data, fullName: e.target.value });
@@ -222,6 +224,8 @@ export default function ExecForm() {
 			extra
 		} = data;
 		try {
+			setLoading(true);
+
 			// Check if the user has already signed up
 			if (await isDuplicate(fullName, email)) return;
 
@@ -272,6 +276,8 @@ export default function ExecForm() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -601,6 +607,7 @@ export default function ExecForm() {
 								}}
 								rounded='md'
 								w={{ base: '100%', md: 'max-content' }}
+								isLoading={loading}
 							>
 								Submit Form
 							</Button>

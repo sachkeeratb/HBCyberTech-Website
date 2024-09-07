@@ -218,6 +218,8 @@ export default function Post() {
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('author');
 
+	const [commentPostLoading, setCommentPostLoading] = useState(false);
+
 	// Weird fix for a bug
 	let lastPage = 0;
 
@@ -415,24 +417,6 @@ export default function Post() {
 			return;
 		}
 
-		// Check if the user is allowed to post a comment
-		const lastCommentTime = localStorage.getItem('lastCommentTime');
-		const now = new Date().getTime();
-
-		// If the user has posted a comment in the last 10 minutes, they must wait
-		if (lastCommentTime && now - parseInt(lastCommentTime) < 10 * 60 * 1000) {
-			toast.error('You must wait 10 minutes between posting comments.');
-			return;
-		}
-		// Otherwise, store the current time
-		else localStorage.setItem('lastCommentTime', now.toString());
-
-		// Check if the user is signed in
-		if (!cookies.user && !cookies.admin) {
-			toast.error('You must be signed in to post a comment.');
-			return;
-		}
-
 		// Check if the user has verified
 		if (
 			!cookies.admin &&
@@ -447,6 +431,24 @@ export default function Post() {
 		}
 
 		try {
+			setCommentPostLoading(true);
+			// Check if the user is allowed to post a comment
+			const lastCommentTime = localStorage.getItem('lastCommentTime');
+			const now = new Date().getTime();
+
+			// If the user has posted a comment in the last 10 minutes, they must wait
+			if (lastCommentTime && now - parseInt(lastCommentTime) < 10 * 60 * 1000) {
+				toast.error('You must wait 10 minutes between posting comments.');
+				return;
+			}
+			// Otherwise, store the current time
+			else localStorage.setItem('lastCommentTime', now.toString());
+
+			// Check if the user is signed in
+			if (!cookies.user && !cookies.admin) {
+				toast.error('You must be signed in to post a comment.');
+				return;
+			}
 			const { author, email, body } = data;
 			const response = await instance.post(
 				`/forum/general/post/${id}/comment`,
@@ -471,6 +473,8 @@ export default function Post() {
 			});
 		} catch (error) {
 			console.error('Error submitting comment:', error);
+		} finally {
+			setCommentPostLoading(false);
 		}
 	};
 
@@ -609,7 +613,12 @@ export default function Post() {
 								<></>
 							)}
 						</FormControl>
-						<Button type='submit' colorScheme='purple' mt={4}>
+						<Button
+							type='submit'
+							colorScheme='purple'
+							mt={4}
+							isLoading={commentPostLoading}
+						>
 							Submit
 						</Button>
 					</Box>

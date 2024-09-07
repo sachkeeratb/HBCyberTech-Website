@@ -92,6 +92,8 @@ export default function GeneralForm() {
 		showTooltip: false
 	});
 
+	const [loading, setLoading] = useState(false);
+
 	// Handle input changes
 	const handleNameInputChange = (e: { target: { value: string } }) => {
 		setData({ ...data, fullName: e.target.value });
@@ -176,6 +178,8 @@ export default function GeneralForm() {
 		const { fullName, email, grade, skills, extra } = data;
 
 		try {
+			setLoading(true);
+
 			// Check if the user has already signed up
 			if (await isDuplicate(fullName, email)) return;
 
@@ -217,6 +221,8 @@ export default function GeneralForm() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -411,6 +417,7 @@ export default function GeneralForm() {
 								}}
 								rounded='md'
 								w={{ base: '100%', md: 'max-content' }}
+								isLoading={loading}
 							>
 								Submit Form
 							</Button>

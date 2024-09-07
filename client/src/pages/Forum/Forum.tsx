@@ -10,7 +10,8 @@ import {
 	Table,
 	Tbody,
 	Tr,
-	Td
+	Td,
+	Spinner
 } from '@chakra-ui/react';
 
 // Import the Link component from React Router
@@ -40,6 +41,8 @@ export default function Forum() {
 		general: 0
 	});
 
+	const [loading, setLoading] = useState(true);
+
 	useEffect(() => {
 		// Fetch the amount of posts in each category
 		(async function fetchData() {
@@ -55,6 +58,8 @@ export default function Forum() {
 				});
 			} catch (error) {
 				console.error('Error fetching posts:', error);
+			} finally {
+				setLoading(false);
 			}
 		})();
 	}, []);
@@ -75,8 +80,16 @@ export default function Forum() {
 							</Text>
 						</Td>
 						<Td textAlign='center'>
-							<Text fontSize='2xl'>{amount.announcements}</Text>
-							{amount.announcements === 1 ? (
+							{loading ? (
+								<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+									<Spinner />
+								</Box>
+							) : (
+								<Text fontSize='2xl'>{amount.announcements}</Text>
+							)}
+							{loading ? (
+								<></>
+							) : amount.announcements === 1 ? (
 								<Text>Post</Text>
 							) : (
 								<Text>Posts</Text>
@@ -95,8 +108,20 @@ export default function Forum() {
 							</Text>
 						</Td>
 						<Td textAlign='center'>
-							<Text fontSize='2xl'>{amount.general}</Text>
-							{amount.general === 1 ? <Text>Post</Text> : <Text>Posts</Text>}
+							{loading ? (
+								<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+									<Spinner />
+								</Box>
+							) : (
+								<Text fontSize='2xl'>{amount.general}</Text>
+							)}
+							{loading ? (
+								<></>
+							) : amount.general === 1 ? (
+								<Text>Post</Text>
+							) : (
+								<Text>Posts</Text>
+							)}
 						</Td>
 					</Tr>
 				</Tbody>

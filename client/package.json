@@ -14,6 +14,7 @@
 		"@chakra-ui/react": "^2.8.2",
 		"@emotion/react": "^11.13.0",
 		"@emotion/styled": "^11.13.0",
+		"CircularProgress": "link:@mui/material/CircularProgress",
 		"axios": "^1.7.4",
 		"framer-motion": "^11.3.21",
 		"jwt-decode": "^4.0.0",

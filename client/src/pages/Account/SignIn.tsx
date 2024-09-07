@@ -70,6 +70,8 @@ export default function SignIn() {
 	const [show, setShow] = useState(false);
 	const handleClick = () => setShow(!show);
 
+	const [loading, setLoading] = useState(false);
+
 	// Handle input change for email
 	const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setData((prevData) => ({
@@ -129,6 +131,8 @@ export default function SignIn() {
 		const { email, password } = data;
 
 		try {
+			setLoading(true);
+
 			// Check if the user exists in the database
 			if (await doesNotExist(email)) return;
 
@@ -214,6 +218,8 @@ export default function SignIn() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -316,6 +322,7 @@ export default function SignIn() {
 								}}
 								rounded='md'
 								w='100%'
+								isLoading={loading}
 							>
 								Sign in
 							</Button>

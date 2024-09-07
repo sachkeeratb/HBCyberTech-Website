@@ -92,6 +92,8 @@ export default function CreateAnnouncement() {
 		email: ''
 	});
 
+	const [loading, setLoading] = useState(false);
+
 	// Check if the user is an admin
 	useEffect(() => {
 		if (!cookies.admin) navigate('/');
@@ -156,22 +158,24 @@ export default function CreateAnnouncement() {
 			return;
 		}
 
-		// Check if the user has posted within the last 10 minutes
-		const lastPostTime = localStorage.getItem('lastPostTime');
-		const now = new Date().getTime();
-
-		// If the user has posted within the last 10 minutes, display an error message
-		if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
-			toast.error('You must wait 10 minutes between posting.');
-			return;
-		}
-		// Otherwise, store the current time in local storage
-		else localStorage.setItem('lastPostTime', now.toString());
-
 		// Get the user data and the post data
 		const { username, email } = user;
 		const { title, body } = data;
 		try {
+			setLoading(true);
+
+			// Check if the user has posted within the last 10 minutes
+			const lastPostTime = localStorage.getItem('lastPostTime');
+			const now = new Date().getTime();
+
+			// If the user has posted within the last 10 minutes, display an error message
+			if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
+				toast.error('You must wait 10 minutes between posting.');
+				return;
+			}
+			// Otherwise, store the current time in local storage
+			else localStorage.setItem('lastPostTime', now.toString());
+
 			const { data } = await instance.post('/forum/announcements/create', {
 				author: username,
 				email: email,
@@ -195,6 +199,8 @@ export default function CreateAnnouncement() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -292,7 +298,12 @@ export default function CreateAnnouncement() {
 								</Text>
 							)}
 						</FormControl>
-						<Button type='submit' colorScheme='purple' size='lg'>
+						<Button
+							type='submit'
+							colorScheme='purple'
+							size='lg'
+							isLoading={loading}
+						>
 							Submit
 						</Button>
 					</VStack>

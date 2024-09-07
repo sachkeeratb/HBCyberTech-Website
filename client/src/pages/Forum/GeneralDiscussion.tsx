@@ -90,6 +90,8 @@ export default function General() {
 	const [search, setSearch] = useState('');
 	const [filter, setFilter] = useState('title');
 
+	const [loading, setLoading] = useState(true);
+
 	// Fetch forum posts from the server
 	useEffect(() => {
 		fetchForumPosts();
@@ -153,7 +155,9 @@ export default function General() {
 
 	// Function for a user to delete their own post
 	const deleteUserPost = async (id: string) => {
+		if (loading) return;
 		try {
+			setLoading(true);
 			const response = await instance.delete(`/forum/general/delete/${id}`, {
 				headers: {
 					Authorization: cookies.user
@@ -169,12 +173,17 @@ export default function General() {
 		} catch (error) {
 			toast.error('Failed to delete post');
 			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	// Function for an admin to delete a post
 	const deleteAdminPost = async (id: string) => {
+		if (loading) return;
 		try {
+			setLoading(true);
+
 			const response = await instance.delete(
 				`/forum/general/delete/as_admin/${id}`,
 				{
@@ -193,6 +202,8 @@ export default function General() {
 		} catch (error) {
 			toast.error('Failed to delete post');
 			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -317,6 +328,7 @@ export default function General() {
 											}>(cookies.user).username === forumPost.author ? (
 												<Button
 													colorScheme='red'
+													isLoading={loading}
 													onClick={() => deleteUserPost(forumPost.id)}
 												>
 													Delete
@@ -324,6 +336,7 @@ export default function General() {
 											) : cookies.admin ? (
 												<Button
 													colorScheme='red'
+													isLoading={loading}
 													onClick={() => deleteAdminPost(forumPost.id)}
 												>
 													Delete

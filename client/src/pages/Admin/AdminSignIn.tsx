@@ -53,6 +53,8 @@ export default function AdminSignIn() {
 	const [show, setShow] = useState(false);
 	const handleClick = () => setShow(!show);
 
+	const [loading, setLoading] = useState(false);
+
 	// Handle password input change
 	const handlePasswordInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPassword(e.target.value);
@@ -69,30 +71,32 @@ export default function AdminSignIn() {
 			return;
 		}
 
-		// Check if the user has exceeded the maximum login attempts
-		if (localStorage.getItem('adminLockoutTime')) {
-			const currentTime = new Date().getTime();
-			const lockoutTime = new Date(
-				localStorage.getItem('adminLockoutTime') || ''
-			);
-
-			// If the time isn't up yet, show an error message
-			if (currentTime < lockoutTime.getTime()) {
-				toast.error(
-					'You have exceeded the maximum login attempts. Please try again later.'
-				);
-				return;
-			}
-
-			// Otherwise, remove the lockout time and login attempts
-			localStorage.removeItem('adminLockoutTime');
-			localStorage.removeItem('adminLoginAttempts');
-		}
-
 		try {
+			setLoading(true);
+
 			// If the user is signed in, sign them out
 			if (cookies.user) removeCookie('user');
 			if (cookies.admin) removeCookie('admin');
+
+			// Check if the user has exceeded the maximum login attempts
+			if (localStorage.getItem('adminLockoutTime')) {
+				const currentTime = new Date().getTime();
+				const lockoutTime = new Date(
+					localStorage.getItem('adminLockoutTime') || ''
+				);
+
+				// If the time isn't up yet, show an error message
+				if (currentTime < lockoutTime.getTime()) {
+					toast.error(
+						'You have exceeded the maximum login attempts. Please try again later.'
+					);
+					return;
+				}
+
+				// Otherwise, remove the lockout time and login attempts
+				localStorage.removeItem('adminLockoutTime');
+				localStorage.removeItem('adminLoginAttempts');
+			}
 
 			// Sign in the user
 			const { data } = await instance.post('/admin/signin', {
@@ -153,6 +157,8 @@ export default function AdminSignIn() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -235,6 +241,7 @@ export default function AdminSignIn() {
 								}}
 								rounded='md'
 								w='100%'
+								isLoading={loading}
 							>
 								Sign in
 							</Button>

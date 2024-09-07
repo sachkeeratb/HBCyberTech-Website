@@ -97,6 +97,8 @@ export default function CreatePost() {
 		verified: false
 	});
 
+	const [loading, setLoading] = useState(false);
+
 	// Set the user's data
 	useEffect(() => {
 		if (cookies.user) {
@@ -177,22 +179,24 @@ export default function CreatePost() {
 			return;
 		}
 
-		// Check if the user has posted within the last 10 minutes
-		const lastPostTime = localStorage.getItem('lastPostTime');
-		const now = new Date().getTime();
-
-		// If the user has posted within the last 10 minutes, display an error message
-		if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
-			toast.error('You must wait 10 minutes between posting.');
-			return;
-		}
-		// Otherwise, store the current time
-		else localStorage.setItem('lastPostTime', now.toString());
-
 		// Get the user data and the post data
 		const { username, email } = user;
 		const { title, body } = data;
 		try {
+			setLoading(true);
+
+			// Check if the user has posted within the last 10 minutes
+			const lastPostTime = localStorage.getItem('lastPostTime');
+			const now = new Date().getTime();
+
+			// If the user has posted within the last 10 minutes, display an error message
+			if (lastPostTime && now - parseInt(lastPostTime) < 10 * 60 * 1000) {
+				toast.error('You must wait 10 minutes between posting.');
+				return;
+			}
+			// Otherwise, store the current time
+			else localStorage.setItem('lastPostTime', now.toString());
+
 			// Send a POST request to create a forum post
 			const { data } = await instance.post('/forum/general/create', {
 				author: username,
@@ -216,6 +220,8 @@ export default function CreatePost() {
 			});
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -328,7 +334,12 @@ export default function CreatePost() {
 								</Text>
 							)}
 						</FormControl>
-						<Button type='submit' colorScheme='purple' size='lg'>
+						<Button
+							type='submit'
+							colorScheme='purple'
+							size='lg'
+							isLoading={loading}
+						>
 							Submit
 						</Button>
 					</VStack>
