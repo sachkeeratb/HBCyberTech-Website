@@ -179,6 +179,8 @@ export default function CreatePost() {
 			return;
 		}
 
+		setData({ ...data, body: data.body.replace(/[\t\n\r]/gm, '') });
+
 		// Get the user data and the post data
 		const { username, email } = user;
 		const { title, body } = data;

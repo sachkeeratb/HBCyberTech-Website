@@ -212,6 +212,13 @@ export default function ExecForm() {
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
+		setData({
+			...data,
+			why: data.why.replace(/[\t\n\r]/gm, ''),
+			experience: data.experience.replace(/[\t\n\r]/gm, ''),
+			extra: data.extra.replace(/[\t\n\r]/gm, '')
+		});
+
 		// Destructure the data
 		const {
 			fullName,

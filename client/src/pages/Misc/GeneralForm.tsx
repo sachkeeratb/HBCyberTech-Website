@@ -174,6 +174,8 @@ export default function GeneralForm() {
 			return;
 		}
 
+		setData({ ...data, extra: data.extra.replace(/[\t\n\r]/gm, '') });
+
 		// Deconstruct the data
 		const { fullName, email, grade, skills, extra } = data;
 

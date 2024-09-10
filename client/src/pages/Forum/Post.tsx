@@ -449,7 +449,10 @@ export default function Post() {
 				toast.error('You must be signed in to post a comment.');
 				return;
 			}
+
+			setData({ ...data, body: data.body.replace(/[\t\n\r]/gm, '') });
 			const { author, email, body } = data;
+
 			const response = await instance.post(
 				`/forum/general/post/${id}/comment`,
 				{
