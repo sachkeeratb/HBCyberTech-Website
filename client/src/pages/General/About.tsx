@@ -22,7 +22,6 @@ import UdeshwarSinghSandhu from '../../assets/UdeshwarSinghSandhu.png';
 import PrathamDave from '../../assets/PrathamDave.jpg';
 import VanshSuri from '../../assets/VanshSuri.png';
 import EdwardLin from '../../assets/EdwardLin.jpg';
-import PranavThukral from '../../assets/PranavThukral.jpg';
 import NimayDesai from '../../assets/NimayDesai.png';
 import SharunArunanthy from '../../assets/SharunArunanthy.png';
 
@@ -766,74 +765,6 @@ export default function About() {
 						racket sports and building circuits on different cad platforms. I am
 						also a part of a table tennis club that I started and managed. Feel
 						free to check it out!
-					</Box>
-				</Flex>
-			</Flex>
-			<Flex direction={['column', 'column', 'row']}>
-				<div>
-					<Box m='auto' mb={[16, 16, 'auto']}>
-						<MotionBox whileHover={{ scale: 1.2 }} rounded='full' shadow='lg'>
-							<Avatar
-								size='2xl'
-								showBorder={true}
-								borderColor='blue.400'
-								loading='lazy'
-								src={PranavThukral}
-							/>
-						</MotionBox>
-					</Box>
-				</div>
-				<Flex
-					position='relative'
-					ml={['auto', 'auto', 16]}
-					m={['auto', 'initial']}
-					w={['90%', '85%', '80%']}
-					maxW='800px'
-					justifyContent='center'
-					direction='column'
-				>
-					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
-							<Box
-								as='h1'
-								mb={6}
-								fontSize='3xl'
-								lineHeight='shorter'
-								fontWeight='bold'
-								mt={0}
-								cursor='pointer'
-								width='max-content'
-								textAlign='left'
-							>
-								<Box as='span' display='inline-block' position='relative'>
-									Marketing Executive
-									<Box
-										as='span'
-										display='block'
-										position='absolute'
-										bg='blue.400'
-										w='100%'
-										h='1px'
-										bottom={-2}
-									/>
-								</Box>{' '}
-								<Box as='span' display={'flex'} pt={5}>
-									{InstagramContact(
-										'https://www.instagram.com/pranav.thukral23'
-									)}
-								</Box>
-							</Box>
-						</MotionBox>
-					</Box>
-					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
-						Hi! My name is{' '}
-						<Box as='strong' fontWeight='600'>
-							Pranav
-						</Box>
-						, and I am a marketing exec for this club. I'm interested in
-						cybersecurity as well as computers in general. I'm also president of
-						our school's Hindu Student Association, Sanskar, so make sure to
-						check that out!
 					</Box>
 				</Flex>
 			</Flex>
