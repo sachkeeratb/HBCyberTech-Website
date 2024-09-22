@@ -28,6 +28,7 @@ import VihaanShah from '../../assets/VihaanShah.png';
 import DhruvParikh from '../../assets/DhruvParikh.png';
 import IshaanDhillon from '../../assets/IshaanDhillon.png';
 import KeyaShah from '../../assets/KeyaShah.png';
+import DhyeyHansoti from '../../assets/DhyeyHansoti.png';
 
 // Import icons
 import {
@@ -1528,7 +1529,7 @@ export function AboutEvents() {
 								showBorder={true}
 								borderColor='blue.400'
 								loading='lazy'
-								src={''}
+								src={DhyeyHansoti}
 							/>
 						</MotionBox>
 					</Box>
@@ -1566,7 +1567,7 @@ export function AboutEvents() {
 										h='1px'
 										bottom={-2}
 									/>
-								</Box>{' '}
+								</Box>
 								<Box as='span' display={'flex'} pt={5}>
 									{InstagramContact('https://www.instagram.com/ledoorframe')}
 								</Box>
@@ -1576,7 +1577,7 @@ export function AboutEvents() {
 					<Box as='h2' fontSize='xl' fontWeight='400' textAlign='left' pb={10}>
 						My name is{' '}
 						<Box as='strong' fontWeight='600'>
-							Dhyey Hanosati
+							Dhyey Hansoti
 						</Box>
 						!
 					</Box>
