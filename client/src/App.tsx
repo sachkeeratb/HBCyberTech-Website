@@ -8,12 +8,17 @@ const NavBar = lazy(() => import('./components/NavBar'));
 // Pages
 const Home = lazy(() => import('./pages/General/Home'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'));
-const About = lazy(() => import('./pages/General/About'));
 const Links = lazy(() => import('./pages/Misc/Links'));
 const SignUp = lazy(() => import('./pages/Account/SignUp'));
 const SignIn = lazy(() => import('./pages/Account/SignIn'));
 const AdminSignIn = lazy(() => import('./pages/Admin/AdminSignIn'));
 const Forum = lazy(() => import('./pages/Forum/Forum'));
+import {
+	AboutCore,
+	AboutDev,
+	AboutMarketing,
+	AboutEvents
+} from './pages/General/About';
 import CreatePost from './pages/Forum/CreatePost';
 import CreateAnnouncement from './pages/Forum/CreateAnnouncement';
 import Announcements from './pages/Forum/Announcements';
@@ -23,7 +28,7 @@ import GenMemList from './pages/Admin/GenMemList';
 import ExecMemList from './pages/Admin/ExecMemList';
 import AccountList from './pages/Admin/AccountList';
 const GeneralForm = lazy(() => import('./pages/Misc/GeneralForm'));
-const ExecForm = lazy(() => import('./pages/Misc/ExecForm'));
+// const ExecForm = lazy(() => import('./pages/Misc/ExecForm'));
 
 import theme from './theme.ts';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -61,7 +66,10 @@ function App() {
 						path='/admin/accounts'
 						element={cookies.admin ? <AccountList /> : <Home />}
 					/>
-					<Route path='/about' element={<About />} />
+					<Route path='/about/core' element={<AboutCore />} />
+					<Route path='/about/development' element={<AboutDev />} />
+					<Route path='/about/marketing' element={<AboutMarketing />} />
+					<Route path='/about/events' element={<AboutEvents />} />
 					<Route path='/links' element={<Links />} />
 					<Route path='/signup' element={<SignUp />} />
 					<Route path='/signin' element={<SignIn />} />
@@ -75,7 +83,7 @@ function App() {
 					<Route path='/forum/general/create' element={<CreatePost />} />
 					<Route path='/forum/general/:id' element={<Post />} />
 					<Route path='/form/general' element={<GeneralForm />} />
-					<Route path='/form/executive' element={<ExecForm />} />
+					{/* <Route path='/form/executive' element={<ExecForm />} /> */}
 				</Routes>
 			</Router>
 		</ChakraProvider>

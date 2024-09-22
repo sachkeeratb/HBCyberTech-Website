@@ -154,7 +154,7 @@ const DesktopNav = () => {
 							<Box
 								as='a'
 								p={2}
-								href={navItem.href ?? '#'}
+								href={navItem.href}
 								fontSize={'sm'}
 								fontWeight={600}
 								color={linkColor}
@@ -228,7 +228,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 			rounded={'md'}
 			_hover={{ bg: useColorModeValue('purple.50', 'gray.900') }}
 		>
-			<Stack direction={'row'} align={'center'}>
+			<Stack direction={'row'} align={'left'}>
 				<Box>
 					<Text
 						transition={'all .3s ease'}
@@ -296,7 +296,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
 			<Box
 				py={2}
 				as='a'
-				href={href ?? '#'}
+				href={href}
 				justifyContent='space-between'
 				alignItems='center'
 				_hover={{
@@ -356,7 +356,29 @@ const NavItems: NavItem[] = [
 	},
 	{
 		label: 'About Us',
-		href: '/about'
+		href: '#',
+		children: [
+			{
+				label: 'Core',
+				// subLabel: 'The core team',
+				href: '/about/core'
+			},
+			{
+				label: 'Development',
+				// subLabel: 'The slideshows and activities',
+				href: '/about/development'
+			},
+			{
+				label: 'Marketing',
+				// subLabel: 'Our online and offline prescence',
+				href: '/about/marketing'
+			},
+			{
+				label: 'Events',
+				// subLabel: 'The creation and management of events',
+				href: '/about/events'
+			}
+		]
 	},
 	{
 		label: 'Forum',

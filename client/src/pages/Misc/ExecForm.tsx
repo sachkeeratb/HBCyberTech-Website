@@ -309,7 +309,7 @@ export default function ExecForm() {
 						Executive Member Form
 					</Heading>
 					<Text fontSize='md' textAlign='center' mb={1}>
-						Join HB CyberTech as an executive in our Development Team! Lead,
+						Join HB CyberTech as an executive! Lead,
 						innovate, and make an impact in development, marketing, or event
 						management.
 					</Text>
@@ -390,6 +390,8 @@ export default function ExecForm() {
 								>
 									<option value=''>Select Executive Type</option>
 									<option value='development'>Development</option>
+									<option value='marketing'>Marketing</option>
+									<option value='events'>Events</option>
 								</Select>
 								<Text align='left' ml={1}>
 									{data.execType === 'development'

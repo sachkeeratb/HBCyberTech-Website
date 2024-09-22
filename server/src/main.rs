@@ -21,11 +21,11 @@ use routes::{
 		return_amount_of_announcements,
 		return_announcements,
 	},
-	executive_member::{
-		create_executive_member,
-		get_all_executive_members,
-		get_executive_member_by_full_name_or_email,
-	},
+	// executive_member::{
+	// 	create_executive_member,
+	// 	get_all_executive_members,
+	// 	get_executive_member_by_full_name_or_email,
+	// },
 	forum_post::{
 		create_post,
 		delete_comment,
@@ -72,9 +72,9 @@ async fn main() -> std::io::Result<()> {
 			.service(create_general_member)
 			.service(get_general_member_by_full_name_or_email)
 			.service(get_all_general_members)
-			.service(create_executive_member)
-			.service(get_executive_member_by_full_name_or_email)
-			.service(get_all_executive_members)
+			// .service(create_executive_member)
+			// .service(get_executive_member_by_full_name_or_email)
+			// .service(get_all_executive_members)
 			.service(create_announcement)
 			.service(delete_announcement)
 			.service(return_announcements)
