@@ -126,7 +126,7 @@ export function AboutCore() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -135,7 +135,7 @@ export function AboutCore() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -213,7 +213,7 @@ export function AboutCore() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -222,7 +222,7 @@ export function AboutCore() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -284,7 +284,7 @@ export function AboutCore() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -293,7 +293,7 @@ export function AboutCore() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -356,7 +356,7 @@ export function AboutCore() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -365,7 +365,7 @@ export function AboutCore() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -454,7 +454,7 @@ export function AboutDev() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -463,7 +463,6 @@ export function AboutDev() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -477,7 +476,7 @@ export function AboutDev() {
 										h='1px'
 										bottom={-2}
 									/>
-								</Box>{' '}
+								</Box>
 								<Box as='span' display={'flex'} pt={5}>
 									<Box pr={5}>
 										{InstagramContact('https://www.instagram.com/vanshsuri08')}
@@ -542,7 +541,7 @@ export function AboutDev() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -551,7 +550,7 @@ export function AboutDev() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -607,7 +606,7 @@ export function AboutDev() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -616,7 +615,7 @@ export function AboutDev() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -677,7 +676,7 @@ export function AboutDev() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -686,7 +685,7 @@ export function AboutDev() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -740,7 +739,7 @@ export function AboutDev() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -749,7 +748,7 @@ export function AboutDev() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -834,7 +833,7 @@ export function AboutMarketing() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -843,7 +842,7 @@ export function AboutMarketing() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -902,7 +901,7 @@ export function AboutMarketing() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -911,7 +910,7 @@ export function AboutMarketing() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -976,7 +975,7 @@ export function AboutMarketing() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -985,7 +984,7 @@ export function AboutMarketing() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1051,7 +1050,7 @@ export function AboutMarketing() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1060,7 +1059,7 @@ export function AboutMarketing() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1111,7 +1110,7 @@ export function AboutMarketing() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1120,7 +1119,7 @@ export function AboutMarketing() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1174,7 +1173,7 @@ export function AboutMarketing() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1183,7 +1182,7 @@ export function AboutMarketing() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1268,7 +1267,7 @@ export function AboutEvents() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1277,7 +1276,7 @@ export function AboutEvents() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1341,7 +1340,7 @@ export function AboutEvents() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1350,7 +1349,7 @@ export function AboutEvents() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1407,7 +1406,7 @@ export function AboutEvents() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1416,7 +1415,7 @@ export function AboutEvents() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1479,7 +1478,7 @@ export function AboutEvents() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1488,7 +1487,7 @@ export function AboutEvents() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1544,7 +1543,7 @@ export function AboutEvents() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1553,7 +1552,7 @@ export function AboutEvents() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1607,7 +1606,7 @@ export function AboutEvents() {
 					direction='column'
 				>
 					<Box position='relative'>
-						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 							<Box
 								as='h1'
 								mb={6}
@@ -1616,7 +1615,7 @@ export function AboutEvents() {
 								fontWeight='bold'
 								mt={0}
 								cursor='pointer'
-								width='max-content'
+								width='fit-content'
 								textAlign='left'
 							>
 								<Box as='span' display='inline-block' position='relative'>
@@ -1703,7 +1702,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -1712,7 +1711,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -1790,7 +1789,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -1799,7 +1798,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -1861,7 +1860,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -1870,7 +1869,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -1933,7 +1932,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -1942,7 +1941,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2003,7 +2002,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2012,7 +2011,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2091,7 +2090,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2100,7 +2099,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2155,7 +2154,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2164,7 +2163,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2227,7 +2226,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2236,7 +2235,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2295,7 +2294,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2304,7 +2303,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2369,7 +2368,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2378,7 +2377,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2439,7 +2438,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2448,7 +2447,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2502,7 +2501,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2511,7 +2510,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2567,7 +2566,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2576,7 +2575,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2642,7 +2641,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2651,7 +2650,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2706,7 +2705,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2715,7 +2714,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2769,7 +2768,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2778,7 +2777,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2834,7 +2833,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2843,7 +2842,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2900,7 +2899,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2909,7 +2908,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -2972,7 +2971,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -2981,7 +2980,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -3037,7 +3036,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -3046,7 +3045,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
@@ -3100,7 +3099,7 @@ export function AboutEvents() {
 // 					direction='column'
 // 				>
 // 					<Box position='relative'>
-// 						<MotionBox whileHover={{ translateY: -5 }} width='max-content'>
+// 						<MotionBox whileHover={{ translateY: -5 }} width='fit-content'>
 // 							<Box
 // 								as='h1'
 // 								mb={6}
@@ -3109,7 +3108,7 @@ export function AboutEvents() {
 // 								fontWeight='bold'
 // 								mt={0}
 // 								cursor='pointer'
-// 								width='max-content'
+// 								width='fit-content'
 // 								textAlign='left'
 // 							>
 // 								<Box as='span' display='inline-block' position='relative'>
