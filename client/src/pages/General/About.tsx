@@ -29,6 +29,7 @@ import DhruvParikh from '../../assets/DhruvParikh.png';
 import IshaanDhillon from '../../assets/IshaanDhillon.png';
 import KeyaShah from '../../assets/KeyaShah.png';
 import DhyeyHansoti from '../../assets/DhyeyHansoti.png';
+import MeharKapoor from '../../assets/MeharKapoor.png';
 
 // Import icons
 import {
@@ -526,7 +527,7 @@ export function AboutDev() {
 								showBorder={true}
 								borderColor='blue.400'
 								loading='lazy'
-								src={''}
+								src={MeharKapoor}
 							/>
 						</MotionBox>
 					</Box>
@@ -565,7 +566,7 @@ export function AboutDev() {
 										h='1px'
 										bottom={-2}
 									/>
-								</Box>{' '}
+								</Box>
 								<Box as='span' display={'flex'} pt={5}>
 									{InstagramContact('https://www.instagram.com/_meharkapoor/')}
 								</Box>
