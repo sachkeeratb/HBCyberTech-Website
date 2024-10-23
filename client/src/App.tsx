@@ -33,6 +33,7 @@ const GeneralForm = lazy(() => import('./pages/Misc/GeneralForm'));
 import theme from './theme.ts';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import TransitionLink from './components/TransitionLink.tsx';
 
 /**
  * Renders the main application component.
@@ -48,42 +49,198 @@ function App() {
 			<NavBar />
 			<Router>
 				<Routes>
-					<Route index path='/' element={<Home />} />
+					<Route
+						index
+						path='/'
+						element={
+							<TransitionLink>
+								<Home />
+							</TransitionLink>
+						}
+					/>
 					<Route
 						path='/admin'
-						element={cookies.admin ? <AdminDashboard /> : <Home />}
+						element={
+							cookies.admin ? (
+								<TransitionLink>
+									<AdminDashboard />
+								</TransitionLink>
+							) : (
+								<TransitionLink>
+									<Home />
+								</TransitionLink>
+							)
+						}
 					/>
-					<Route path='/admin/signin' element={<AdminSignIn />} />
+					<Route
+						path='/admin/signin'
+						element={
+							<TransitionLink>
+								<AdminSignIn />
+							</TransitionLink>
+						}
+					/>
 					<Route
 						path='/admin/generals'
-						element={cookies.admin ? <GenMemList /> : <Home />}
+						element={
+							cookies.admin ? (
+								<TransitionLink>
+									<GenMemList />
+								</TransitionLink>
+							) : (
+								<TransitionLink>
+									<Home />
+								</TransitionLink>
+							)
+						}
 					/>
 					<Route
 						path='/admin/executives'
-						element={cookies.admin ? <ExecMemList /> : <Home />}
-					/>{' '}
+						element={
+							cookies.admin ? (
+								<TransitionLink>
+									<ExecMemList />
+								</TransitionLink>
+							) : (
+								<TransitionLink>
+									<Home />
+								</TransitionLink>
+							)
+						}
+					/>
 					<Route
 						path='/admin/accounts'
-						element={cookies.admin ? <AccountList /> : <Home />}
+						element={
+							cookies.admin ? (
+								<TransitionLink>
+									<AccountList />
+								</TransitionLink>
+							) : (
+								<TransitionLink>
+									<Home />
+								</TransitionLink>
+							)
+						}
 					/>
-					<Route path='/about/core' element={<AboutCore />} />
-					<Route path='/about/development' element={<AboutDev />} />
-					<Route path='/about/marketing' element={<AboutMarketing />} />
-					<Route path='/about/events' element={<AboutEvents />} />
-					<Route path='/links' element={<Links />} />
-					<Route path='/signup' element={<SignUp />} />
-					<Route path='/signin' element={<SignIn />} />
-					<Route path='/forum' element={<Forum />} />
-					<Route path='/forum/announcements' element={<Announcements />} />
+					<Route
+						path='/about/core'
+						element={
+							<TransitionLink>
+								<AboutCore />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/about/development'
+						element={
+							<TransitionLink>
+								<AboutDev />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/about/marketing'
+						element={
+							<TransitionLink>
+								<AboutMarketing />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/about/events'
+						element={
+							<TransitionLink>
+								<AboutEvents />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/links'
+						element={
+							<TransitionLink>
+								<Links />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/signup'
+						element={
+							<TransitionLink>
+								<SignUp />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/signin'
+						element={
+							<TransitionLink>
+								<SignIn />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/forum'
+						element={
+							<TransitionLink>
+								<Forum />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/forum/announcements'
+						element={
+							<TransitionLink>
+								<Announcements />
+							</TransitionLink>
+						}
+					/>
 					<Route
 						path='/forum/announcements/create'
-						element={cookies.admin ? <CreateAnnouncement /> : <Home />}
+						element={
+							cookies.admin ? (
+								<TransitionLink>
+									<CreateAnnouncement />
+								</TransitionLink>
+							) : (
+								<TransitionLink>
+									<Home />
+								</TransitionLink>
+							)
+						}
 					/>
-					<Route path='/forum/general' element={<General />} />
-					<Route path='/forum/general/create' element={<CreatePost />} />
-					<Route path='/forum/general/:id' element={<Post />} />
-					<Route path='/form/general' element={<GeneralForm />} />
-					{/* <Route path='/form/executive' element={<ExecForm />} /> */}
+					<Route
+						path='/forum/general'
+						element={
+							<TransitionLink>
+								<General />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/forum/general/create'
+						element={
+							<TransitionLink>
+								<CreatePost />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/forum/general/:id'
+						element={
+							<TransitionLink>
+								<Post />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						path='/form/general'
+						element={
+							<TransitionLink>
+								<GeneralForm />
+							</TransitionLink>
+						}
+					/>
+					{/* <Route path='/form/executive' element={ TransitionLink> <ExecForm /> </TransitionLink> } /> */}
 				</Routes>
 			</Router>
 		</ChakraProvider>
