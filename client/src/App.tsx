@@ -8,6 +8,7 @@ const NavBar = lazy(() => import('./components/NavBar'));
 // Pages
 const Home = lazy(() => import('./pages/General/Home'));
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'));
+const Resources = lazy(() => import('./pages/General/Resources'));
 const Links = lazy(() => import('./pages/Misc/Links'));
 const SignUp = lazy(() => import('./pages/Account/SignUp'));
 const SignIn = lazy(() => import('./pages/Account/SignIn'));
@@ -55,6 +56,15 @@ function App() {
 						element={
 							<TransitionLink>
 								<Home />
+							</TransitionLink>
+						}
+					/>
+					<Route
+						index
+						path='/resources'
+						element={
+							<TransitionLink>
+								<Resources />
 							</TransitionLink>
 						}
 					/>

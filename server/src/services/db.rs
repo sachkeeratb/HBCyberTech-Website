@@ -16,6 +16,7 @@ use crate::models::{
 	executive_member::ExecutiveMember,
 	forum_post::Post,
 	general_member::GeneralMember,
+	resource::Resource,
 };
 
 // Define the Database struct
@@ -26,6 +27,7 @@ pub struct Database {
 	forum_post: Collection<Post>,
 	account: Collection<Account>,
 	admin: Collection<Admin>,
+	resource: Collection<Resource>,
 }
 
 impl Database {
@@ -48,6 +50,7 @@ impl Database {
 		let forum_post: Collection<Post> = db.collection("ForumPosts");
 		let account: Collection<Account> = db.collection("Accounts");
 		let admin: Collection<Admin> = db.collection("Admin");
+		let resource: Collection<Resource> = db.collection("Resources");
 
 		// Return the Database struct
 		Database {
@@ -57,6 +60,7 @@ impl Database {
 			forum_post,
 			account,
 			admin,
+			resource,
 		}
 	}
 
@@ -458,5 +462,30 @@ impl Database {
 
 		// Return the result of the update operation
 		Ok(result)
+	}
+
+	// Resources
+	pub async fn get_resources(
+		&self,
+		page: u32,
+		limit: u32,
+		search: String,
+		field: String,
+		tag: String
+	) -> Result<Vec<Resource>, mongodb::error::Error> {
+		let skip = (page - 1) * limit;
+		let mut filter = if search.is_empty() {
+			doc! {}
+		} else {
+			doc! { field : { "$regex": search, "$options": "i" } }
+		};
+
+		if !tag.is_empty() {
+			filter.insert("tags", doc! { "$in": [tag.clone()] });
+		}
+
+		let cursor = self.resource.find(filter).skip(skip.into()).limit(limit.into()).await?;
+		let resources: Vec<Resource> = cursor.try_collect().await?;
+		Ok(resources)
 	}
 }

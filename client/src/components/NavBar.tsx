@@ -381,6 +381,10 @@ const NavItems: NavItem[] = [
 		]
 	},
 	{
+		label: 'Resources',
+		href: '/resources'
+	},
+	{
 		label: 'Forum',
 		href: '/forum',
 		children: [

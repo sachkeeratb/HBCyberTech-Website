@@ -18,3 +18,13 @@ pub struct AdminPaginationArgs {
 	pub search: String,
 	pub field: String,
 }
+
+// Define the ResourcePaginationArgs struct
+#[derive(Deserialize)]
+pub struct ResourcePaginationArgs {
+	pub page: u32,
+	pub limit: u32,
+	pub search: String,
+	pub field: String,
+	pub tag: String,
+}

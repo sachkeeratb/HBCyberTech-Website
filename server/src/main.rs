@@ -21,11 +21,11 @@ use routes::{
 		return_amount_of_announcements,
 		return_announcements,
 	},
-	// executive_member::{
-	// 	create_executive_member,
-	// 	get_all_executive_members,
-	// 	get_executive_member_by_full_name_or_email,
-	// },
+	executive_member::{
+		// 	create_executive_member,
+		get_all_executive_members,
+		get_executive_member_by_full_name_or_email,
+	},
 	forum_post::{
 		create_post,
 		delete_comment,
@@ -43,6 +43,7 @@ use routes::{
 		get_all_general_members,
 		get_general_member_by_full_name_or_email,
 	},
+	resource::get_resources,
 };
 use services::db::Database;
 
@@ -73,8 +74,8 @@ async fn main() -> std::io::Result<()> {
 			.service(get_general_member_by_full_name_or_email)
 			.service(get_all_general_members)
 			// .service(create_executive_member)
-			// .service(get_executive_member_by_full_name_or_email)
-			// .service(get_all_executive_members)
+			.service(get_executive_member_by_full_name_or_email)
+			.service(get_all_executive_members)
 			.service(create_announcement)
 			.service(delete_announcement)
 			.service(return_announcements)
@@ -96,6 +97,7 @@ async fn main() -> std::io::Result<()> {
 			.service(get_all_accounts)
 			.service(admin_sign_in)
 			.service(verify_admin)
+			.service(get_resources)
 	})
 		// Bind the server to the host and port
 		.bind((

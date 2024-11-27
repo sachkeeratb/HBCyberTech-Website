@@ -74,10 +74,10 @@ interface Link {
 }
 
 const LinksList: Link[] = [
-	// {
-	// 	label: 'Google Classroom',
-	// 	href: 'https://classroom.google.com/'
-	// },
+	{
+		label: 'Google Classroom',
+		href: 'https://classroom.google.com/c/NzA1OTcyMDgxNjE3?cjc=bxtr2uc'
+	},
 	{
 		label: 'Instagram Account',
 		href: 'https://www.instagram.com/hbcybertech'
