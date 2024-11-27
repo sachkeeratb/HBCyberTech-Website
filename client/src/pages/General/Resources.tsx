@@ -38,11 +38,11 @@ const instance = axios.create({
 
 export default function Resources() {
 	const [resources, setResources] = useState<Resource[]>([]);
-	const [search, setSearch] = useState('');
-	const [tag, setTag] = useState();
-	const [page, setPage] = useState(1);
-	const [hasMore, setHasMore] = useState(false);
-	const [loading, setLoading] = useState(true);
+	const [search, setSearch] = useState<string>('');
+	const [tag, setTag] = useState<string>('');
+	const [page, setPage] = useState<number>(1);
+	const [hasMore, setHasMore] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		fetchResources();
@@ -96,10 +96,8 @@ export default function Resources() {
 					onChange={handleSearchChange}
 					maxWidth='73%'
 				/>
-				<Select maxWidth='25%' onChange={handleTagChange}>
-					<option value='' defaultValue>
-						Select
-					</option>
+				<Select maxWidth='25%' onChange={handleTagChange} defaultValue=''>
+					<option value=''>Select</option>
 					<option value='CTF'>CTF</option>
 					<option value='Cybersecurity'>Cybersecurity</option>
 					<option value='Website'>Website</option>
